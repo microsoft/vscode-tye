@@ -1,3 +1,22 @@
+# Tye for Visual Studio Code (Preview)
+
+The Tye extension makes it easier to run and debug applications that are using [Tye](https://github.com/dotnet/tye)
+
+# Prerequisites
+
+## Docker
+
+Using Tye requires Docker to be installed.
+
+## Tye
+
+Using the Tye tooling requires a project to be run using the Tye CLI.
+
+## Visual Studio Code
+
+# Feature Overview
+
+# Telemetry
 
 # Contributing
 
