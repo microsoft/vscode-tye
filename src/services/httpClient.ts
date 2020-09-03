@@ -5,7 +5,7 @@ import axios from 'axios';
 import * as vscode from 'vscode';
 
 export interface HttpResponse {
-    data: any;
+    data: unknown;
 }
 
 export interface HttpPostOptions {

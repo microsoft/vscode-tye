@@ -34,9 +34,9 @@ export function activate(context: vscode.ExtensionContext): void {
 		const replica: TyeReplica = serviceNode.replica;
 		const service: TyeService = serviceNode.service;
 		
-		let host = replica.environment[`service__${service.description.name}__host`.toUpperCase()];
-		let port = replica.environment[`service__${service.description.name}__port`.toUpperCase()];
-		let protocol = replica.environment[`service__${service.description.name}__protocol`.toUpperCase()] ?? 'http';
+		const host = replica.environment[`service__${service.description.name}__host`.toUpperCase()];
+		const port = replica.environment[`service__${service.description.name}__port`.toUpperCase()];
+		const protocol = replica.environment[`service__${service.description.name}__protocol`.toUpperCase()] ?? 'http';
 
 		await vscode.env.openExternal(vscode.Uri.parse(`${protocol}://${host}:${port}`));
 	}));
@@ -71,6 +71,3 @@ export function activate(context: vscode.ExtensionContext): void {
 		}
 	}));
 }
-
-// this method is called when your extension is deactivated
-export function deactivate() {}

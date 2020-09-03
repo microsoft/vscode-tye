@@ -5,7 +5,7 @@
 //change the Tye API. I think we should change the Tye API.
 interface TyeService {
     description: TyeDescription,
-    replicas: any;
+    replicas: {[key:string]: TyeReplica},
     serviceType: string;
 }
 
@@ -16,5 +16,5 @@ interface TyeDescription {
 interface TyeReplica {
     name:string
     pid:number
-    environment: any
+    environment: {[key:string]: string}
 }

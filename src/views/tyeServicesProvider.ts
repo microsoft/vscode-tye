@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
-import * as path from 'path';
 import { TyeClient } from '../services/tyeClient';
 
 export class TyeServicesProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
@@ -23,28 +22,22 @@ export class TyeServicesProvider implements vscode.TreeDataProvider<vscode.TreeI
 
     const services = await this.tyeClient.getServices();
 
-    let nodes: TyeNode[];
-
     if(services) {
       if(element) {
         const clickedService = services.find(a=>a.description.name === element.label);
-        
-        nodes = Object.keys(clickedService?.replicas).map(replicaName => 
-          {
-            if(clickedService) {
-              return new ReplicaNode(clickedService, clickedService.replicas[replicaName]);
-            } else {
-              //This shouldn't be possible to get to AFAIK but I don't want to turn down
-              //the warnings for undefined checks so I will handle it as if it could happen.
-              //Checking for clickedService not being undefined before the keys call isn't enough.
-              throw new Error('clicked node that doesn\'t exist in the services API');
-            }
-          });
+
+        if(clickedService?.replicas) {
+          return Object.keys(clickedService.replicas).map(replicaName => 
+            {
+                return new ReplicaNode(clickedService, clickedService.replicas[replicaName]);
+            });
+        }
       } else {
-        nodes = services.map(service => new ServiceNode(service));
+        const nodes:TyeNode[] = services.map(service => new ServiceNode(service));
         nodes.unshift(new DashboardNode());
+        return nodes;
       }
-      return nodes;
+      return [];
     } else {
       //vscode.window.showInformationMessage('Unable to reach Tye service on http://localhost:8000/api/v1/services');
     }

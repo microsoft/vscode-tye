@@ -15,7 +15,7 @@ export class TyeLogsContentProvider implements vscode.TextDocumentContentProvide
 
     async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Promise<string> {
         const resp = await this.httpClient.get(`http://localhost:8000/api/v1/logs/${uri.path}`, token);
-        const ar:string[] = resp.data;
+        const ar:string[] = resp.data as string[];
         return ar.join('\n');
     }
 }
