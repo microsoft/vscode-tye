@@ -14,77 +14,86 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onView:tyeServices"
+		"onView:vscode-tye.views.services"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"viewsWelcome": [
 			{
-			  "view": "tyeServices",
-			  "contents": "The extension requires you to run Tye in a command window. This extension will attempt to access `http://localhost:8000/api/v1/services` by default."
+				"view": "vscode-tye.views.services",
+				"contents": "The extension requires you to run Tye in a command window. This extension will attempt to access `http://localhost:8000/api/v1/services` by default."
 			}
 		],
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "tye-explorer",
+					"title": "Tye Explorer",
+					"icon": "resources/dep.png"
+				}
+			]
+		},
 		"views": {
-			"debug" : [
+			"tye-explorer" : [
 			{
-				"id": "tyeServices",
+				"id": "vscode-tye.views.services",
 				"name": "Tye Services"
 			}
 		]},
 		"commands": [
-            {
-                "command": "tyeServices.refreshEntry",
-                "title": "Refresh",
-                "icon": "$(refresh)"
+			{
+				"command": "vscode-tye.commands.refreshEntry",
+				"title": "Refresh",
+				"icon": "$(refresh)"
 			},
 			{
-                "command": "tyeServices.debugAll",
-                "title": "Debug",
-                "icon": "$(debug)"
+				"command": "vscode-tye.commands.debugAll",
+				"title": "Debug",
+				"icon": "$(debug)"
 			},
 			{
-				"command": "tyeServices.browseService",
+				"command": "vscode-tye.commands.browseService",
 				"title": "Browse",
 				"icon": "$(browser)"
 			},
 			{
-				"command": "tyeServices.attachService",
+				"command": "vscode-tye.commands.attachService",
 				"title": "Attach",
 				"icon": "$(debug)"
 			},
 			{
-				"command": "tyeServices.showLogs",
+				"command": "vscode-tye.commands.showLogs",
 				"title": "Logs",
 				"icon": "$(file-text)"
 			}
 		],
 		"menus": {
-            "view/title": [
-                {
-                    "command": "tyeServices.refreshEntry",
-                    "when": "view == tyeServices",
-                    "group": "navigation"
+			"view/title": [
+				{
+					"command": "vscode-tye.commands.refreshEntry",
+					"when": "view == vscode-tye.views.services",
+					"group": "navigation"
 				},
 				{
-                    "command": "tyeServices.debugAll",
-                    "when": "view == tyeServices",
-                    "group": "navigation"
+					"command": "vscode-tye.commands.debugAll",
+					"when": "view == vscode-tye.views.services",
+					"group": "navigation"
 				}
 			],
 			"view/item/context": [
 				{
-					"command": "tyeServices.browseService",
-					"when": "view == tyeServices && viewItem == project",
+					"command": "vscode-tye.commands.browseService",
+					"when": "view == vscode-tye.views.services && viewItem == project",
 					"group": "inline"
 				},
 				{
-					"command": "tyeServices.attachService",
-					"when": "view == tyeServices && viewItem == project",
+					"command": "vscode-tye.commands.attachService",
+					"when": "view == vscode-tye.views.services && viewItem == project",
 					"group": "inline"
 				},
 				{
-					"command": "tyeServices.showLogs",
-					"when": "view == tyeServices && viewItem == browsable",
+					"command": "vscode-tye.commands.showLogs",
+					"when": "view == vscode-tye.views.services && viewItem == browsable",
 					"group": "inline"
 				}
 			]
@@ -102,7 +111,7 @@
 		"@types/vscode": "^1.48.0",
 		"@types/glob": "^7.1.3",
 		"@types/mocha": "^8.0.0",
-		"@types/node": "^14.0.27",
+		"@types/node": "^12.12.54",
 		"eslint": "^7.6.0",
 		"@typescript-eslint/eslint-plugin": "^3.8.0",
 		"@typescript-eslint/parser": "^3.8.0",

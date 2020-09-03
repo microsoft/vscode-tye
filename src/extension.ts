@@ -9,8 +9,8 @@ import { TyeLogsContentProvider } from './views/tyeLogsContentProvider';
 
 export function activate(context: vscode.ExtensionContext): void {
 
-	context.subscriptions.push(vscode.commands.registerCommand('extension.debugTyeService', async (pid: string) => {
-			const config = {type:"coreclr", name:`Attach to Tye PID: ${pid}`,request:"attach", processId:`${pid}`};
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.debugTyeService', async (pid: string) => {
+			const config = {type:'coreclr', name:`Attach to Tye PID: ${pid}`,request:'attach', processId:`${pid}`};
 			await vscode.debug.startDebugging(undefined, config);
 	}));
 
@@ -22,48 +22,48 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	const treeProvider = new TyeServicesProvider(vscode.workspace.workspaceFolders, tyeClient);
 	context.subscriptions.push(vscode.window.registerTreeDataProvider(
-		'tyeServices',
+		'vscode-tye.views.services',
 		treeProvider
 	));
 
-	context.subscriptions.push(vscode.commands.registerCommand('tyeServices.refreshEntry', () =>
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.refreshEntry', () =>
 		treeProvider.refresh()
 	));
 
-	context.subscriptions.push(vscode.commands.registerCommand('tyeServices.browseService', async (serviceNode: ReplicaNode) => {
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.browseService', async (serviceNode: ReplicaNode) => {
 		const replica: TyeReplica = serviceNode.replica;
 		const service: TyeService = serviceNode.service;
 		
 		let host = replica.environment[`service__${service.description.name}__host`.toUpperCase()];
 		let port = replica.environment[`service__${service.description.name}__port`.toUpperCase()];
-		let protocol = replica.environment[`service__${service.description.name}__protocol`.toUpperCase()] ?? "http";
+		let protocol = replica.environment[`service__${service.description.name}__protocol`.toUpperCase()] ?? 'http';
 
 		await vscode.env.openExternal(vscode.Uri.parse(`${protocol}://${host}:${port}`));
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('extension.launchTyeDashboard', () =>
-		vscode.env.openExternal(vscode.Uri.parse("http://localhost:8000"))
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.launchTyeDashboard', () =>
+		vscode.env.openExternal(vscode.Uri.parse('http://localhost:8000'))
 	));
 
-	context.subscriptions.push(vscode.commands.registerCommand('tyeServices.attachService', async (node: ReplicaNode) => {
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.attachService', async (node: ReplicaNode) => {
 		const replica: TyeReplica = node.replica;
-		const config = {type:"coreclr", name:`Attach to Tye PID: ${replica.pid}`,request:"attach", processId:`${replica.pid}`};
+		const config = {type:'coreclr', name:`Attach to Tye PID: ${replica.pid}`,request:'attach', processId:`${replica.pid}`};
 		await vscode.debug.startDebugging(undefined, config);
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('tyeServices.showLogs', async (node: ServiceNode) => {
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.showLogs', async (node: ServiceNode) => {
 		const service: TyeService = node.service;
 		const doc = await vscode.workspace.openTextDocument(vscode.Uri.parse('tye:' + service.description.name));
 		await vscode.window.showTextDocument(doc, {preview:false});
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('tyeServices.debugAll', async () => {
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.debugAll', async () => {
 		const services = await tyeClient.getServices();
 		if(services) {
 			for(const service of services) {
-				if(service.serviceType === "project") {
+				if(service.serviceType === 'project') {
 					for(const replicaName of Object.keys(service.replicas)) {
-						const config = {type:"coreclr", name:`Attach to Tye PID: ${service.replicas[replicaName].pid}`,request:"attach", processId:`${service.replicas[replicaName].pid}`};
+						const config = {type:'coreclr', name:`Attach to Tye PID: ${service.replicas[replicaName].pid}`,request:'attach', processId:`${service.replicas[replicaName].pid}`};
 						await vscode.debug.startDebugging(undefined, config);
 					}
 				}

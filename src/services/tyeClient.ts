@@ -5,10 +5,10 @@ import AxiosHttpClient from "./httpClient";
 
 export class TyeClient {
 
-    constructor(private httpClient: AxiosHttpClient) {}
+    constructor(private readonly httpClient: AxiosHttpClient) {}
 
 
-    public async getServices(uri = "http://localhost:8000/api/v1/services") : Promise<TyeService[]> {
+    public async getServices(uri = 'http://localhost:8000/api/v1/services') : Promise<TyeService[]> {
         const resp = await this.httpClient.get(uri);
         return resp.data;
     }

@@ -6,8 +6,8 @@ import * as path from 'path';
 import { TyeClient } from '../services/tyeClient';
 
 export class TyeServicesProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
-  constructor(private workspaceRoot: readonly vscode.WorkspaceFolder[] | undefined,
-              private tyeClient: TyeClient) {}
+    constructor(private workspaceRoot: readonly vscode.WorkspaceFolder[] | undefined,
+                private readonly tyeClient: TyeClient) {}
 
   getTreeItem(element: ServiceNode): vscode.TreeItem {
     return element;
@@ -37,7 +37,7 @@ export class TyeServicesProvider implements vscode.TreeDataProvider<vscode.TreeI
               //This shouldn't be possible to get to AFAIK but I don't want to turn down
               //the warnings for undefined checks so I will handle it as if it could happen.
               //Checking for clickedService not being undefined before the keys call isn't enough.
-              throw new Error("clicked node that doesn't exist in the services API");
+              throw new Error('clicked node that doesn\'t exist in the services API');
             }
           });
       } else {
@@ -69,22 +69,22 @@ class TyeNode extends vscode.TreeItem {
   // }
   
   get description(): string {
-    return "";
+    return '';
   }
 }
 
 class DashboardNode extends TyeNode {
   constructor() {
-    super("Dashboard", vscode.TreeItemCollapsibleState.None);
+    super('Dashboard', vscode.TreeItemCollapsibleState.None);
   }
 
   get command() { 
-    return {command: "extension.launchTyeDashboard", title: '', arguments: []};
+    return {command: 'vscode-tye.commands.launchTyeDashboard', title: '', arguments: []};
   }
 
-  iconPath = new vscode.ThemeIcon("book");
+  iconPath = new vscode.ThemeIcon('book');
 
-  contextValue = "information";
+  contextValue = 'information';
 }
 
 export class ServiceNode extends TyeNode {
@@ -96,14 +96,14 @@ export class ServiceNode extends TyeNode {
   }
 
   get iconPath(): vscode.ThemeIcon {
-    if(this.service.serviceType === "container") {
-      return new vscode.ThemeIcon("package");
+    if(this.service.serviceType === 'container') {
+      return new vscode.ThemeIcon('package');
     }
   
-    return new vscode.ThemeIcon("project");
+    return new vscode.ThemeIcon('project');
   }
 
-  contextValue = "browsable";
+  contextValue = 'browsable';
 }
 
 export class ReplicaNode extends TyeNode {
