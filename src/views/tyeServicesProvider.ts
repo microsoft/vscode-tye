@@ -56,11 +56,7 @@ export class TyeServicesProvider implements vscode.TreeDataProvider<vscode.TreeI
 class TyeNode extends vscode.TreeItem {
   
   command? : vscode.Command;
-  
-  // get tooltip(): string {
-  //   return `${this.label}`;
-  // }
-  
+
   get description(): string {
     return '';
   }
@@ -86,6 +82,8 @@ export class ServiceNode extends TyeNode {
   constructor(service: TyeService) {
     super(service.description.name, vscode.TreeItemCollapsibleState.Collapsed);
     this.service = service;
+    this.contextValue = service.serviceType;
+    this.contextValue += " hasLogs"
   }
 
   get iconPath(): vscode.ThemeIcon {
@@ -95,8 +93,6 @@ export class ServiceNode extends TyeNode {
   
     return new vscode.ThemeIcon('project');
   }
-
-  contextValue = 'browsable';
 }
 
 export class ReplicaNode extends TyeNode {
@@ -109,5 +105,40 @@ export class ReplicaNode extends TyeNode {
     this.replica = replica;
     this.service = service;
     this.contextValue = service.serviceType;
+    if(this.service.serviceType === 'project') {
+      this.contextValue += ' attachable'
+    }
+    if(this.isBrowsable) {
+      this.contextValue += ' browsable';
+    }
+  }
+
+  get isBrowsable(): boolean {
+    if(this.replica.environment) {
+      return this.replica.environment[`service__${this.service.description.name}__host`.toUpperCase()] !== undefined;
+    }
+
+    if(this.service.serviceType == "ingress") {
+      return true;
+    }
+
+    return false;
+  }
+
+  GetBrowsableUri() : vscode.Uri {
+
+    let host = 'localhost';
+    let port = this.replica.ports[0];
+    let protocol = 'http';
+
+    //We want to prefer the environment variable so that it matches as closely as possible to GetServiceUri.
+    //Which is what code would get if accessing this service.
+    if(this.replica.environment) {
+      host = this.replica.environment[`service__${this.service.description.name}__host`.toUpperCase()];
+      port = Number.parseInt(this.replica.environment[`service__${this.service.description.name}__port`.toUpperCase()]);
+      protocol = this.replica.environment[`service__${this.service.description.name}__protocol`.toUpperCase()] ?? 'http';
+    }
+
+    return vscode.Uri.parse(`${protocol}://${host}:${port}`);
   }
 }

@@ -4,7 +4,7 @@
 import * as vscode from 'vscode';
 import AxiosHttpClient from './services/httpClient';
 import { TyeServicesProvider, ReplicaNode, ServiceNode } from './views/tyeServicesProvider';
-import { TyeClient } from './services/tyeClient';
+import { HttpTyeClient } from './services/tyeClient';
 import { TyeLogsContentProvider } from './views/tyeLogsContentProvider';
 
 export function activate(context: vscode.ExtensionContext): void {
@@ -15,7 +15,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	}));
 
 	const httpClient = new AxiosHttpClient();
-	const tyeClient = new TyeClient(httpClient);
+	const tyeClient = new HttpTyeClient(httpClient);
 
 	const logsContentProvider = new TyeLogsContentProvider(httpClient);
 	context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('tye', logsContentProvider));
@@ -31,14 +31,9 @@ export function activate(context: vscode.ExtensionContext): void {
 	));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.browseService', async (serviceNode: ReplicaNode) => {
-		const replica: TyeReplica = serviceNode.replica;
-		const service: TyeService = serviceNode.service;
-		
-		const host = replica.environment[`service__${service.description.name}__host`.toUpperCase()];
-		const port = replica.environment[`service__${service.description.name}__port`.toUpperCase()];
-		const protocol = replica.environment[`service__${service.description.name}__protocol`.toUpperCase()] ?? 'http';
-
-		await vscode.env.openExternal(vscode.Uri.parse(`${protocol}://${host}:${port}`));
+		if(serviceNode.isBrowsable) {
+			await vscode.env.openExternal(serviceNode.GetBrowsableUri());
+		}
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.launchTyeDashboard', () =>
