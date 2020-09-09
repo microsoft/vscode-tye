@@ -14,7 +14,7 @@ suite('integration/ingressServiceTests', () => {
     const testDataServiceCount = 3;
 
     async function buildTestClient(): Promise<TyeClient> {
-        const data = JSON.parse(await fse.readFile(path.resolve(__dirname, '../../../../src/test/suite/integration/ingressServices.json'), 'utf8')) as  TyeService[];
+        const data = JSON.parse(await fse.readFile(path.resolve(__dirname, '../../../../src/test/suite/integration/ingressServices.json'), 'utf8')) as TyeService[];
         return new MockTyeClient(data);
     }
 

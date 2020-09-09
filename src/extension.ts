@@ -31,8 +31,9 @@ export function activate(context: vscode.ExtensionContext): void {
 	));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.browseService', async (serviceNode: ReplicaNode) => {
-		if(serviceNode.isBrowsable) {
-			await vscode.env.openExternal(serviceNode.GetBrowsableUri());
+		const uri = serviceNode.BrowserUri;
+		if(uri) {
+			await vscode.env.openExternal(uri);
 		}
 	}));
 

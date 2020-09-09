@@ -118,14 +118,18 @@ export class ReplicaNode extends TyeNode {
       return this.replica.environment[`service__${this.service.description.name}__host`.toUpperCase()] !== undefined;
     }
 
-    if(this.service.serviceType == "ingress") {
+    if(this.service.serviceType === 'ingress') {
       return true;
     }
 
     return false;
   }
 
-  GetBrowsableUri() : vscode.Uri {
+  get BrowserUri() : vscode.Uri | undefined {
+
+    if(!this.isBrowsable){
+      return undefined;
+    }
 
     let host = 'localhost';
     let port = this.replica.ports[0];
