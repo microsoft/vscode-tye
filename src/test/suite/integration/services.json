@@ -1,0 +1,587 @@
+[
+  {
+    "description": {
+      "name": "postgres",
+      "replicas": 1,
+      "runInfo": {
+        "type": "docker",
+        "args": null,
+        "build": false,
+        "project": null,
+        "workingDirectory": null,
+        "volumeMappings": [],
+        "image": "postgres",
+        "executable": null
+      },
+      "bindings": [
+        {
+          "name": null,
+          "connectionString": "Server=${host};Port=${port};User Id=postgres;Password=${env:POSTGRES_PASSWORD};",
+          "autoAssignPort": false,
+          "port": 5432,
+          "containerPort": null,
+          "host": null,
+          "protocol": null
+        }
+      ],
+      "configuration": [
+        {
+          "name": "POSTGRES_PASSWORD",
+          "value": "pass@word1"
+        }
+      ]
+    },
+    "serviceType": "container",
+    "restarts": 0,
+    "status": {
+      "projectFilePath": null,
+      "executablePath": null,
+      "args": null,
+      "workingDirectory": null
+    },
+    "replicas": {
+      "postgres_fb52c648-5": {
+        "dockerCommand": "run -d   -e \u0022PORT=5432\u0022 -e \u0022PROXY_PORT=5432:5432\u0022 -e \u0022POSTGRES_PASSWORD=pass@word1\u0022 -e \u0022CONNECTIONSTRINGS__POSTGRES=Server=host.docker.internal;Port=5432;User Id=postgres;Password=pass@word1;\u0022 -e \u0022SERVICE__VOTE__PROTOCOL=http\u0022 -e \u0022VOTE_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__VOTE__PORT=57617\u0022 -e \u0022VOTE_SERVICE_PORT=57617\u0022 -e \u0022SERVICE__VOTE__HOST=host.docker.internal\u0022 -e \u0022VOTE_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__VOTE__HTTPS__PROTOCOL=https\u0022 -e \u0022VOTE_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__VOTE__HTTPS__PORT=57620\u0022 -e \u0022VOTE_HTTPS_SERVICE_PORT=57620\u0022 -e \u0022SERVICE__VOTE__HTTPS__HOST=host.docker.internal\u0022 -e \u0022VOTE_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022CONNECTIONSTRINGS__REDIS=host.docker.internal:6379\u0022 -e \u0022SERVICE__WORKER__PROTOCOL=http\u0022 -e \u0022WORKER_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__WORKER__PORT=57623\u0022 -e \u0022WORKER_SERVICE_PORT=57623\u0022 -e \u0022SERVICE__WORKER__HOST=host.docker.internal\u0022 -e \u0022WORKER_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__WORKER__HTTPS__PROTOCOL=https\u0022 -e \u0022WORKER_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__WORKER__HTTPS__PORT=57624\u0022 -e \u0022WORKER_HTTPS_SERVICE_PORT=57624\u0022 -e \u0022SERVICE__WORKER__HTTPS__HOST=host.docker.internal\u0022 -e \u0022WORKER_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__RESULTS__PROTOCOL=http\u0022 -e \u0022RESULTS_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__RESULTS__PORT=57625\u0022 -e \u0022RESULTS_SERVICE_PORT=57625\u0022 -e \u0022SERVICE__RESULTS__HOST=host.docker.internal\u0022 -e \u0022RESULTS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__RESULTS__HTTPS__PROTOCOL=https\u0022 -e \u0022RESULTS_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__RESULTS__HTTPS__PORT=57626\u0022 -e \u0022RESULTS_HTTPS_SERVICE_PORT=57626\u0022 -e \u0022SERVICE__RESULTS__HTTPS__HOST=host.docker.internal\u0022 -e \u0022RESULTS_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022APP_INSTANCE=postgres_fb52c648-5\u0022 -e \u0022CONTAINER_HOST=host.docker.internal\u0022  -p 5432:5432 --name postgres_fb52c648-5 --restart=unless-stopped postgres ",
+        "containerId": "03c75aa60f8a",
+        "dockerNetwork": "tye_network_c7daaed0-c",
+        "dockerNetworkAlias": "postgres",
+        "name": "postgres_fb52c648-5",
+        "ports": [
+          5432
+        ],
+        "exitCode": null,
+        "pid": null,
+        "environment": {
+          "PORT": "5432",
+          "PROXY_PORT": "5432:5432",
+          "POSTGRES_PASSWORD": "pass@word1",
+          "CONNECTIONSTRINGS__POSTGRES": "Server=host.docker.internal;Port=5432;User Id=postgres;Password=pass@word1;",
+          "SERVICE__VOTE__PROTOCOL": "http",
+          "VOTE_SERVICE_PROTOCOL": "http",
+          "SERVICE__VOTE__PORT": "57617",
+          "VOTE_SERVICE_PORT": "57617",
+          "SERVICE__VOTE__HOST": "host.docker.internal",
+          "VOTE_SERVICE_HOST": "host.docker.internal",
+          "SERVICE__VOTE__HTTPS__PROTOCOL": "https",
+          "VOTE_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__VOTE__HTTPS__PORT": "57620",
+          "VOTE_HTTPS_SERVICE_PORT": "57620",
+          "SERVICE__VOTE__HTTPS__HOST": "host.docker.internal",
+          "VOTE_HTTPS_SERVICE_HOST": "host.docker.internal",
+          "CONNECTIONSTRINGS__REDIS": "host.docker.internal:6379",
+          "SERVICE__WORKER__PROTOCOL": "http",
+          "WORKER_SERVICE_PROTOCOL": "http",
+          "SERVICE__WORKER__PORT": "57623",
+          "WORKER_SERVICE_PORT": "57623",
+          "SERVICE__WORKER__HOST": "host.docker.internal",
+          "WORKER_SERVICE_HOST": "host.docker.internal",
+          "SERVICE__WORKER__HTTPS__PROTOCOL": "https",
+          "WORKER_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__WORKER__HTTPS__PORT": "57624",
+          "WORKER_HTTPS_SERVICE_PORT": "57624",
+          "SERVICE__WORKER__HTTPS__HOST": "host.docker.internal",
+          "WORKER_HTTPS_SERVICE_HOST": "host.docker.internal",
+          "SERVICE__RESULTS__PROTOCOL": "http",
+          "RESULTS_SERVICE_PROTOCOL": "http",
+          "SERVICE__RESULTS__PORT": "57625",
+          "RESULTS_SERVICE_PORT": "57625",
+          "SERVICE__RESULTS__HOST": "host.docker.internal",
+          "RESULTS_SERVICE_HOST": "host.docker.internal",
+          "SERVICE__RESULTS__HTTPS__PROTOCOL": "https",
+          "RESULTS_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__RESULTS__HTTPS__PORT": "57626",
+          "RESULTS_HTTPS_SERVICE_PORT": "57626",
+          "SERVICE__RESULTS__HTTPS__HOST": "host.docker.internal",
+          "RESULTS_HTTPS_SERVICE_HOST": "host.docker.internal",
+          "APP_INSTANCE": "postgres_fb52c648-5",
+          "CONTAINER_HOST": "host.docker.internal"
+        },
+        "state": "ready"
+      }
+    }
+  },
+  {
+    "description": {
+      "name": "redis",
+      "replicas": 1,
+      "runInfo": {
+        "type": "docker",
+        "args": null,
+        "build": false,
+        "project": null,
+        "workingDirectory": null,
+        "volumeMappings": [],
+        "image": "redis",
+        "executable": null
+      },
+      "bindings": [
+        {
+          "name": null,
+          "connectionString": "${host}:${port}",
+          "autoAssignPort": false,
+          "port": 6379,
+          "containerPort": null,
+          "host": null,
+          "protocol": null
+        }
+      ],
+      "configuration": []
+    },
+    "serviceType": "container",
+    "restarts": 0,
+    "status": {
+      "projectFilePath": null,
+      "executablePath": null,
+      "args": null,
+      "workingDirectory": null
+    },
+    "replicas": {
+      "redis_e00fd8d7-5": {
+        "dockerCommand": "run -d   -e \u0022PORT=6379\u0022 -e \u0022PROXY_PORT=6379:6379\u0022 -e \u0022CONNECTIONSTRINGS__REDIS=host.docker.internal:6379\u0022 -e \u0022SERVICE__VOTE__PROTOCOL=http\u0022 -e \u0022VOTE_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__VOTE__PORT=57617\u0022 -e \u0022VOTE_SERVICE_PORT=57617\u0022 -e \u0022SERVICE__VOTE__HOST=host.docker.internal\u0022 -e \u0022VOTE_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__VOTE__HTTPS__PROTOCOL=https\u0022 -e \u0022VOTE_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__VOTE__HTTPS__PORT=57620\u0022 -e \u0022VOTE_HTTPS_SERVICE_PORT=57620\u0022 -e \u0022SERVICE__VOTE__HTTPS__HOST=host.docker.internal\u0022 -e \u0022VOTE_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__WORKER__PROTOCOL=http\u0022 -e \u0022WORKER_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__WORKER__PORT=57623\u0022 -e \u0022WORKER_SERVICE_PORT=57623\u0022 -e \u0022SERVICE__WORKER__HOST=host.docker.internal\u0022 -e \u0022WORKER_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__WORKER__HTTPS__PROTOCOL=https\u0022 -e \u0022WORKER_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__WORKER__HTTPS__PORT=57624\u0022 -e \u0022WORKER_HTTPS_SERVICE_PORT=57624\u0022 -e \u0022SERVICE__WORKER__HTTPS__HOST=host.docker.internal\u0022 -e \u0022WORKER_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022CONNECTIONSTRINGS__POSTGRES=Server=host.docker.internal;Port=5432;User Id=postgres;Password=pass@word1;\u0022 -e \u0022SERVICE__RESULTS__PROTOCOL=http\u0022 -e \u0022RESULTS_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__RESULTS__PORT=57625\u0022 -e \u0022RESULTS_SERVICE_PORT=57625\u0022 -e \u0022SERVICE__RESULTS__HOST=host.docker.internal\u0022 -e \u0022RESULTS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__RESULTS__HTTPS__PROTOCOL=https\u0022 -e \u0022RESULTS_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__RESULTS__HTTPS__PORT=57626\u0022 -e \u0022RESULTS_HTTPS_SERVICE_PORT=57626\u0022 -e \u0022SERVICE__RESULTS__HTTPS__HOST=host.docker.internal\u0022 -e \u0022RESULTS_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022APP_INSTANCE=redis_e00fd8d7-5\u0022 -e \u0022CONTAINER_HOST=host.docker.internal\u0022  -p 6379:6379 --name redis_e00fd8d7-5 --restart=unless-stopped redis ",
+        "containerId": "c4df94db91ab",
+        "dockerNetwork": "tye_network_c7daaed0-c",
+        "dockerNetworkAlias": "redis",
+        "name": "redis_e00fd8d7-5",
+        "ports": [
+          6379
+        ],
+        "exitCode": null,
+        "pid": null,
+        "environment": {
+          "PORT": "6379",
+          "PROXY_PORT": "6379:6379",
+          "CONNECTIONSTRINGS__REDIS": "host.docker.internal:6379",
+          "SERVICE__VOTE__PROTOCOL": "http",
+          "VOTE_SERVICE_PROTOCOL": "http",
+          "SERVICE__VOTE__PORT": "57617",
+          "VOTE_SERVICE_PORT": "57617",
+          "SERVICE__VOTE__HOST": "host.docker.internal",
+          "VOTE_SERVICE_HOST": "host.docker.internal",
+          "SERVICE__VOTE__HTTPS__PROTOCOL": "https",
+          "VOTE_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__VOTE__HTTPS__PORT": "57620",
+          "VOTE_HTTPS_SERVICE_PORT": "57620",
+          "SERVICE__VOTE__HTTPS__HOST": "host.docker.internal",
+          "VOTE_HTTPS_SERVICE_HOST": "host.docker.internal",
+          "SERVICE__WORKER__PROTOCOL": "http",
+          "WORKER_SERVICE_PROTOCOL": "http",
+          "SERVICE__WORKER__PORT": "57623",
+          "WORKER_SERVICE_PORT": "57623",
+          "SERVICE__WORKER__HOST": "host.docker.internal",
+          "WORKER_SERVICE_HOST": "host.docker.internal",
+          "SERVICE__WORKER__HTTPS__PROTOCOL": "https",
+          "WORKER_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__WORKER__HTTPS__PORT": "57624",
+          "WORKER_HTTPS_SERVICE_PORT": "57624",
+          "SERVICE__WORKER__HTTPS__HOST": "host.docker.internal",
+          "WORKER_HTTPS_SERVICE_HOST": "host.docker.internal",
+          "CONNECTIONSTRINGS__POSTGRES": "Server=host.docker.internal;Port=5432;User Id=postgres;Password=pass@word1;",
+          "SERVICE__RESULTS__PROTOCOL": "http",
+          "RESULTS_SERVICE_PROTOCOL": "http",
+          "SERVICE__RESULTS__PORT": "57625",
+          "RESULTS_SERVICE_PORT": "57625",
+          "SERVICE__RESULTS__HOST": "host.docker.internal",
+          "RESULTS_SERVICE_HOST": "host.docker.internal",
+          "SERVICE__RESULTS__HTTPS__PROTOCOL": "https",
+          "RESULTS_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__RESULTS__HTTPS__PORT": "57626",
+          "RESULTS_HTTPS_SERVICE_PORT": "57626",
+          "SERVICE__RESULTS__HTTPS__HOST": "host.docker.internal",
+          "RESULTS_HTTPS_SERVICE_HOST": "host.docker.internal",
+          "APP_INSTANCE": "redis_e00fd8d7-5",
+          "CONTAINER_HOST": "host.docker.internal"
+        },
+        "state": "ready"
+      }
+    }
+  },
+  {
+    "description": {
+      "name": "results",
+      "replicas": 1,
+      "runInfo": {
+        "type": "project",
+        "args": null,
+        "build": true,
+        "project": "/Users/glenncondron/code/tye/samples/voting/results/results.csproj",
+        "workingDirectory": null,
+        "volumeMappings": null,
+        "image": null,
+        "executable": null
+      },
+      "bindings": [
+        {
+          "name": null,
+          "connectionString": null,
+          "autoAssignPort": false,
+          "port": 57625,
+          "containerPort": 80,
+          "host": null,
+          "protocol": "http"
+        },
+        {
+          "name": "https",
+          "connectionString": null,
+          "autoAssignPort": false,
+          "port": 57626,
+          "containerPort": 443,
+          "host": null,
+          "protocol": "https"
+        }
+      ],
+      "configuration": []
+    },
+    "serviceType": "project",
+    "restarts": 0,
+    "status": {
+      "projectFilePath": "/Users/glenncondron/code/tye/samples/voting/results/results.csproj",
+      "executablePath": "dotnet",
+      "args": "exec \u0022/Users/glenncondron/code/tye/samples/voting/results/bin/Debug/netcoreapp3.1/results.dll\u0022",
+      "workingDirectory": "/Users/glenncondron/code/tye/samples/voting/results"
+    },
+    "replicas": {
+      "results_b69ee447-2": {
+        "dockerCommand": null,
+        "containerId": null,
+        "dockerNetwork": null,
+        "dockerNetworkAlias": null,
+        "name": "results_b69ee447-2",
+        "ports": [
+          57625,
+          57626
+        ],
+        "exitCode": null,
+        "pid": 30266,
+        "environment": {
+          "DOTNET_ENVIRONMENT": "Development",
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "DOTNET_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "SERVICE__RESULTS__PROTOCOL": "http",
+          "RESULTS_SERVICE_PROTOCOL": "http",
+          "SERVICE__RESULTS__PORT": "57625",
+          "RESULTS_SERVICE_PORT": "57625",
+          "SERVICE__RESULTS__HOST": "localhost",
+          "RESULTS_SERVICE_HOST": "localhost",
+          "SERVICE__RESULTS__HTTPS__PROTOCOL": "https",
+          "RESULTS_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__RESULTS__HTTPS__PORT": "57626",
+          "RESULTS_HTTPS_SERVICE_PORT": "57626",
+          "SERVICE__RESULTS__HTTPS__HOST": "localhost",
+          "RESULTS_HTTPS_SERVICE_HOST": "localhost",
+          "SERVICE__VOTE__PROTOCOL": "http",
+          "VOTE_SERVICE_PROTOCOL": "http",
+          "SERVICE__VOTE__PORT": "57617",
+          "VOTE_SERVICE_PORT": "57617",
+          "SERVICE__VOTE__HOST": "localhost",
+          "VOTE_SERVICE_HOST": "localhost",
+          "SERVICE__VOTE__HTTPS__PROTOCOL": "https",
+          "VOTE_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__VOTE__HTTPS__PORT": "57620",
+          "VOTE_HTTPS_SERVICE_PORT": "57620",
+          "SERVICE__VOTE__HTTPS__HOST": "localhost",
+          "VOTE_HTTPS_SERVICE_HOST": "localhost",
+          "CONNECTIONSTRINGS__REDIS": "localhost:6379",
+          "SERVICE__WORKER__PROTOCOL": "http",
+          "WORKER_SERVICE_PROTOCOL": "http",
+          "SERVICE__WORKER__PORT": "57623",
+          "WORKER_SERVICE_PORT": "57623",
+          "SERVICE__WORKER__HOST": "localhost",
+          "WORKER_SERVICE_HOST": "localhost",
+          "SERVICE__WORKER__HTTPS__PROTOCOL": "https",
+          "WORKER_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__WORKER__HTTPS__PORT": "57624",
+          "WORKER_HTTPS_SERVICE_PORT": "57624",
+          "SERVICE__WORKER__HTTPS__HOST": "localhost",
+          "WORKER_HTTPS_SERVICE_HOST": "localhost",
+          "CONNECTIONSTRINGS__POSTGRES": "Server=localhost;Port=5432;User Id=postgres;Password=pass@word1;",
+          "ASPNETCORE_URLS": "http://localhost:57625;https://localhost:57626",
+          "HTTPS_PORT": "57626",
+          "PORT": "57625;57626",
+          "APP_INSTANCE": "results_b69ee447-2"
+        },
+        "state": "ready"
+      }
+    }
+  },
+  {
+    "description": {
+      "name": "vote",
+      "replicas": 2,
+      "runInfo": {
+        "type": "project",
+        "args": null,
+        "build": true,
+        "project": "/Users/glenncondron/code/tye/samples/voting/vote/vote.csproj",
+        "workingDirectory": null,
+        "volumeMappings": null,
+        "image": null,
+        "executable": null
+      },
+      "bindings": [
+        {
+          "name": null,
+          "connectionString": null,
+          "autoAssignPort": false,
+          "port": 57617,
+          "containerPort": 80,
+          "host": null,
+          "protocol": "http"
+        },
+        {
+          "name": "https",
+          "connectionString": null,
+          "autoAssignPort": false,
+          "port": 57620,
+          "containerPort": 443,
+          "host": null,
+          "protocol": "https"
+        }
+      ],
+      "configuration": []
+    },
+    "serviceType": "project",
+    "restarts": 0,
+    "status": {
+      "projectFilePath": "/Users/glenncondron/code/tye/samples/voting/vote/vote.csproj",
+      "executablePath": "dotnet",
+      "args": "exec \u0022/Users/glenncondron/code/tye/samples/voting/vote/bin/Debug/netcoreapp3.1/vote.dll\u0022",
+      "workingDirectory": "/Users/glenncondron/code/tye/samples/voting/vote"
+    },
+    "replicas": {
+      "vote_1e697e03-a": {
+        "dockerCommand": null,
+        "containerId": null,
+        "dockerNetwork": null,
+        "dockerNetworkAlias": null,
+        "name": "vote_1e697e03-a",
+        "ports": [
+          57618,
+          57621
+        ],
+        "exitCode": null,
+        "pid": 30265,
+        "environment": {
+          "DOTNET_ENVIRONMENT": "Development",
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "DOTNET_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "SERVICE__VOTE__PROTOCOL": "http",
+          "VOTE_SERVICE_PROTOCOL": "http",
+          "SERVICE__VOTE__PORT": "57617",
+          "VOTE_SERVICE_PORT": "57617",
+          "SERVICE__VOTE__HOST": "localhost",
+          "VOTE_SERVICE_HOST": "localhost",
+          "SERVICE__VOTE__HTTPS__PROTOCOL": "https",
+          "VOTE_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__VOTE__HTTPS__PORT": "57620",
+          "VOTE_HTTPS_SERVICE_PORT": "57620",
+          "SERVICE__VOTE__HTTPS__HOST": "localhost",
+          "VOTE_HTTPS_SERVICE_HOST": "localhost",
+          "CONNECTIONSTRINGS__REDIS": "localhost:6379",
+          "SERVICE__WORKER__PROTOCOL": "http",
+          "WORKER_SERVICE_PROTOCOL": "http",
+          "SERVICE__WORKER__PORT": "57623",
+          "WORKER_SERVICE_PORT": "57623",
+          "SERVICE__WORKER__HOST": "localhost",
+          "WORKER_SERVICE_HOST": "localhost",
+          "SERVICE__WORKER__HTTPS__PROTOCOL": "https",
+          "WORKER_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__WORKER__HTTPS__PORT": "57624",
+          "WORKER_HTTPS_SERVICE_PORT": "57624",
+          "SERVICE__WORKER__HTTPS__HOST": "localhost",
+          "WORKER_HTTPS_SERVICE_HOST": "localhost",
+          "CONNECTIONSTRINGS__POSTGRES": "Server=localhost;Port=5432;User Id=postgres;Password=pass@word1;",
+          "SERVICE__RESULTS__PROTOCOL": "http",
+          "RESULTS_SERVICE_PROTOCOL": "http",
+          "SERVICE__RESULTS__PORT": "57625",
+          "RESULTS_SERVICE_PORT": "57625",
+          "SERVICE__RESULTS__HOST": "localhost",
+          "RESULTS_SERVICE_HOST": "localhost",
+          "SERVICE__RESULTS__HTTPS__PROTOCOL": "https",
+          "RESULTS_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__RESULTS__HTTPS__PORT": "57626",
+          "RESULTS_HTTPS_SERVICE_PORT": "57626",
+          "SERVICE__RESULTS__HTTPS__HOST": "localhost",
+          "RESULTS_HTTPS_SERVICE_HOST": "localhost",
+          "ASPNETCORE_URLS": "http://localhost:57618;https://localhost:57621",
+          "HTTPS_PORT": "57620",
+          "PORT": "57618;57621",
+          "APP_INSTANCE": "vote_1e697e03-a"
+        },
+        "state": "ready"
+      },
+      "vote_55ce2d6f-7": {
+        "dockerCommand": null,
+        "containerId": null,
+        "dockerNetwork": null,
+        "dockerNetworkAlias": null,
+        "name": "vote_55ce2d6f-7",
+        "ports": [
+          57619,
+          57622
+        ],
+        "exitCode": null,
+        "pid": 30267,
+        "environment": {
+          "DOTNET_ENVIRONMENT": "Development",
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "DOTNET_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "SERVICE__VOTE__PROTOCOL": "http",
+          "VOTE_SERVICE_PROTOCOL": "http",
+          "SERVICE__VOTE__PORT": "57617",
+          "VOTE_SERVICE_PORT": "57617",
+          "SERVICE__VOTE__HOST": "localhost",
+          "VOTE_SERVICE_HOST": "localhost",
+          "SERVICE__VOTE__HTTPS__PROTOCOL": "https",
+          "VOTE_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__VOTE__HTTPS__PORT": "57620",
+          "VOTE_HTTPS_SERVICE_PORT": "57620",
+          "SERVICE__VOTE__HTTPS__HOST": "localhost",
+          "VOTE_HTTPS_SERVICE_HOST": "localhost",
+          "CONNECTIONSTRINGS__REDIS": "localhost:6379",
+          "SERVICE__WORKER__PROTOCOL": "http",
+          "WORKER_SERVICE_PROTOCOL": "http",
+          "SERVICE__WORKER__PORT": "57623",
+          "WORKER_SERVICE_PORT": "57623",
+          "SERVICE__WORKER__HOST": "localhost",
+          "WORKER_SERVICE_HOST": "localhost",
+          "SERVICE__WORKER__HTTPS__PROTOCOL": "https",
+          "WORKER_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__WORKER__HTTPS__PORT": "57624",
+          "WORKER_HTTPS_SERVICE_PORT": "57624",
+          "SERVICE__WORKER__HTTPS__HOST": "localhost",
+          "WORKER_HTTPS_SERVICE_HOST": "localhost",
+          "CONNECTIONSTRINGS__POSTGRES": "Server=localhost;Port=5432;User Id=postgres;Password=pass@word1;",
+          "SERVICE__RESULTS__PROTOCOL": "http",
+          "RESULTS_SERVICE_PROTOCOL": "http",
+          "SERVICE__RESULTS__PORT": "57625",
+          "RESULTS_SERVICE_PORT": "57625",
+          "SERVICE__RESULTS__HOST": "localhost",
+          "RESULTS_SERVICE_HOST": "localhost",
+          "SERVICE__RESULTS__HTTPS__PROTOCOL": "https",
+          "RESULTS_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__RESULTS__HTTPS__PORT": "57626",
+          "RESULTS_HTTPS_SERVICE_PORT": "57626",
+          "SERVICE__RESULTS__HTTPS__HOST": "localhost",
+          "RESULTS_HTTPS_SERVICE_HOST": "localhost",
+          "ASPNETCORE_URLS": "http://localhost:57619;https://localhost:57622",
+          "HTTPS_PORT": "57620",
+          "PORT": "57619;57622",
+          "APP_INSTANCE": "vote_55ce2d6f-7"
+        },
+        "state": "ready"
+      }
+    }
+  },
+  {
+    "description": {
+      "name": "worker",
+      "replicas": 1,
+      "runInfo": {
+        "type": "project",
+        "args": null,
+        "build": true,
+        "project": "/Users/glenncondron/code/tye/samples/voting/worker/worker.csproj",
+        "workingDirectory": null,
+        "volumeMappings": null,
+        "image": null,
+        "executable": null
+      },
+      "bindings": [
+        {
+          "name": null,
+          "connectionString": null,
+          "autoAssignPort": false,
+          "port": 57623,
+          "containerPort": 80,
+          "host": null,
+          "protocol": "http"
+        },
+        {
+          "name": "https",
+          "connectionString": null,
+          "autoAssignPort": false,
+          "port": 57624,
+          "containerPort": 443,
+          "host": null,
+          "protocol": "https"
+        }
+      ],
+      "configuration": []
+    },
+    "serviceType": "project",
+    "restarts": 0,
+    "status": {
+      "projectFilePath": "/Users/glenncondron/code/tye/samples/voting/worker/worker.csproj",
+      "executablePath": "dotnet",
+      "args": "exec \u0022/Users/glenncondron/code/tye/samples/voting/worker/bin/Debug/netcoreapp3.1/worker.dll\u0022",
+      "workingDirectory": "/Users/glenncondron/code/tye/samples/voting/worker"
+    },
+    "replicas": {
+      "worker_8be36426-6": {
+        "dockerCommand": null,
+        "containerId": null,
+        "dockerNetwork": null,
+        "dockerNetworkAlias": null,
+        "name": "worker_8be36426-6",
+        "ports": [
+          57623,
+          57624
+        ],
+        "exitCode": null,
+        "pid": 30264,
+        "environment": {
+          "DOTNET_ENVIRONMENT": "Development",
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "DOTNET_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "SERVICE__WORKER__PROTOCOL": "http",
+          "WORKER_SERVICE_PROTOCOL": "http",
+          "SERVICE__WORKER__PORT": "57623",
+          "WORKER_SERVICE_PORT": "57623",
+          "SERVICE__WORKER__HOST": "localhost",
+          "WORKER_SERVICE_HOST": "localhost",
+          "SERVICE__WORKER__HTTPS__PROTOCOL": "https",
+          "WORKER_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__WORKER__HTTPS__PORT": "57624",
+          "WORKER_HTTPS_SERVICE_PORT": "57624",
+          "SERVICE__WORKER__HTTPS__HOST": "localhost",
+          "WORKER_HTTPS_SERVICE_HOST": "localhost",
+          "SERVICE__VOTE__PROTOCOL": "http",
+          "VOTE_SERVICE_PROTOCOL": "http",
+          "SERVICE__VOTE__PORT": "57617",
+          "VOTE_SERVICE_PORT": "57617",
+          "SERVICE__VOTE__HOST": "localhost",
+          "VOTE_SERVICE_HOST": "localhost",
+          "SERVICE__VOTE__HTTPS__PROTOCOL": "https",
+          "VOTE_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__VOTE__HTTPS__PORT": "57620",
+          "VOTE_HTTPS_SERVICE_PORT": "57620",
+          "SERVICE__VOTE__HTTPS__HOST": "localhost",
+          "VOTE_HTTPS_SERVICE_HOST": "localhost",
+          "CONNECTIONSTRINGS__REDIS": "localhost:6379",
+          "CONNECTIONSTRINGS__POSTGRES": "Server=localhost;Port=5432;User Id=postgres;Password=pass@word1;",
+          "SERVICE__RESULTS__PROTOCOL": "http",
+          "RESULTS_SERVICE_PROTOCOL": "http",
+          "SERVICE__RESULTS__PORT": "57625",
+          "RESULTS_SERVICE_PORT": "57625",
+          "SERVICE__RESULTS__HOST": "localhost",
+          "RESULTS_SERVICE_HOST": "localhost",
+          "SERVICE__RESULTS__HTTPS__PROTOCOL": "https",
+          "RESULTS_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__RESULTS__HTTPS__PORT": "57626",
+          "RESULTS_HTTPS_SERVICE_PORT": "57626",
+          "SERVICE__RESULTS__HTTPS__HOST": "localhost",
+          "RESULTS_HTTPS_SERVICE_HOST": "localhost",
+          "ASPNETCORE_URLS": "http://localhost:57623;https://localhost:57624",
+          "HTTPS_PORT": "57624",
+          "PORT": "57623;57624",
+          "APP_INSTANCE": "worker_8be36426-6"
+        },
+        "state": "ready"
+      }
+    }
+  }
+]

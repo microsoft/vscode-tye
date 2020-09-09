@@ -1,0 +1,340 @@
+[
+  {
+    "description": {
+      "name": "app-a",
+      "replicas": 2,
+      "runInfo": {
+        "type": "project",
+        "args": null,
+        "build": true,
+        "project": "/Users/glenncondron/code/tye/samples/apps-with-ingress/ApplicationA/ApplicationA.csproj",
+        "workingDirectory": null,
+        "volumeMappings": null,
+        "image": null,
+        "executable": null
+      },
+      "bindings": [
+        {
+          "name": null,
+          "connectionString": null,
+          "autoAssignPort": false,
+          "port": 62286,
+          "containerPort": 80,
+          "host": null,
+          "protocol": "http"
+        },
+        {
+          "name": "https",
+          "connectionString": null,
+          "autoAssignPort": false,
+          "port": 62289,
+          "containerPort": 443,
+          "host": null,
+          "protocol": "https"
+        }
+      ],
+      "configuration": []
+    },
+    "serviceType": "project",
+    "restarts": 0,
+    "status": {
+      "projectFilePath": "/Users/glenncondron/code/tye/samples/apps-with-ingress/ApplicationA/ApplicationA.csproj",
+      "executablePath": "dotnet",
+      "args": "exec \u0022/Users/glenncondron/code/tye/samples/apps-with-ingress/ApplicationA/bin/Debug/netcoreapp3.1/ApplicationA.dll\u0022",
+      "workingDirectory": "/Users/glenncondron/code/tye/samples/apps-with-ingress/ApplicationA"
+    },
+    "replicas": {
+      "app-a_b79ef3d9-8": {
+        "dockerCommand": null,
+        "containerId": null,
+        "dockerNetwork": null,
+        "dockerNetworkAlias": null,
+        "name": "app-a_b79ef3d9-8",
+        "ports": [
+          62287,
+          62290
+        ],
+        "exitCode": null,
+        "pid": 35791,
+        "environment": {
+          "DOTNET_ENVIRONMENT": "Development",
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "DOTNET_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "SERVICE__APP-A__PROTOCOL": "http",
+          "APP-A_SERVICE_PROTOCOL": "http",
+          "SERVICE__APP-A__PORT": "62286",
+          "APP-A_SERVICE_PORT": "62286",
+          "SERVICE__APP-A__HOST": "localhost",
+          "APP-A_SERVICE_HOST": "localhost",
+          "SERVICE__APP-A__HTTPS__PROTOCOL": "https",
+          "APP-A_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__APP-A__HTTPS__PORT": "62289",
+          "APP-A_HTTPS_SERVICE_PORT": "62289",
+          "SERVICE__APP-A__HTTPS__HOST": "localhost",
+          "APP-A_HTTPS_SERVICE_HOST": "localhost",
+          "SERVICE__APP-B__PROTOCOL": "http",
+          "APP-B_SERVICE_PROTOCOL": "http",
+          "SERVICE__APP-B__PORT": "62292",
+          "APP-B_SERVICE_PORT": "62292",
+          "SERVICE__APP-B__HOST": "localhost",
+          "APP-B_SERVICE_HOST": "localhost",
+          "SERVICE__APP-B__HTTPS__PROTOCOL": "https",
+          "APP-B_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__APP-B__HTTPS__PORT": "62295",
+          "APP-B_HTTPS_SERVICE_PORT": "62295",
+          "SERVICE__APP-B__HTTPS__HOST": "localhost",
+          "APP-B_HTTPS_SERVICE_HOST": "localhost",
+          "ASPNETCORE_URLS": "http://localhost:62287;https://localhost:62290",
+          "HTTPS_PORT": "62289",
+          "PORT": "62287;62290",
+          "APP_INSTANCE": "app-a_b79ef3d9-8"
+        },
+        "state": "ready"
+      },
+      "app-a_754a3d38-0": {
+        "dockerCommand": null,
+        "containerId": null,
+        "dockerNetwork": null,
+        "dockerNetworkAlias": null,
+        "name": "app-a_754a3d38-0",
+        "ports": [
+          62288,
+          62291
+        ],
+        "exitCode": null,
+        "pid": 35790,
+        "environment": {
+          "DOTNET_ENVIRONMENT": "Development",
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "DOTNET_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "SERVICE__APP-A__PROTOCOL": "http",
+          "APP-A_SERVICE_PROTOCOL": "http",
+          "SERVICE__APP-A__PORT": "62286",
+          "APP-A_SERVICE_PORT": "62286",
+          "SERVICE__APP-A__HOST": "localhost",
+          "APP-A_SERVICE_HOST": "localhost",
+          "SERVICE__APP-A__HTTPS__PROTOCOL": "https",
+          "APP-A_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__APP-A__HTTPS__PORT": "62289",
+          "APP-A_HTTPS_SERVICE_PORT": "62289",
+          "SERVICE__APP-A__HTTPS__HOST": "localhost",
+          "APP-A_HTTPS_SERVICE_HOST": "localhost",
+          "SERVICE__APP-B__PROTOCOL": "http",
+          "APP-B_SERVICE_PROTOCOL": "http",
+          "SERVICE__APP-B__PORT": "62292",
+          "APP-B_SERVICE_PORT": "62292",
+          "SERVICE__APP-B__HOST": "localhost",
+          "APP-B_SERVICE_HOST": "localhost",
+          "SERVICE__APP-B__HTTPS__PROTOCOL": "https",
+          "APP-B_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__APP-B__HTTPS__PORT": "62295",
+          "APP-B_HTTPS_SERVICE_PORT": "62295",
+          "SERVICE__APP-B__HTTPS__HOST": "localhost",
+          "APP-B_HTTPS_SERVICE_HOST": "localhost",
+          "ASPNETCORE_URLS": "http://localhost:62288;https://localhost:62291",
+          "HTTPS_PORT": "62289",
+          "PORT": "62288;62291",
+          "APP_INSTANCE": "app-a_754a3d38-0"
+        },
+        "state": "ready"
+      }
+    }
+  },
+  {
+    "description": {
+      "name": "app-b",
+      "replicas": 2,
+      "runInfo": {
+        "type": "project",
+        "args": null,
+        "build": true,
+        "project": "/Users/glenncondron/code/tye/samples/apps-with-ingress/ApplicationB/ApplicationB.csproj",
+        "workingDirectory": null,
+        "volumeMappings": null,
+        "image": null,
+        "executable": null
+      },
+      "bindings": [
+        {
+          "name": null,
+          "connectionString": null,
+          "autoAssignPort": false,
+          "port": 62292,
+          "containerPort": 80,
+          "host": null,
+          "protocol": "http"
+        },
+        {
+          "name": "https",
+          "connectionString": null,
+          "autoAssignPort": false,
+          "port": 62295,
+          "containerPort": 443,
+          "host": null,
+          "protocol": "https"
+        }
+      ],
+      "configuration": []
+    },
+    "serviceType": "project",
+    "restarts": 0,
+    "status": {
+      "projectFilePath": "/Users/glenncondron/code/tye/samples/apps-with-ingress/ApplicationB/ApplicationB.csproj",
+      "executablePath": "dotnet",
+      "args": "exec \u0022/Users/glenncondron/code/tye/samples/apps-with-ingress/ApplicationB/bin/Debug/netcoreapp3.1/ApplicationB.dll\u0022",
+      "workingDirectory": "/Users/glenncondron/code/tye/samples/apps-with-ingress/ApplicationB"
+    },
+    "replicas": {
+      "app-b_b42e8e59-0": {
+        "dockerCommand": null,
+        "containerId": null,
+        "dockerNetwork": null,
+        "dockerNetworkAlias": null,
+        "name": "app-b_b42e8e59-0",
+        "ports": [
+          62294,
+          62297
+        ],
+        "exitCode": null,
+        "pid": 35789,
+        "environment": {
+          "DOTNET_ENVIRONMENT": "Development",
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "DOTNET_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "SERVICE__APP-B__PROTOCOL": "http",
+          "APP-B_SERVICE_PROTOCOL": "http",
+          "SERVICE__APP-B__PORT": "62292",
+          "APP-B_SERVICE_PORT": "62292",
+          "SERVICE__APP-B__HOST": "localhost",
+          "APP-B_SERVICE_HOST": "localhost",
+          "SERVICE__APP-B__HTTPS__PROTOCOL": "https",
+          "APP-B_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__APP-B__HTTPS__PORT": "62295",
+          "APP-B_HTTPS_SERVICE_PORT": "62295",
+          "SERVICE__APP-B__HTTPS__HOST": "localhost",
+          "APP-B_HTTPS_SERVICE_HOST": "localhost",
+          "SERVICE__APP-A__PROTOCOL": "http",
+          "APP-A_SERVICE_PROTOCOL": "http",
+          "SERVICE__APP-A__PORT": "62286",
+          "APP-A_SERVICE_PORT": "62286",
+          "SERVICE__APP-A__HOST": "localhost",
+          "APP-A_SERVICE_HOST": "localhost",
+          "SERVICE__APP-A__HTTPS__PROTOCOL": "https",
+          "APP-A_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__APP-A__HTTPS__PORT": "62289",
+          "APP-A_HTTPS_SERVICE_PORT": "62289",
+          "SERVICE__APP-A__HTTPS__HOST": "localhost",
+          "APP-A_HTTPS_SERVICE_HOST": "localhost",
+          "ASPNETCORE_URLS": "http://localhost:62294;https://localhost:62297",
+          "HTTPS_PORT": "62295",
+          "PORT": "62294;62297",
+          "APP_INSTANCE": "app-b_b42e8e59-0"
+        },
+        "state": "ready"
+      },
+      "app-b_d4f69280-c": {
+        "dockerCommand": null,
+        "containerId": null,
+        "dockerNetwork": null,
+        "dockerNetworkAlias": null,
+        "name": "app-b_d4f69280-c",
+        "ports": [
+          62293,
+          62296
+        ],
+        "exitCode": null,
+        "pid": 35792,
+        "environment": {
+          "DOTNET_ENVIRONMENT": "Development",
+          "ASPNETCORE_ENVIRONMENT": "Development",
+          "DOTNET_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS": "true",
+          "SERVICE__APP-B__PROTOCOL": "http",
+          "APP-B_SERVICE_PROTOCOL": "http",
+          "SERVICE__APP-B__PORT": "62292",
+          "APP-B_SERVICE_PORT": "62292",
+          "SERVICE__APP-B__HOST": "localhost",
+          "APP-B_SERVICE_HOST": "localhost",
+          "SERVICE__APP-B__HTTPS__PROTOCOL": "https",
+          "APP-B_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__APP-B__HTTPS__PORT": "62295",
+          "APP-B_HTTPS_SERVICE_PORT": "62295",
+          "SERVICE__APP-B__HTTPS__HOST": "localhost",
+          "APP-B_HTTPS_SERVICE_HOST": "localhost",
+          "SERVICE__APP-A__PROTOCOL": "http",
+          "APP-A_SERVICE_PROTOCOL": "http",
+          "SERVICE__APP-A__PORT": "62286",
+          "APP-A_SERVICE_PORT": "62286",
+          "SERVICE__APP-A__HOST": "localhost",
+          "APP-A_SERVICE_HOST": "localhost",
+          "SERVICE__APP-A__HTTPS__PROTOCOL": "https",
+          "APP-A_HTTPS_SERVICE_PROTOCOL": "https",
+          "SERVICE__APP-A__HTTPS__PORT": "62289",
+          "APP-A_HTTPS_SERVICE_PORT": "62289",
+          "SERVICE__APP-A__HTTPS__HOST": "localhost",
+          "APP-A_HTTPS_SERVICE_HOST": "localhost",
+          "ASPNETCORE_URLS": "http://localhost:62293;https://localhost:62296",
+          "HTTPS_PORT": "62295",
+          "PORT": "62293;62296",
+          "APP_INSTANCE": "app-b_d4f69280-c"
+        },
+        "state": "ready"
+      }
+    }
+  },
+  {
+    "description": {
+      "name": "ingress",
+      "replicas": 1,
+      "runInfo": {
+        "type": "project",
+        "args": null,
+        "build": false,
+        "project": null,
+        "workingDirectory": null,
+        "volumeMappings": null,
+        "image": null,
+        "executable": null
+      },
+      "bindings": [
+        {
+          "name": null,
+          "connectionString": null,
+          "autoAssignPort": false,
+          "port": 8080,
+          "containerPort": 80,
+          "host": null,
+          "protocol": "http"
+        }
+      ],
+      "configuration": []
+    },
+    "serviceType": "ingress",
+    "restarts": 0,
+    "status": {
+      "projectFilePath": null,
+      "executablePath": null,
+      "args": null,
+      "workingDirectory": null
+    },
+    "replicas": {
+      "ingress_909b7bb8-4": {
+        "dockerCommand": null,
+        "containerId": null,
+        "dockerNetwork": null,
+        "dockerNetworkAlias": null,
+        "name": "ingress_909b7bb8-4",
+        "ports": [
+          8080
+        ],
+        "exitCode": null,
+        "pid": null,
+        "environment": null,
+        "state": "started"
+      }
+    }
+  }
+]

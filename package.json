@@ -83,17 +83,17 @@
 			"view/item/context": [
 				{
 					"command": "vscode-tye.commands.browseService",
-					"when": "view == vscode-tye.views.services && viewItem == project",
+					"when": "view == vscode-tye.views.services && viewItem =~ /browsable/",
 					"group": "inline"
 				},
 				{
 					"command": "vscode-tye.commands.attachService",
-					"when": "view == vscode-tye.views.services && viewItem == project",
+					"when": "view == vscode-tye.views.services && viewItem =~ /attachable/",
 					"group": "inline"
 				},
 				{
 					"command": "vscode-tye.commands.showLogs",
-					"when": "view == vscode-tye.views.services && viewItem == browsable",
+					"when": "view == vscode-tye.views.services && viewItem =~ /hasLogs/",
 					"group": "inline"
 				}
 			]
@@ -108,6 +108,7 @@
 		"test": "node ./out/test/runTest.js"
 	},
 	"devDependencies": {
+		"@types/fs-extra": "^8.1.0",
 		"@types/vscode": "^1.48.0",
 		"@types/glob": "^7.1.3",
 		"@types/mocha": "^8.0.0",
@@ -121,6 +122,7 @@
 		"vscode-test": "^1.4.0"
 	},
 	"dependencies": {
-		"axios": "^0.19.2"
+		"axios": "^0.19.2",
+		"fs-extra": "^8.1.0"
 	}
 }
