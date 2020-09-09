@@ -53,7 +53,7 @@ export class TyeServicesProvider implements vscode.TreeDataProvider<vscode.TreeI
 }
 
 
-class TyeNode extends vscode.TreeItem {
+export class TyeNode extends vscode.TreeItem {
   
   command? : vscode.Command;
 
@@ -83,7 +83,7 @@ export class ServiceNode extends TyeNode {
     super(service.description.name, vscode.TreeItemCollapsibleState.Collapsed);
     this.service = service;
     this.contextValue = service.serviceType;
-    this.contextValue += " hasLogs"
+    this.contextValue += ' hasLogs'
   }
 
   get iconPath(): vscode.ThemeIcon {
