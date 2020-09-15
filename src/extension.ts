@@ -50,8 +50,9 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			});
 
 			telemetryProvider.registerContextCommandWithTelemetry('vscode-tye.commands.browseService', async (context: IActionContext, node: ReplicaNode | undefined) => {
-				if(node?.isBrowsable) {
-					await vscode.env.openExternal(node.GetBrowsableUri());
+				const uri = node?.BrowserUri;
+				if(uri) {
+					await vscode.env.openExternal(uri);
 				}
 			});
 
