@@ -14,10 +14,68 @@
 		"Other"
 	],
 	"activationEvents": [
+		"onCommand:workbench.action.tasks.runTask",
 		"onView:vscode-tye.views.services"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"taskDefinitions": [
+			{
+				"type": "tye-run",
+				"properties": {
+					"build": {
+						"type": "string"
+					},
+					"dashboard": {
+						"type": "boolean"
+					},
+					"debug": {
+						"type": "string"
+					},
+					"docker": {
+						"type": "boolean"
+					},
+					"dtrace": {
+						"type": "string",
+						"enum": [
+							"zipkin"
+						]
+					},
+					"framework": {
+						"type": "string"
+					},
+					"logs": {
+						"type": "string",
+						"enum": [
+							"console",
+							"elastic",
+							"ai",
+							"seq"
+						]
+					},
+					"metrics": {
+						"type": "string"
+					},
+					"port": {
+						"type": "integer"
+					},
+					"tags": {
+						"type": "string"
+					},
+					"verbosity": {
+						"type": "string",
+						"enum": [
+							"Debug",
+							"Info",
+							"Quiet"
+						]
+					},
+					"watch": {
+						"type": "boolean"
+					}
+				}
+			}
+		],
 		"viewsWelcome": [
 			{
 				"view": "vscode-tye.views.services",

@@ -6,6 +6,7 @@ import AxiosHttpClient from './services/httpClient';
 import { TyeServicesProvider, ReplicaNode, ServiceNode } from './views/tyeServicesProvider';
 import { HttpTyeClient } from './services/tyeClient';
 import { TyeLogsContentProvider } from './views/tyeLogsContentProvider';
+import TyeRunCommandTaskProvider from './tasks/tyeRunTaskProvider';
 
 export function activate(context: vscode.ExtensionContext): void {
 
@@ -66,4 +67,6 @@ export function activate(context: vscode.ExtensionContext): void {
 			}
 		}
 	}));
+
+	context.subscriptions.push(vscode.tasks.registerTaskProvider('tye-run', new TyeRunCommandTaskProvider()));
 }
