@@ -15,6 +15,7 @@ export interface TyeRunTaskDefinition extends TaskDefinition {
     framework?: string;
     logs?: TyeLogProvider;
     metrics?: string;
+    path?: string;
     port?: number;
     tags?: string | string[];
     verbosity?: TyeVerbosity;
@@ -42,6 +43,7 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                         .withNamedArg('--framework', tyeDefinition.framework)
                         .withNamedArgs('--tags', tyeDefinition.tags)
                         .withNamedArg('--verbosity', tyeDefinition.verbosity)
+                        .withQuotedArg(tyeDefinition.path)
                         .build();
 
                 return callback(command, { cwd: definition.cwd });
