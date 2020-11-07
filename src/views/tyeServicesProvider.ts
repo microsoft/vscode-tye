@@ -1,12 +1,26 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import { TaskMonitor } from 'src/tasks/taskMonitor';
 import * as vscode from 'vscode';
 import { TyeClient } from '../services/tyeClient';
 
-export class TyeServicesProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
+export class TyeServicesProvider extends vscode.Disposable implements vscode.TreeDataProvider<vscode.TreeItem> {
+    private readonly listener: vscode.Disposable;
+
     constructor(private workspaceRoot: readonly vscode.WorkspaceFolder[] | undefined,
-                private readonly tyeClient: TyeClient) {}
+                private readonly taskMonitor: TaskMonitor,
+                private readonly tyeClient: TyeClient) {
+        super(
+            () => {
+                this.listener.dispose();
+            });
+
+        this.listener = taskMonitor.tasksChanged(
+            () => {
+                this.refresh();
+            });
+    }
 
   getTreeItem(element: ServiceNode): vscode.TreeItem {
     return element;

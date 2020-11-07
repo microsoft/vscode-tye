@@ -7,6 +7,7 @@ import { TyeServicesProvider, ReplicaNode, ServiceNode } from './views/tyeServic
 import { HttpTyeClient } from './services/tyeClient';
 import { TyeLogsContentProvider } from './views/tyeLogsContentProvider';
 import TyeRunCommandTaskProvider from './tasks/tyeRunTaskProvider';
+import { DaprTaskMonitor } from './tasks/taskMonitor';
 
 export function activate(context: vscode.ExtensionContext): void {
 
@@ -16,12 +17,13 @@ export function activate(context: vscode.ExtensionContext): void {
 	}));
 
 	const httpClient = new AxiosHttpClient();
+	const taskMonitor = new DaprTaskMonitor();
 	const tyeClient = new HttpTyeClient(httpClient);
 
 	const logsContentProvider = new TyeLogsContentProvider(httpClient);
-	context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('tye', logsContentProvider));
+	context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('tye', logsContentProvider, ));
 
-	const treeProvider = new TyeServicesProvider(vscode.workspace.workspaceFolders, tyeClient);
+	const treeProvider = new TyeServicesProvider(vscode.workspace.workspaceFolders, taskMonitor, tyeClient);
 	context.subscriptions.push(vscode.window.registerTreeDataProvider(
 		'vscode-tye.views.services',
 		treeProvider
@@ -68,5 +70,5 @@ export function activate(context: vscode.ExtensionContext): void {
 		}
 	}));
 
-	context.subscriptions.push(vscode.tasks.registerTaskProvider('tye-run', new TyeRunCommandTaskProvider()));
+	context.subscriptions.push(vscode.tasks.registerTaskProvider('tye-run', new TyeRunCommandTaskProvider(taskMonitor)));
 }

@@ -1,6 +1,7 @@
 import CommandLineBuilder from "../util/commandLineBuilder";
 import { TaskDefinition } from "vscode";
 import CommandTaskProvider from "./commandTaskProvider";
+import { TaskMonitorReporter } from "./taskMonitor";
 
 export type TyeLogProvider = 'console' | 'elastic' | 'ai' | 'seq';
 export type TyeDistributedTraceProvider = 'zipkin';
@@ -23,30 +24,33 @@ export interface TyeRunTaskDefinition extends TaskDefinition {
 }
 
 export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
-    constructor() {
+    constructor(taskMonitorReporter: TaskMonitorReporter) {
         super(
             (definition, callback) => {
-                const tyeDefinition = <TyeRunTaskDefinition>definition;
+                return taskMonitorReporter.reportTask(
+                    () => {
+                        const tyeDefinition = <TyeRunTaskDefinition>definition;
 
-                const command =
-                    CommandLineBuilder
-                        .create('tye run')
-                        .withFlagArg('--no-build', tyeDefinition.build === false)
-                        .withNamedArg('--port', tyeDefinition.port)
-                        .withNamedArg('--logs', tyeDefinition.logs)
-                        .withNamedArg('--dtrace', tyeDefinition.dtrace)
-                        .withNamedArg('--metrics', tyeDefinition.metrics)
-                        .withNamedArgs('--debug', tyeDefinition.debug)
-                        .withFlagArg('--docker', tyeDefinition.docker)
-                        .withFlagArg('--dashboard', tyeDefinition.dashboard)
-                        .withFlagArg('--watch', tyeDefinition.watch)
-                        .withNamedArg('--framework', tyeDefinition.framework)
-                        .withNamedArgs('--tags', tyeDefinition.tags)
-                        .withNamedArg('--verbosity', tyeDefinition.verbosity)
-                        .withQuotedArg(tyeDefinition.path)
-                        .build();
+                        const command =
+                            CommandLineBuilder
+                                .create('tye run')
+                                .withFlagArg('--no-build', tyeDefinition.build === false)
+                                .withNamedArg('--port', tyeDefinition.port)
+                                .withNamedArg('--logs', tyeDefinition.logs)
+                                .withNamedArg('--dtrace', tyeDefinition.dtrace)
+                                .withNamedArg('--metrics', tyeDefinition.metrics)
+                                .withNamedArgs('--debug', tyeDefinition.debug)
+                                .withFlagArg('--docker', tyeDefinition.docker)
+                                .withFlagArg('--dashboard', tyeDefinition.dashboard)
+                                .withFlagArg('--watch', tyeDefinition.watch)
+                                .withNamedArg('--framework', tyeDefinition.framework)
+                                .withNamedArgs('--tags', tyeDefinition.tags)
+                                .withNamedArg('--verbosity', tyeDefinition.verbosity)
+                                .withQuotedArg(tyeDefinition.path)
+                                .build();
 
-                return callback(command, { cwd: definition.cwd });
+                        return callback(command, { cwd: definition.cwd });
+                    });
             },
             /* isBackgroundTask: */ true,
             /* problemMatchers: */ []);
