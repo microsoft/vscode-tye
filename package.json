@@ -24,28 +24,35 @@
 				"type": "tye-run",
 				"properties": {
 					"build": {
-						"type": "string"
+						"type": "string",
+						"description": "%vscode-tye.tasks.tye-run.properties.build.description%"
 					},
 					"dashboard": {
-						"type": "boolean"
+						"type": "boolean",
+						"description": "%vscode-tye.tasks.tye-run.properties.dashboard.description%"
 					},
 					"debug": {
-						"type": "string"
+						"type": "string",
+						"description": "%vscode-tye.tasks.tye-run.properties.debug.description%"
 					},
 					"docker": {
-						"type": "boolean"
+						"type": "boolean",
+						"description": "%vscode-tye.tasks.tye-run.properties.docker.description%"
 					},
 					"dtrace": {
 						"type": "string",
+						"description": "%vscode-tye.tasks.tye-run.properties.dtrace.description%",
 						"enum": [
 							"zipkin"
 						]
 					},
 					"framework": {
-						"type": "string"
+						"type": "string",
+						"description": "%vscode-tye.tasks.tye-run.properties.framework.description%"
 					},
 					"logs": {
 						"type": "string",
+						"description": "%vscode-tye.tasks.tye-run.properties.logs.description%",
 						"enum": [
 							"console",
 							"elastic",
@@ -54,19 +61,24 @@
 						]
 					},
 					"metrics": {
-						"type": "string"
+						"type": "string",
+						"description": "%vscode-tye.tasks.tye-run.properties.metrics.description%"
 					},
 					"path": {
-						"type": "string"
+						"type": "string",
+						"description": "%vscode-tye.tasks.tye-run.properties.path.description%"
 					},
 					"port": {
-						"type": "integer"
+						"type": "integer",
+						"description": "%vscode-tye.tasks.tye-run.properties.port.description%"
 					},
 					"tags": {
-						"type": "string"
+						"type": "string",
+						"description": "%vscode-tye.tasks.tye-run.properties.tags.description%"
 					},
 					"verbosity": {
 						"type": "string",
+						"description": "%vscode-tye.tasks.tye-run.properties.verbosity.description%",
 						"enum": [
 							"Debug",
 							"Info",
@@ -74,7 +86,8 @@
 						]
 					},
 					"watch": {
-						"type": "boolean"
+						"type": "boolean",
+						"description": "%vscode-tye.tasks.tye-run.properties.watch.description%"
 					}
 				}
 			}

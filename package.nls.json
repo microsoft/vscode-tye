@@ -1,2 +1,15 @@
 {
+    "vscode-tye.tasks.tye-run.properties.build.description": "Build project files before running.",
+    "vscode-tye.tasks.tye-run.properties.dashboard.description": "Launch dashboard on run.",
+    "vscode-tye.tasks.tye-run.properties.debug.description": "Wait for debugger attach to specific service.",
+    "vscode-tye.tasks.tye-run.properties.docker.description": "Run projects as Docker containers.",
+    "vscode-tye.tasks.tye-run.properties.dtrace.description": "Write distributed traces to the specified tracing provider.",
+    "vscode-tye.tasks.tye-run.properties.framework.description": "The target framwork hint to use for all cross-targeting projects with multiple TFMs. This value must be a valid target framework for each individual cross-targeting project.",
+    "vscode-tye.tasks.tye-run.properties.logs.description": "Write structured application logs to the specified log provider.",
+    "vscode-tye.tasks.tye-run.properties.metrics.description": "Write metrics to the specified metrics provider.",
+    "vscode-tye.tasks.tye-run.properties.path.description": "A file or directory, and can be a .yaml, .sln, or project file.",
+    "vscode-tye.tasks.tye-run.properties.port.description": "The port to run control plane on.",
+    "vscode-tye.tasks.tye-run.properties.tags.description": "Filter the group of running services by tag.",
+    "vscode-tye.tasks.tye-run.properties.verbosity.description": "Output verbosity.",
+    "vscode-tye.tasks.tye-run.properties.watch.description": "Watches for code changes for all projects."
 }
