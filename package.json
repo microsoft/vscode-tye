@@ -95,23 +95,23 @@
 		"viewsWelcome": [
 			{
 				"view": "vscode-tye.views.services",
-				"contents": "The extension requires you to run Tye in a command window. This extension will attempt to access `http://localhost:8000/api/v1/services` by default."
+				"contents": "%vscode-tye.views.services.contents%"
 			}
 		],
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "tye-explorer",
-					"title": "Tye Explorer",
+					"id": "microsoft-tye",
+					"title": "%vscode-tye.activityBar.microsoft-tye.title%",
 					"icon": "resources/dep.png"
 				}
 			]
 		},
 		"views": {
-			"tye-explorer": [
+			"microsoft-tye": [
 				{
 					"id": "vscode-tye.views.services",
-					"name": "Tye Services"
+					"name": "%vscode-tye.views.services.name%"
 				}
 			]
 		},

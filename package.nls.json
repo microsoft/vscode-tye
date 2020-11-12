@@ -1,4 +1,6 @@
 {
+    "vscode-tye.activityBar.microsoft-tye.title": "Tye",
+
     "vscode-tye.commands.refreshEntry.title": "Refresh",
     "vscode-tye.commands.debugAll.title": "Debug",
     "vscode-tye.commands.browseService.title": "Browse",
@@ -17,5 +19,8 @@
     "vscode-tye.tasks.tye-run.properties.port.description": "The port to run control plane on.",
     "vscode-tye.tasks.tye-run.properties.tags.description": "Filter the group of running services by tag.",
     "vscode-tye.tasks.tye-run.properties.verbosity.description": "Output verbosity.",
-    "vscode-tye.tasks.tye-run.properties.watch.description": "Watches for code changes for all projects."
+    "vscode-tye.tasks.tye-run.properties.watch.description": "Watches for code changes for all projects.",
+
+    "vscode-tye.views.services.contents": "The extension requires you to run Tye in a command window. This extension will attempt to access `http://localhost:8000/api/v1/services` by default.",
+    "vscode-tye.views.services.name": "Tye Services"
 }
