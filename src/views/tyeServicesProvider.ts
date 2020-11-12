@@ -67,12 +67,9 @@ export class TyeServicesProvider extends vscode.Disposable implements vscode.Tre
 }
 
 
-class TyeNode extends vscode.TreeItem {
-  
-  command? : vscode.Command;
-
-  get description(): string {
-    return '';
+abstract class TyeNode extends vscode.TreeItem {
+  constructor(label: string, collapsibleState?: vscode.TreeItemCollapsibleState) {
+    super(label, collapsibleState);
   }
 }
 
@@ -81,9 +78,7 @@ class DashboardNode extends TyeNode {
     super('Dashboard', vscode.TreeItemCollapsibleState.None);
   }
 
-  get command() { 
-    return {command: 'vscode-tye.commands.launchTyeDashboard', title: '', arguments: []};
-  }
+  command = {command: 'vscode-tye.commands.launchTyeDashboard', title: '', arguments: []};
 
   iconPath = new vscode.ThemeIcon('book');
 
@@ -98,14 +93,12 @@ export class ServiceNode extends TyeNode {
     this.service = service;
     this.contextValue = service.serviceType;
     this.contextValue += " hasLogs"
-  }
 
-  get iconPath(): vscode.ThemeIcon {
     if(this.service.serviceType === 'container') {
-      return new vscode.ThemeIcon('package');
+      this.iconPath = new vscode.ThemeIcon('package');
+    } else {
+      this.iconPath = new vscode.ThemeIcon('project');
     }
-  
-    return new vscode.ThemeIcon('project');
   }
 }
 

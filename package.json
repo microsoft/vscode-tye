@@ -162,12 +162,11 @@
 		}
 	},
 	"scripts": {
-		"vscode:prepublish": "yarn run compile",
-		"compile": "tsc -p ./",
-		"lint": "eslint src --ext ts",
-		"watch": "tsc -watch -p ./",
-		"pretest": "yarn run compile && yarn run lint",
-		"test": "node ./out/test/runTest.js"
+		"build": "gulp build",
+		"clean": "gulp clean",
+		"lint": "gulp lint",
+		"package": "gulp package",
+		"test": "gulp test"
 	},
 	"devDependencies": {
 		"@types/fs-extra": "^9.0.4",
