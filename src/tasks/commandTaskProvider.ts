@@ -11,7 +11,12 @@ import { getLocalizationPathForFile } from '../util/localization';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
-export type CommandTaskSpawnCallback = (command: string, options?: cp.SpawnOptions) => Promise<void>;
+interface CommandTaskSpawnOptions extends cp.SpawnOptions {
+    onStdOut?: (data: string) => void;
+    onStdErr?: (data: string) => void;
+}
+
+export type CommandTaskSpawnCallback = (command: string, options?: CommandTaskSpawnOptions) => Promise<void>;
 export type CommandTaskProviderCallback = (definition: TaskDefinition, callback: CommandTaskSpawnCallback, token?: vscode.CancellationToken) => Promise<void>;
 
 export default class CommandTaskProvider extends CustomExecutionTaskProvider {
@@ -24,20 +29,24 @@ export default class CommandTaskProvider extends CustomExecutionTaskProvider {
                 return callback(
                     definition,
                     async (command, options) => {
+                        const spawnOptions = options || {};
+
                         const process = new Process();
 
                         try {
                             process.onStdErr(
                                 data => {
                                     writer.write(data);
+
+                                    spawnOptions.onStdErr?.(data);
                                 });
 
                             process.onStdOut(
                                 data => {
                                     writer.write(data);
-                                });
 
-                            const spawnOptions = options || {};
+                                    spawnOptions.onStdOut?.(data);
+                                });
 
                             if (spawnOptions.cwd === undefined) {
                                 if (vscode.workspace.workspaceFolders === undefined || vscode.workspace.workspaceFolders.length === 0) {

@@ -6,9 +6,10 @@ export interface TaskMonitor {
 
 export interface TaskMonitorReporter {
     reportTaskStart(): void;
+    reportTaskRunning(): void;
     reportTaskEnd(): void;
 
-    reportTask<T = void>(callback: () => Promise<T>): Promise<T>;
+    reportTask<T = void>(callback: (reportTaskRunning: () => void) => Promise<T>): Promise<T>;
 }
 
 export class DaprTaskMonitor extends vscode.Disposable implements TaskMonitor, TaskMonitorReporter {
@@ -29,15 +30,19 @@ export class DaprTaskMonitor extends vscode.Disposable implements TaskMonitor, T
         this.tasksChangedEmitter.fire();
     }
 
+    reportTaskRunning(): void {
+        this.tasksChangedEmitter.fire();
+    }
+
     reportTaskEnd(): void {
         this.tasksChangedEmitter.fire();
     }
 
-    async reportTask<T = void>(callback: () => Promise<T>): Promise<T> {
+    async reportTask<T = void>(callback: (reportTaskRunning: () => void) => Promise<T>): Promise<T> {
         this.reportTaskStart();
 
         try {
-            return await callback();
+            return await callback(() => this.reportTaskRunning());
         } finally {
             this.reportTaskEnd();
         }

@@ -28,7 +28,7 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
         super(
             (definition, callback) => {
                 return taskMonitorReporter.reportTask(
-                    () => {
+                    reportTaskRunning => {
                         const tyeDefinition = <TyeRunTaskDefinition>definition;
 
                         const command =
@@ -49,7 +49,19 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                                 .withQuotedArg(tyeDefinition.path)
                                 .build();
 
-                        return callback(command, { cwd: definition.cwd });
+                        return callback(
+                            command,
+                            {
+                                cwd: definition.cwd,
+                                onStdOut:
+                                    data => {
+                                        const listeningForPipeEvents = /Listening for event pipe events/;
+
+                                        if (listeningForPipeEvents.test(data)) {
+                                            reportTaskRunning();
+                                        }
+                                    }
+                            });
                     });
             },
             /* isBackgroundTask: */ true,
