@@ -118,27 +118,27 @@
 		"commands": [
 			{
 				"command": "vscode-tye.commands.refreshEntry",
-				"title": "Refresh",
+				"title": "%vscode-tye.commands.refreshEntry.title%",
 				"icon": "$(refresh)"
 			},
 			{
 				"command": "vscode-tye.commands.debugAll",
-				"title": "Debug",
+				"title": "%vscode-tye.commands.debugAll.title%",
 				"icon": "$(debug)"
 			},
 			{
 				"command": "vscode-tye.commands.browseService",
-				"title": "Browse",
+				"title": "%vscode-tye.commands.browseService.title%",
 				"icon": "$(browser)"
 			},
 			{
 				"command": "vscode-tye.commands.attachService",
-				"title": "Attach",
+				"title": "%vscode-tye.commands.attachService.title%",
 				"icon": "$(debug)"
 			},
 			{
 				"command": "vscode-tye.commands.showLogs",
-				"title": "Logs",
+				"title": "%vscode-tye.commands.showLogs.title%",
 				"icon": "$(file-text)"
 			}
 		],
