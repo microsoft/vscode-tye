@@ -7,6 +7,9 @@
 	"publisher": "ms-azuretools",
 	"license": "SEE LICENSE IN LICENSE.txt",
 	"homepage": "https://github.com/Microsoft/vscode-tye/",
+	"repository": {
+		"url": "https://github.com/Microsoft/vscode-tye/"
+	},
 	"engines": {
 		"vscode": "^1.51.0"
 	},
