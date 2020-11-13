@@ -21,7 +21,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	const tyeClient = new HttpTyeClient(httpClient);
 
 	const logsContentProvider = new TyeLogsContentProvider(httpClient);
-	context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('tye', logsContentProvider, ));
+	context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('tye', logsContentProvider));
 
 	const treeProvider = new TyeServicesProvider(vscode.workspace.workspaceFolders, taskMonitor, tyeClient);
 	context.subscriptions.push(vscode.window.registerTreeDataProvider(
