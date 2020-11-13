@@ -1,12 +1,26 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import { TaskMonitor } from 'src/tasks/taskMonitor';
 import * as vscode from 'vscode';
 import { TyeClient } from '../services/tyeClient';
 
-export class TyeServicesProvider implements vscode.TreeDataProvider<vscode.TreeItem> {
+export class TyeServicesProvider extends vscode.Disposable implements vscode.TreeDataProvider<vscode.TreeItem> {
+    private readonly listener: vscode.Disposable;
+
     constructor(private workspaceRoot: readonly vscode.WorkspaceFolder[] | undefined,
-                private readonly tyeClient: TyeClient) {}
+                private readonly taskMonitor: TaskMonitor,
+                private readonly tyeClient: TyeClient) {
+        super(
+            () => {
+                this.listener.dispose();
+            });
+
+        this.listener = taskMonitor.tasksChanged(
+            () => {
+                this.refresh();
+            });
+    }
 
   getTreeItem(element: ServiceNode): vscode.TreeItem {
     return element;
@@ -53,12 +67,9 @@ export class TyeServicesProvider implements vscode.TreeDataProvider<vscode.TreeI
 }
 
 
-class TyeNode extends vscode.TreeItem {
-  
-  command? : vscode.Command;
-
-  get description(): string {
-    return '';
+abstract class TyeNode extends vscode.TreeItem {
+  constructor(label: string, collapsibleState?: vscode.TreeItemCollapsibleState) {
+    super(label, collapsibleState);
   }
 }
 
@@ -67,9 +78,7 @@ class DashboardNode extends TyeNode {
     super('Dashboard', vscode.TreeItemCollapsibleState.None);
   }
 
-  get command() { 
-    return {command: 'vscode-tye.commands.launchTyeDashboard', title: '', arguments: []};
-  }
+  command = {command: 'vscode-tye.commands.launchTyeDashboard', title: '', arguments: []};
 
   iconPath = new vscode.ThemeIcon('book');
 
@@ -84,14 +93,12 @@ export class ServiceNode extends TyeNode {
     this.service = service;
     this.contextValue = service.serviceType;
     this.contextValue += " hasLogs"
-  }
 
-  get iconPath(): vscode.ThemeIcon {
     if(this.service.serviceType === 'container') {
-      return new vscode.ThemeIcon('package');
+      this.iconPath = new vscode.ThemeIcon('package');
+    } else {
+      this.iconPath = new vscode.ThemeIcon('project');
     }
-  
-    return new vscode.ThemeIcon('project');
   }
 }
 
