@@ -8,6 +8,7 @@ import { HttpTyeClient } from './services/tyeClient';
 import { TyeLogsContentProvider } from './views/tyeLogsContentProvider';
 import TyeRunCommandTaskProvider from './tasks/tyeRunTaskProvider';
 import { DaprTaskMonitor } from './tasks/taskMonitor';
+import { TyeDebugConfigurationProvider } from './debug/tyeDebugConfigurationProvider';
 
 export function activate(context: vscode.ExtensionContext): void {
 
@@ -69,6 +70,8 @@ export function activate(context: vscode.ExtensionContext): void {
 			}
 		}
 	}));
+
+	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('tye', new TyeDebugConfigurationProvider()));
 
 	context.subscriptions.push(vscode.tasks.registerTaskProvider('tye-run', new TyeRunCommandTaskProvider(taskMonitor)));
 }
