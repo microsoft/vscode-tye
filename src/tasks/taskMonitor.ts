@@ -15,7 +15,7 @@ export interface TaskMonitorReporter {
     reportTask<T = void>(callback: (reportTaskRunning: () => void) => Promise<T>): Promise<T>;
 }
 
-export class DaprTaskMonitor extends vscode.Disposable implements TaskMonitor, TaskMonitorReporter {
+export class TyeTaskMonitor extends vscode.Disposable implements TaskMonitor, TaskMonitorReporter {
     private readonly tasksChangedEmitter = new vscode.EventEmitter<void>();
 
     constructor() {
