@@ -23,9 +23,10 @@
 		// "noUnusedParameters": true,  /* Report errors on unused parameters. */
 	},
 	"exclude": [
-		"gulpfile.ts",
-		"node_modules",
 		".vscode-test",
+		"gulpfile.ts",
+		"main.js",
+		"node_modules",
 		"webpack.config.ts"
 	]
 }

@@ -21,7 +21,7 @@
 		"onDebugResolve:tye",
 		"onView:vscode-tye.views.services"
 	],
-	"main": "./out/extension.js",
+	"main": "./main.js",
 	"contributes": {
 		"debuggers": [
 			{
@@ -219,6 +219,7 @@
 	},
 	"scripts": {
 		"build": "gulp build",
+		"build-packed": "gulp build-packed",
 		"clean": "gulp clean",
 		"lint": "gulp lint",
 		"package": "gulp package",
@@ -231,7 +232,9 @@
 		"@types/gulp-sourcemaps": "^0.0.32",
 		"@types/mocha": "^8.0.4",
 		"@types/node": "^12.19.4",
+		"@types/terser-webpack-plugin": "^5.0.2",
 		"@types/vscode": "^1.51.0",
+		"@types/webpack": "^4.41.25",
 		"@typescript-eslint/eslint-plugin": "^4.7.0",
 		"@typescript-eslint/parser": "^4.7.0",
 		"del": "^6.0.0",
@@ -242,11 +245,14 @@
 		"gulp-sourcemaps": "^3.0.0",
 		"gulp-typescript": "^6.0.0-alpha.1",
 		"mocha": "^8.2.1",
+		"terser-webpack-plugin": "^5.0.3",
+		"ts-loader": "^8.0.11",
 		"ts-node": "^9.0.0",
 		"typescript": "^4.0.5",
 		"vsce": "^1.81.1",
 		"vscode-nls-dev": "^3.3.2",
-		"vscode-test": "^1.4.1"
+		"vscode-test": "^1.4.1",
+		"webpack": "^5.4.0"
 	},
 	"dependencies": {
 		"axios": "^0.21.0",

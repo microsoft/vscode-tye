@@ -7,7 +7,7 @@ import { TyeServicesProvider, ReplicaNode, ServiceNode } from './views/tyeServic
 import { HttpTyeClient } from './services/tyeClient';
 import { TyeLogsContentProvider } from './views/tyeLogsContentProvider';
 import TyeRunCommandTaskProvider from './tasks/tyeRunTaskProvider';
-import { DaprTaskMonitor } from './tasks/taskMonitor';
+import { TyeTaskMonitor } from './tasks/taskMonitor';
 import { TyeDebugConfigurationProvider } from './debug/tyeDebugConfigurationProvider';
 
 export function activate(context: vscode.ExtensionContext): void {
@@ -18,7 +18,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	}));
 
 	const httpClient = new AxiosHttpClient();
-	const taskMonitor = new DaprTaskMonitor();
+	const taskMonitor = new TyeTaskMonitor();
 	const tyeClient = new HttpTyeClient(httpClient);
 
 	const logsContentProvider = new TyeLogsContentProvider(httpClient);
