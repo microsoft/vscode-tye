@@ -1,2 +1,4 @@
 .eslintrc.js
 gulpfile.ts
+main.js
+webpack.config.ts

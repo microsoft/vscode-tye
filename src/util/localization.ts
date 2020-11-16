@@ -3,8 +3,8 @@
 
 import * as path from 'path';
 
-type DaprGlobals = NodeJS.Global & typeof globalThis & {
-    vscodeDapr?: {
+type TyeGlobals = NodeJS.Global & typeof globalThis & {
+    vscodeTye?: {
         localizationRootPath: string;
     }
 };
@@ -28,12 +28,12 @@ const sourceFolder = 'src';
  * @returns A vscode-nls compatible path representing both the bundle metadata and relative source locations.
  */
 export function getLocalizationPathForFile(fileName: string): string {
-    const vscodeDapr = (<DaprGlobals>global).vscodeDapr;
+    const vscodeTye = (<TyeGlobals>global).vscodeTye;
 
-    if (vscodeDapr?.localizationRootPath) {
+    if (vscodeTye?.localizationRootPath) {
         const relativePath = path.relative(sourceFolder, fileName);
 
-        return path.join(vscodeDapr.localizationRootPath, relativePath);
+        return path.join(vscodeTye.localizationRootPath, relativePath);
     } else {
         return fileName;
     }
