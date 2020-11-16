@@ -18,10 +18,50 @@
 	],
 	"activationEvents": [
 		"onCommand:workbench.action.tasks.runTask",
+		"onDebugResolve:tye",
 		"onView:vscode-tye.views.services"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"debuggers": [
+			{
+				"type": "tye",
+				"configurationAttributes": {
+					"launch": {
+						"properties": {
+							"services": {
+								"type": "array",
+								"description": "%vscode-tye.debuggers.tye.properties.services.description%",
+								"items": {
+									"type": "string"
+								}
+							}
+						}
+					}
+				}
+			}
+		],
+		"problemMatchers": [
+			{
+				"name": "tye-run",
+				"fileLocation": [
+					"relative",
+					"${workspaceFolder}"
+				],
+				"pattern": [
+					{
+						"regexp": ".",
+						"file": 1,
+						"location": 2,
+						"message": 3
+					}
+				],
+				"background": {
+					"beginsPattern": "^.*Executing application",
+					"endsPattern": "^.*Listening for event pipe events"
+				}
+			}
+		],
 		"taskDefinitions": [
 			{
 				"type": "tye-run",

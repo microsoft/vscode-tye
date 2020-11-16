@@ -68,6 +68,6 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                     });
             },
             /* isBackgroundTask: */ true,
-            /* problemMatchers: */ []);
+            /* problemMatchers: */ ['$tye-run']);
     }
 }
