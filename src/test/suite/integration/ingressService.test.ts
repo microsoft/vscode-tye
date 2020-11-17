@@ -7,7 +7,7 @@ import * as path from 'path';
 
 import { TyeClient } from '../../../services/tyeClient';
 import { TyeServicesProvider, ReplicaNode, ServiceNode } from '../../../views/tyeServicesProvider';
-import { MockTaskMonitor } from './mockTaskMonitor';
+import { MockTyeApplicationProvider } from './mockTyeApplicationProvider';
 import { MockTyeClient } from './mockTyeClient';
 
 suite('integration/ingressServiceTests', () => {
@@ -19,8 +19,12 @@ suite('integration/ingressServiceTests', () => {
         return new MockTyeClient(data);
     }
 
+    function mockTyeClientProvider() {
+        return undefined;
+    }
+
     async function buildTestProvider(): Promise<TyeServicesProvider> {
-        return new TyeServicesProvider([], new MockTaskMonitor(), await buildTestClient());
+        return new TyeServicesProvider([], new MockTyeApplicationProvider(), mockTyeClientProvider, await buildTestClient());
     }
 
     test('TestMockClient', async () => {

@@ -4,11 +4,12 @@
 import * as vscode from 'vscode';
 import AxiosHttpClient from './services/httpClient';
 import { TyeServicesProvider, ReplicaNode, ServiceNode } from './views/tyeServicesProvider';
-import { HttpTyeClient } from './services/tyeClient';
+import { HttpTyeClient, httpTyeClientProvider } from './services/tyeClient';
 import { TyeLogsContentProvider } from './views/tyeLogsContentProvider';
 import TyeRunCommandTaskProvider from './tasks/tyeRunTaskProvider';
 import { TyeTaskMonitor } from './tasks/taskMonitor';
 import { TyeDebugConfigurationProvider } from './debug/tyeDebugConfigurationProvider';
+import { TaskBasedTyeApplicationProvider } from './services/tyeApplicationProvider';
 
 export function activate(context: vscode.ExtensionContext): void {
 
@@ -18,13 +19,14 @@ export function activate(context: vscode.ExtensionContext): void {
 	}));
 
 	const httpClient = new AxiosHttpClient();
-	const taskMonitor = new TyeTaskMonitor();
 	const tyeClient = new HttpTyeClient(httpClient);
+	const taskMonitor = new TyeTaskMonitor();
+	const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(taskMonitor);
 
 	const logsContentProvider = new TyeLogsContentProvider(httpClient);
 	context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('tye', logsContentProvider));
 
-	const treeProvider = new TyeServicesProvider(vscode.workspace.workspaceFolders, taskMonitor, tyeClient);
+	const treeProvider = new TyeServicesProvider(vscode.workspace.workspaceFolders, tyeApplicationProvider, httpTyeClientProvider(httpClient), tyeClient);
 	context.subscriptions.push(vscode.window.registerTreeDataProvider(
 		'vscode-tye.views.services',
 		treeProvider
