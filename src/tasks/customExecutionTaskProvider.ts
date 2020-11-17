@@ -8,7 +8,7 @@ import { TaskDefinition } from './taskDefinition';
 
 export default class CustomExecutionTaskProvider implements vscode.TaskProvider {
     constructor(
-        private readonly callback: (definition: TaskDefinition, writer: PseudoterminalWriter, token?: vscode.CancellationToken) => Promise<number | void>,
+        private readonly callback: (name: string, definition: TaskDefinition, writer: PseudoterminalWriter, token?: vscode.CancellationToken) => Promise<number | void>,
         private readonly isBackgroundTask?: boolean,
         private readonly problemMatchers?: string[]) {
     }
@@ -32,7 +32,7 @@ export default class CustomExecutionTaskProvider implements vscode.TaskProvider 
             task.source,
             new vscode.CustomExecution(
                 () => Promise.resolve(
-                    new TaskPseudoterminal((writer, token) => this.callback(task.definition, writer, token)))),
+                    new TaskPseudoterminal((writer, token) => this.callback(task.name, task.definition, writer, token)))),
             problemMatchers);
 
         resolvedTask.isBackground = this.isBackgroundTask !== undefined ? this.isBackgroundTask : task.isBackground;

@@ -17,7 +17,7 @@ interface CommandTaskSpawnOptions extends cp.SpawnOptions {
 }
 
 export type CommandTaskSpawnCallback = (command: string, options?: CommandTaskSpawnOptions) => Promise<void>;
-export type CommandTaskProviderCallback = (definition: TaskDefinition, callback: CommandTaskSpawnCallback, token?: vscode.CancellationToken) => Promise<void>;
+export type CommandTaskProviderCallback = (name: string, definition: TaskDefinition, callback: CommandTaskSpawnCallback, token?: vscode.CancellationToken) => Promise<void>;
 
 export default class CommandTaskProvider extends CustomExecutionTaskProvider {
     constructor(
@@ -25,8 +25,9 @@ export default class CommandTaskProvider extends CustomExecutionTaskProvider {
         isBackgroundTask?: boolean,
         problemMatchers?: string[]) {
         super(
-            (definition, writer, token) => {
+            (name, definition, writer, token) => {
                 return callback(
+                    name,
                     definition,
                     async (command, options) => {
                         const spawnOptions = options || {};

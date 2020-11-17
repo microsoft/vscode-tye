@@ -3,20 +3,29 @@
 
 import * as vscode from 'vscode';
 
+export type MonitoredTask = {
+    readonly name: string;
+    readonly options?: unknown;
+    readonly state: 'started' | 'running';
+}
+
 export interface TaskMonitor {
+    readonly tasks: MonitoredTask[];
+
     readonly tasksChanged: vscode.Event<void>;
 }
 
 export interface TaskMonitorReporter {
-    reportTaskStart(): void;
-    reportTaskRunning(): void;
-    reportTaskEnd(): void;
+    reportTaskStart(name: string): void;
+    reportTaskRunning(name: string, options?: unknown): void;
+    reportTaskEnd(name: string): void;
 
-    reportTask<T = void>(callback: (reportTaskRunning: () => void) => Promise<T>): Promise<T>;
+    reportTask<T = void>(name: string, callback: (reportTaskRunning: (options?: unknown) => void) => Promise<T>): Promise<T>;
 }
 
 export class TyeTaskMonitor extends vscode.Disposable implements TaskMonitor, TaskMonitorReporter {
     private readonly tasksChangedEmitter = new vscode.EventEmitter<void>();
+    private readonly taskMap: { [key: string]: MonitoredTask } = {};
 
     constructor() {
         super(
@@ -25,29 +34,39 @@ export class TyeTaskMonitor extends vscode.Disposable implements TaskMonitor, Ta
             });
     }
 
+    get tasks(): MonitoredTask[] {
+        return Object.values(this.taskMap);
+    }
+
     get tasksChanged(): vscode.Event<void> {
         return this.tasksChangedEmitter.event;
     }
 
-    reportTaskStart(): void {
+    reportTaskStart(name: string): void {
+        this.taskMap[name] = { name, state: 'started' };
+
         this.tasksChangedEmitter.fire();
     }
 
-    reportTaskRunning(): void {
+    reportTaskRunning(name: string, options?: unknown): void {
+        this.taskMap[name] = { name, options, state: 'running' };
+
         this.tasksChangedEmitter.fire();
     }
 
-    reportTaskEnd(): void {
+    reportTaskEnd(name: string): void {
+        delete this.taskMap[name];
+
         this.tasksChangedEmitter.fire();
     }
 
-    async reportTask<T = void>(callback: (reportTaskRunning: () => void) => Promise<T>): Promise<T> {
-        this.reportTaskStart();
+    async reportTask<T = void>(name: string, callback: (reportTaskRunning: (options?: unknown) => void) => Promise<T>): Promise<T> {
+        this.reportTaskStart(name);
 
         try {
-            return await callback(() => this.reportTaskRunning());
+            return await callback(options => this.reportTaskRunning(name, options));
         } finally {
-            this.reportTaskEnd();
+            this.reportTaskEnd(name);
         }
     }
 }
