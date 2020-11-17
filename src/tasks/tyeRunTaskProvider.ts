@@ -39,6 +39,7 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
 
                 return taskMonitorReporter.reportTask(
                     name,
+                    definition.type,
                     reportTaskRunning => {
                         const tyeDefinition = <TyeRunTaskDefinition>definition;
 

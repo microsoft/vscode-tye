@@ -7,6 +7,7 @@ export type MonitoredTask = {
     readonly name: string;
     readonly options?: unknown;
     readonly state: 'started' | 'running';
+    readonly type: string;
 }
 
 export interface TaskMonitor {
@@ -16,11 +17,11 @@ export interface TaskMonitor {
 }
 
 export interface TaskMonitorReporter {
-    reportTaskStart(name: string): void;
-    reportTaskRunning(name: string, options?: unknown): void;
+    reportTaskStart(name: string, type: string): void;
+    reportTaskRunning(name: string, type: string, options?: unknown): void;
     reportTaskEnd(name: string): void;
 
-    reportTask<T = void>(name: string, callback: (reportTaskRunning: (options?: unknown) => void) => Promise<T>): Promise<T>;
+    reportTask<T = void>(name: string, type: string, callback: (reportTaskRunning: (options?: unknown) => void) => Promise<T>): Promise<T>;
 }
 
 export class TyeTaskMonitor extends vscode.Disposable implements TaskMonitor, TaskMonitorReporter {
@@ -42,14 +43,14 @@ export class TyeTaskMonitor extends vscode.Disposable implements TaskMonitor, Ta
         return this.tasksChangedEmitter.event;
     }
 
-    reportTaskStart(name: string): void {
-        this.taskMap[name] = { name, state: 'started' };
+    reportTaskStart(name: string, type: string): void {
+        this.taskMap[name] = { name, state: 'started', type };
 
         this.tasksChangedEmitter.fire();
     }
 
-    reportTaskRunning(name: string, options?: unknown): void {
-        this.taskMap[name] = { name, options, state: 'running' };
+    reportTaskRunning(name: string, type: string, options?: unknown): void {
+        this.taskMap[name] = { name, options, state: 'running', type};
 
         this.tasksChangedEmitter.fire();
     }
@@ -60,11 +61,11 @@ export class TyeTaskMonitor extends vscode.Disposable implements TaskMonitor, Ta
         this.tasksChangedEmitter.fire();
     }
 
-    async reportTask<T = void>(name: string, callback: (reportTaskRunning: (options?: unknown) => void) => Promise<T>): Promise<T> {
-        this.reportTaskStart(name);
+    async reportTask<T = void>(name: string, type: string, callback: (reportTaskRunning: (options?: unknown) => void) => Promise<T>): Promise<T> {
+        this.reportTaskStart(name, type);
 
         try {
-            return await callback(options => this.reportTaskRunning(name, options));
+            return await callback(options => this.reportTaskRunning(name, type, options));
         } finally {
             this.reportTaskEnd(name);
         }
