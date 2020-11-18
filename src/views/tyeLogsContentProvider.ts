@@ -15,7 +15,9 @@ export class TyeLogsContentProvider implements vscode.TextDocumentContentProvide
     onDidChange = this.onDidChangeEmitter.event;
 
     async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Promise<string> {
-        // Tye Log URI Schema: tye-log://<service>?dashboard=<dashboard>
+        // Tye Log URI Schema: tye-log://logs/<service>?dashboard=<dashboard>
+        //
+        // NOTE: Using 'logs' as the authority is for the benefit of VS Code, which only displays the URI path in editor title.
         //
         // TODO: Switch to something like: tye-log://<application>/<service>
         //       This requires the ability to map application names to dashboards (theoretically possible given Tye YAML schema),
@@ -31,7 +33,7 @@ export class TyeLogsContentProvider implements vscode.TextDocumentContentProvide
                 const tyeClient = this.tyeClientProvider(dashboardUri);
 
                 if (tyeClient) {
-                    return await tyeClient.getLog(uri.authority, token);
+                    return await tyeClient.getLog(uri.path.substr(1) /* NOTE: Remove leading '/' of path. */, token);
                 }
             }
         }

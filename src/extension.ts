@@ -63,7 +63,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 		const logUri =
 			vscode.Uri
-				.parse(`tye-log://${service.description.name}`)
+				.parse(`tye-log://logs/${service.description.name}`)
 				.with({
 					query: querystring.stringify({ dashboard: dashboard?.toString() })
 			});
