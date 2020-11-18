@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
-import { TyeApplicationProvider } from 'src/services/tyeApplicationProvider';
+import { TyeApplication, TyeApplicationProvider } from 'src/services/tyeApplicationProvider';
 import { TyeClientProvider } from '../services/tyeClient';
 
 export class TyeServicesProvider extends vscode.Disposable implements vscode.TreeDataProvider<vscode.TreeItem> {
@@ -52,7 +52,7 @@ export class TyeServicesProvider extends vscode.Disposable implements vscode.Tre
               });
             }
           } else {
-            const nodes:TyeNode[] = services.map(service => new ServiceNode(service));
+            const nodes:TyeNode[] = services.map(service => new ServiceNode(service, application));
             
             if (application.dashboard) {
                 nodes.unshift(new DashboardNode(application.dashboard));
@@ -100,7 +100,7 @@ class DashboardNode extends TyeNode {
 export class ServiceNode extends TyeNode {
   service: TyeService;
 
-  constructor(service: TyeService) {
+  constructor(service: TyeService, public readonly application: TyeApplication) {
     super(service.description.name, vscode.TreeItemCollapsibleState.Collapsed);
     this.service = service;
     this.contextValue = service.serviceType;

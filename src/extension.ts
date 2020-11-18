@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import * as querystring from 'querystring';
 import * as vscode from 'vscode';
 import AxiosHttpClient from './services/httpClient';
 import { TyeServicesProvider, ReplicaNode, ServiceNode } from './views/tyeServicesProvider';
@@ -22,11 +23,12 @@ export function activate(context: vscode.ExtensionContext): void {
 	const tyeClient = new HttpTyeClient(httpClient);
 	const taskMonitor = new TyeTaskMonitor();
 	const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(taskMonitor);
+	const tyeClientProvider = httpTyeClientProvider(httpClient);
 
-	const logsContentProvider = new TyeLogsContentProvider(httpClient);
-	context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('tye', logsContentProvider));
+	const logsContentProvider = new TyeLogsContentProvider(tyeClientProvider);
+	context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('tye-log', logsContentProvider));
 
-	const treeProvider = new TyeServicesProvider(vscode.workspace.workspaceFolders, tyeApplicationProvider, httpTyeClientProvider(httpClient));
+	const treeProvider = new TyeServicesProvider(vscode.workspace.workspaceFolders, tyeApplicationProvider, tyeClientProvider);
 	context.subscriptions.push(vscode.window.registerTreeDataProvider(
 		'vscode-tye.views.services',
 		treeProvider
@@ -56,8 +58,18 @@ export function activate(context: vscode.ExtensionContext): void {
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.showLogs', async (node: ServiceNode) => {
+		const dashboard = node.application.dashboard;
 		const service: TyeService = node.service;
-		const doc = await vscode.workspace.openTextDocument(vscode.Uri.parse('tye:' + service.description.name));
+
+		const logUri =
+			vscode.Uri
+				.parse(`tye-log://${service.description.name}`)
+				.with({
+					query: querystring.stringify({ dashboard: dashboard?.toString() })
+			});
+
+		const doc = await vscode.workspace.openTextDocument(logUri);
+
 		await vscode.window.showTextDocument(doc, {preview:false});
 	}));
 
