@@ -1,8 +1,12 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { MonitoredTask, TaskMonitor } from 'src/tasks/taskMonitor';
 import * as vscode from 'vscode';
 
 export type TyeApplication = {
     readonly dashboard?: vscode.Uri;
+    readonly name?: string;
 };
 
 export interface TyeApplicationProvider {
@@ -12,6 +16,7 @@ export interface TyeApplicationProvider {
 }
 
 type TyeRunTaskOptions = {
+    readonly applicationName: string;
     readonly dashboard?: vscode.Uri;
 };
 
@@ -65,7 +70,8 @@ export class TaskBasedTyeApplicationProvider extends vscode.Disposable implement
         const options = task.options as TyeRunTaskOptions;
 
         return {
-            dashboard: options?.dashboard
+            dashboard: options?.dashboard,
+            name: options.applicationName
         };
     }
 }

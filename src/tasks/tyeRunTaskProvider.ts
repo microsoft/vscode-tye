@@ -12,6 +12,7 @@ export type TyeDistributedTraceProvider = 'zipkin';
 export type TyeVerbosity = 'Debug' | 'Info' | 'Quiet';
 
 export interface TyeRunTaskDefinition extends TaskDefinition {
+    applicationName: string; // TODO: Infer this from output and/or the dashboard API.
     build?: boolean;
     dashboard?: boolean;
     debug?: '*' | string | string[];
@@ -79,7 +80,11 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                                             if (listeningForPipeEvents.test(data)) {
                                                 isRunning = true;
 
-                                                reportTaskRunning({ dashboard });
+                                                reportTaskRunning(
+                                                    {
+                                                        applicationName: tyeDefinition.applicationName,
+                                                        dashboard
+                                                    });
                                             }
                                         }
                                     }
