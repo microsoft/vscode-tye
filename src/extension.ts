@@ -43,9 +43,11 @@ export function activate(context: vscode.ExtensionContext): void {
 		}
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.launchTyeDashboard', () =>
-		vscode.env.openExternal(vscode.Uri.parse('http://localhost:8000'))
-	));
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.launchTyeDashboard', async (dashboard: vscode.Uri) => {
+		if (dashboard?.scheme === 'http' || dashboard?.scheme === 'https') {
+			await vscode.env.openExternal(dashboard);
+		}
+	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.attachService', async (node: ReplicaNode) => {
 		const replica: TyeReplica = node.replica;

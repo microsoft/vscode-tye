@@ -53,7 +53,11 @@ export class TyeServicesProvider extends vscode.Disposable implements vscode.Tre
             }
           } else {
             const nodes:TyeNode[] = services.map(service => new ServiceNode(service));
-            nodes.unshift(new DashboardNode());
+            
+            if (application.dashboard) {
+                nodes.unshift(new DashboardNode(application.dashboard));
+            }
+            
             return nodes;
           }
           
@@ -82,11 +86,11 @@ abstract class TyeNode extends vscode.TreeItem {
 }
 
 class DashboardNode extends TyeNode {
-  constructor() {
+  constructor(private readonly dashboard: vscode.Uri) {
     super('Dashboard', vscode.TreeItemCollapsibleState.None);
   }
 
-  command = {command: 'vscode-tye.commands.launchTyeDashboard', title: '', arguments: []};
+  command = {command: 'vscode-tye.commands.launchTyeDashboard', title: '', arguments: [this.dashboard]};
 
   iconPath = new vscode.ThemeIcon('book');
 
