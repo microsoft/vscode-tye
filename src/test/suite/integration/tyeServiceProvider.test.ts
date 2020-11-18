@@ -19,12 +19,10 @@ suite('integration/tyeServiceProvider', () => {
         return new MockTyeClient(data);
     }
 
-    function mockTyeClientProvider() {
-        return undefined;
-    }
-
     async function buildTestProvider(): Promise<TyeServicesProvider> {
-        return new TyeServicesProvider([], new MockTyeApplicationProvider(), mockTyeClientProvider, await buildTestClient());
+        const testClient = await buildTestClient();
+
+        return new TyeServicesProvider([], new MockTyeApplicationProvider(), () => testClient);
     }
 
     test('TestMockClient', async () => {

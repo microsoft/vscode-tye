@@ -3,15 +3,14 @@
 
 import * as vscode from 'vscode';
 import { TyeApplicationProvider } from 'src/services/tyeApplicationProvider';
-import { TyeClient, TyeClientProvider } from '../services/tyeClient';
+import { TyeClientProvider } from '../services/tyeClient';
 
 export class TyeServicesProvider extends vscode.Disposable implements vscode.TreeDataProvider<vscode.TreeItem> {
     private readonly listener: vscode.Disposable;
 
     constructor(private workspaceRoot: readonly vscode.WorkspaceFolder[] | undefined,
                 private readonly tyeApplicationProvider: TyeApplicationProvider,
-                private readonly tyeClientProvider: TyeClientProvider,
-                private readonly defaultTyeClient: TyeClient) {
+                private readonly tyeClientProvider: TyeClientProvider) {
         super(
             () => {
                 this.listener.dispose();
@@ -37,30 +36,31 @@ export class TyeServicesProvider extends vscode.Disposable implements vscode.Tre
 
     // TODO: Support multiple services; currently, just pick the first one...
     const application = this.tyeApplicationProvider.applications[0];
+    const tyeClient = this.tyeClientProvider(application?.dashboard);
 
-    const tyeClient = this.tyeClientProvider(application?.dashboard) ?? this.defaultTyeClient;
+    if (tyeClient) {
+      const services = await tyeClient.getServices();
 
-    const services = await tyeClient.getServices();
-
-    if(services) {
-      if(element) {
-        const clickedService = services.find(a=>a.description.name === element.label);
-        
-        if(clickedService?.replicas) {
-          return Object.keys(clickedService.replicas).map(replicaName => 
-            {
-              return new ReplicaNode(clickedService, clickedService.replicas[replicaName]);
-            });
+      if(services) {
+        if(element) {
+          const clickedService = services.find(a=>a.description.name === element.label);
+          
+          if(clickedService?.replicas) {
+            return Object.keys(clickedService.replicas).map(replicaName => 
+              {
+                return new ReplicaNode(clickedService, clickedService.replicas[replicaName]);
+              });
+            }
+          } else {
+            const nodes:TyeNode[] = services.map(service => new ServiceNode(service));
+            nodes.unshift(new DashboardNode());
+            return nodes;
           }
-      } else {
-          const nodes:TyeNode[] = services.map(service => new ServiceNode(service));
-          nodes.unshift(new DashboardNode());
-          return nodes;
-      }
-        
-      return [];
-    } else {
-      //vscode.window.showInformationMessage('Unable to reach Tye service on http://localhost:8000/api/v1/services');
+          
+          return [];
+        } else {
+          //vscode.window.showInformationMessage('Unable to reach Tye service on http://localhost:8000/api/v1/services');
+        }
     }
 
     return [];

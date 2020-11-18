@@ -53,6 +53,12 @@ export class TaskBasedTyeApplicationProvider extends vscode.Disposable implement
                 .tasks
                 .filter(task => task.type === 'tye-run')
                 .map(task => TaskBasedTyeApplicationProvider.ToApplication(task));
+
+        if (this._applications.length === 0) {
+            this._applications = [
+                { dashboard: vscode.Uri.parse('http://localhost:8000') }
+            ];
+        }
     }
 
     private static ToApplication(task: MonitoredTask): TyeApplication {
