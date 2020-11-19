@@ -24,9 +24,9 @@ export class TaskBasedTyeApplicationProvider extends vscode.Disposable implement
     private readonly applicationsChangedEmitter = new vscode.EventEmitter<TyeApplication[]>();
     private readonly listener: vscode.Disposable;
     
-    private _applications: TyeApplication[] = [];
+    private _applications: TyeApplication[] | undefined = undefined;
 
-    constructor(taskMonitor: TaskMonitor) {
+    constructor(private readonly taskMonitor: TaskMonitor) {
         super(
             () => {
                 this.listener.dispose();
@@ -34,36 +34,45 @@ export class TaskBasedTyeApplicationProvider extends vscode.Disposable implement
                 this.applicationsChangedEmitter.dispose();
             });
 
-        this.listener = taskMonitor.tasksChanged(
+        this.listener = this.taskMonitor.tasksChanged(
             () => {
-                this.updateApplications(taskMonitor);
-                
-                this.applicationsChangedEmitter.fire(this.applications);
+                void this.updateApplications();
             });
 
-        this.updateApplications(taskMonitor);
+        void this.updateApplications();
     }
 
     get applications(): TyeApplication[] {
-        return this._applications;
+        if (this._applications === undefined) {
+            // TODO: Ensure this is called only once.
+            void this.updateApplications();
+        }
+
+        return this._applications ?? [];
     }
 
     get applicationsChanged(): vscode.Event<TyeApplication[]> {
         return this.applicationsChangedEmitter.event;
     }
 
-    private updateApplications(taskMonitor: TaskMonitor) {
-        this._applications =
-            taskMonitor
+    private updateApplications(): Promise<void> {
+        let newApplications =
+            this.taskMonitor
                 .tasks
                 .filter(task => task.type === 'tye-run')
                 .map(task => TaskBasedTyeApplicationProvider.ToApplication(task));
 
-        if (this._applications.length === 0) {
-            this._applications = [
+        if (newApplications.length === 0) {
+            newApplications = [
                 { dashboard: vscode.Uri.parse('http://localhost:8000') }
             ];
         }
+
+        this._applications = newApplications;
+
+        this.applicationsChangedEmitter.fire(this._applications);
+
+        return Promise.resolve();
     }
 
     private static ToApplication(task: MonitoredTask): TyeApplication {

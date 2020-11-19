@@ -41,8 +41,8 @@
 								}
 							},
 							"watch": {
-								"type": "boolean'",
-								"description": "%vscode-tye.debuggers.tye.properties.watch.description"
+								"type": "boolean",
+								"description": "%vscode-tye.debuggers.tye.properties.watch.description%"
 							}
 						},
 						"required": [ "applicationName" ]

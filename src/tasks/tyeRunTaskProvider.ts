@@ -35,7 +35,6 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
     constructor(taskMonitorReporter: TaskMonitorReporter) {
         super(
             (name, definition, callback) => {
-                let isRunning = false;
                 let dashboard: vscode.Uri | undefined = undefined;
 
                 return taskMonitorReporter.reportTask(
@@ -68,24 +67,23 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                                 cwd: definition.cwd,
                                 onStdOut:
                                     data => {
-                                        if (!isRunning) {
-                                            if (dashboard === undefined) {
-                                                const match = dashboardRunningOn.exec(data);
-                                                
-                                                if (match?.groups?.location) {
-                                                    dashboard = vscode.Uri.parse(match.groups.location, true);
-                                                }
-                                            }
+                                        if (dashboard === undefined) {
+                                            const match = dashboardRunningOn.exec(data);
                                             
-                                            if (listeningForPipeEvents.test(data)) {
-                                                isRunning = true;
-
-                                                reportTaskRunning(
-                                                    {
-                                                        applicationName: tyeDefinition.applicationName,
-                                                        dashboard
-                                                    });
+                                            if (match?.groups?.location) {
+                                                dashboard = vscode.Uri.parse(match.groups.location, true);
                                             }
+                                        }
+                                        
+                                        if (listeningForPipeEvents.test(data)) {
+                                            // NOTE: This may be fired multiple times:
+                                            //       (1) if the application has more than one service/replica
+                                            //       (2) if the application is in watch mode
+                                            reportTaskRunning(
+                                                {
+                                                    applicationName: tyeDefinition.applicationName,
+                                                    dashboard
+                                                });
                                         }
                                     }
                             });
