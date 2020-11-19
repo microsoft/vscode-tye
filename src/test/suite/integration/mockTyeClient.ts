@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { TyeClient } from '../../../services/tyeClient';
 
 export class MockTyeClient implements TyeClient {
