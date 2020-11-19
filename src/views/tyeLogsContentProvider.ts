@@ -1,12 +1,13 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import * as querystring from 'querystring';
 import * as vscode from 'vscode';
-import AxiosHttpClient from '../services/httpClient';
+import { TyeClientProvider } from 'src/services/tyeClient';
 
 export class TyeLogsContentProvider implements vscode.TextDocumentContentProvider {
     
-    constructor(private readonly httpClient: AxiosHttpClient) {
+    constructor(private readonly tyeClientProvider: TyeClientProvider) {
     }
 
     //TODO: onDidChangeEmmitter.fire can cause the document to reload, need to work out if we want to hook that
@@ -14,8 +15,29 @@ export class TyeLogsContentProvider implements vscode.TextDocumentContentProvide
     onDidChange = this.onDidChangeEmitter.event;
 
     async provideTextDocumentContent(uri: vscode.Uri, token: vscode.CancellationToken): Promise<string> {
-        const resp = await this.httpClient.get(`http://localhost:8000/api/v1/logs/${uri.path}`, token);
-        const ar:string[] = resp.data as string[];
-        return ar.join('\n');
+        // Tye Log URI Schema: tye-log://logs/<service>?dashboard=<dashboard>
+        //
+        // NOTE: Using 'logs' as the authority is for the benefit of VS Code, which only displays the URI path in editor title.
+        //
+        // TODO: Switch to something like: tye-log://<application>/<service>
+        //       This requires the ability to map application names to dashboards (theoretically possible given Tye YAML schema),
+        //       but requires a dashboard endpoint that returns the application name.
+
+        const query = querystring.parse(uri.query);
+        
+        if (query.dashboard) {
+            const dashboardString = Array.isArray(query.dashboard) ? query.dashboard[0] : query.dashboard;
+            const dashboardUri = vscode.Uri.parse(dashboardString, true);
+
+            if (dashboardUri) {
+                const tyeClient = this.tyeClientProvider(dashboardUri);
+
+                if (tyeClient) {
+                    return await tyeClient.getLog(uri.path.substr(1) /* NOTE: Remove leading '/' of path. */, token);
+                }
+            }
+        }
+
+        throw new Error('Unable to retrieve Tye service log.');
     }
 }

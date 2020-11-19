@@ -29,6 +29,10 @@
 				"configurationAttributes": {
 					"launch": {
 						"properties": {
+							"applicationName": {
+								"type": "string",
+								"description": "%vscode-tye.debuggers.tye.properties.applicationName.description%"
+							},
 							"services": {
 								"type": "array",
 								"description": "%vscode-tye.debuggers.tye.properties.services.description%",
@@ -36,7 +40,8 @@
 									"type": "string"
 								}
 							}
-						}
+						},
+						"required": [ "applicationName" ]
 					}
 				}
 			}
@@ -66,6 +71,10 @@
 			{
 				"type": "tye-run",
 				"properties": {
+					"applicationName": {
+						"type": "string",
+						"description": "%vscode-tye.tasks.tye-run.properties.applicationName.description%"
+					},
 					"build": {
 						"type": "string",
 						"description": "%vscode-tye.tasks.tye-run.properties.build.description%"
@@ -132,7 +141,8 @@
 						"type": "boolean",
 						"description": "%vscode-tye.tasks.tye-run.properties.watch.description%"
 					}
-				}
+				},
+				"required": [ "applicationName" ]
 			}
 		],
 		"viewsWelcome": [

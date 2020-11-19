@@ -7,8 +7,10 @@
     "vscode-tye.commands.attachService.title": "Attach",
     "vscode-tye.commands.showLogs.title": "Logs",
 
+    "vscode-tye.debuggers.tye.properties.applicationName.description": "The name of the Tye application whose services to debug.",
     "vscode-tye.debuggers.tye.properties.services.description": "The subset of services to debug else, if unspecified, all services are debuggged.",
 
+    "vscode-tye.tasks.tye-run.properties.applicationName.description": "The name of the Tye application being run.",
     "vscode-tye.tasks.tye-run.properties.build.description": "Build project files before running.",
     "vscode-tye.tasks.tye-run.properties.dashboard.description": "Launch dashboard on run.",
     "vscode-tye.tasks.tye-run.properties.debug.description": "Wait for debugger attach to specific service.",

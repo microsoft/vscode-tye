@@ -1,22 +1,22 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { TaskMonitor } from 'src/tasks/taskMonitor';
 import * as vscode from 'vscode';
-import { TyeClient } from '../services/tyeClient';
+import { TyeApplication, TyeApplicationProvider } from 'src/services/tyeApplicationProvider';
+import { TyeClientProvider } from '../services/tyeClient';
 
 export class TyeServicesProvider extends vscode.Disposable implements vscode.TreeDataProvider<vscode.TreeItem> {
     private readonly listener: vscode.Disposable;
 
     constructor(private workspaceRoot: readonly vscode.WorkspaceFolder[] | undefined,
-                private readonly taskMonitor: TaskMonitor,
-                private readonly tyeClient: TyeClient) {
+                private readonly tyeApplicationProvider: TyeApplicationProvider,
+                private readonly tyeClientProvider: TyeClientProvider) {
         super(
             () => {
                 this.listener.dispose();
             });
 
-        this.listener = taskMonitor.tasksChanged(
+        this.listener = tyeApplicationProvider.applicationsChanged(
             () => {
                 this.refresh();
             });
@@ -34,27 +34,39 @@ export class TyeServicesProvider extends vscode.Disposable implements vscode.Tre
       return Promise.resolve([]);
     }
 
-    const services = await this.tyeClient.getServices();
+    // TODO: Support multiple services; currently, just pick the first one...
+    const application = this.tyeApplicationProvider.applications[0];
+    const tyeClient = this.tyeClientProvider(application?.dashboard);
 
-    if(services) {
-      if(element) {
-        const clickedService = services.find(a=>a.description.name === element.label);
+    if (tyeClient) {
+      const services = await tyeClient.getServices();
 
-        if(clickedService?.replicas) {
-          return Object.keys(clickedService.replicas).map(replicaName => 
-            {
+      if(services) {
+        if(element) {
+          const clickedService = services.find(a=>a.description.name === element.label);
+          
+          if(clickedService?.replicas) {
+            return Object.keys(clickedService.replicas).map(replicaName => 
+              {
                 return new ReplicaNode(clickedService, clickedService.replicas[replicaName]);
-            });
+              });
+            }
+          } else {
+            const nodes:TyeNode[] = services.map(service => new ServiceNode(service, application));
+            
+            if (application.dashboard) {
+                nodes.unshift(new DashboardNode(application.dashboard));
+            }
+            
+            return nodes;
+          }
+          
+          return [];
+        } else {
+          //vscode.window.showInformationMessage('Unable to reach Tye service on http://localhost:8000/api/v1/services');
         }
-      } else {
-        const nodes:TyeNode[] = services.map(service => new ServiceNode(service));
-        nodes.unshift(new DashboardNode());
-        return nodes;
-      }
-      return [];
-    } else {
-      //vscode.window.showInformationMessage('Unable to reach Tye service on http://localhost:8000/api/v1/services');
     }
+
     return [];
   }
 
@@ -74,11 +86,11 @@ abstract class TyeNode extends vscode.TreeItem {
 }
 
 class DashboardNode extends TyeNode {
-  constructor() {
+  constructor(private readonly dashboard: vscode.Uri) {
     super('Dashboard', vscode.TreeItemCollapsibleState.None);
   }
 
-  command = {command: 'vscode-tye.commands.launchTyeDashboard', title: '', arguments: []};
+  command = {command: 'vscode-tye.commands.launchTyeDashboard', title: '', arguments: [this.dashboard]};
 
   iconPath = new vscode.ThemeIcon('book');
 
@@ -88,7 +100,7 @@ class DashboardNode extends TyeNode {
 export class ServiceNode extends TyeNode {
   service: TyeService;
 
-  constructor(service: TyeService) {
+  constructor(service: TyeService, public readonly application: TyeApplication) {
     super(service.description.name, vscode.TreeItemCollapsibleState.Collapsed);
     this.service = service;
     this.contextValue = service.serviceType;

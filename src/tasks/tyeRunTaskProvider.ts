@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import * as vscode from 'vscode';
 import CommandLineBuilder from "../util/commandLineBuilder";
 import { TaskDefinition } from "vscode";
 import CommandTaskProvider from "./commandTaskProvider";
@@ -11,6 +12,7 @@ export type TyeDistributedTraceProvider = 'zipkin';
 export type TyeVerbosity = 'Debug' | 'Info' | 'Quiet';
 
 export interface TyeRunTaskDefinition extends TaskDefinition {
+    applicationName: string; // TODO: Infer this from output and/or the dashboard API.
     build?: boolean;
     dashboard?: boolean;
     debug?: '*' | string | string[];
@@ -26,11 +28,19 @@ export interface TyeRunTaskDefinition extends TaskDefinition {
     watch?: boolean;
 }
 
+const dashboardRunningOn = /Dashboard running on (?<location>.*)$/gm;
+const listeningForPipeEvents = /Listening for event pipe events/;
+
 export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
     constructor(taskMonitorReporter: TaskMonitorReporter) {
         super(
-            (definition, callback) => {
+            (name, definition, callback) => {
+                let isRunning = false;
+                let dashboard: vscode.Uri | undefined = undefined;
+
                 return taskMonitorReporter.reportTask(
+                    name,
+                    definition.type,
                     reportTaskRunning => {
                         const tyeDefinition = <TyeRunTaskDefinition>definition;
 
@@ -58,10 +68,24 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                                 cwd: definition.cwd,
                                 onStdOut:
                                     data => {
-                                        const listeningForPipeEvents = /Listening for event pipe events/;
+                                        if (!isRunning) {
+                                            if (dashboard === undefined) {
+                                                const match = dashboardRunningOn.exec(data);
+                                                
+                                                if (match?.groups?.location) {
+                                                    dashboard = vscode.Uri.parse(match.groups.location, true);
+                                                }
+                                            }
+                                            
+                                            if (listeningForPipeEvents.test(data)) {
+                                                isRunning = true;
 
-                                        if (listeningForPipeEvents.test(data)) {
-                                            reportTaskRunning();
+                                                reportTaskRunning(
+                                                    {
+                                                        applicationName: tyeDefinition.applicationName,
+                                                        dashboard
+                                                    });
+                                            }
                                         }
                                     }
                             });
