@@ -31,7 +31,7 @@
 						"properties": {
 							"applicationName": {
 								"type": "string",
-								"description": "%vscode-tye.debuggers.tye.properties.services.applicationName%"
+								"description": "%vscode-tye.debuggers.tye.properties.applicationName.description%"
 							},
 							"services": {
 								"type": "array",
@@ -73,7 +73,7 @@
 				"properties": {
 					"applicationName": {
 						"type": "string",
-						"description": "%vscode-tye.tasks.tye-run.properties.build.applicationName%"
+						"description": "%vscode-tye.tasks.tye-run.properties.applicationName.description%"
 					},
 					"build": {
 						"type": "string",

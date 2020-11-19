@@ -3,14 +3,18 @@
 
 import * as querystring from 'querystring';
 import * as vscode from 'vscode';
+import * as nls from 'vscode-nls';
 import AxiosHttpClient from './services/httpClient';
 import { TyeServicesProvider, ReplicaNode, ServiceNode } from './views/tyeServicesProvider';
-import { HttpTyeClient, httpTyeClientProvider } from './services/tyeClient';
+import { httpTyeClientProvider } from './services/tyeClient';
 import { TyeLogsContentProvider } from './views/tyeLogsContentProvider';
 import TyeRunCommandTaskProvider from './tasks/tyeRunTaskProvider';
 import { TyeTaskMonitor } from './tasks/taskMonitor';
 import { TyeDebugConfigurationProvider } from './debug/tyeDebugConfigurationProvider';
 import { TaskBasedTyeApplicationProvider } from './services/tyeApplicationProvider';
+import { getLocalizationPathForFile } from './util/localization';
+
+const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export function activate(context: vscode.ExtensionContext): void {
 
@@ -20,7 +24,6 @@ export function activate(context: vscode.ExtensionContext): void {
 	}));
 
 	const httpClient = new AxiosHttpClient();
-	const tyeClient = new HttpTyeClient(httpClient);
 	const taskMonitor = new TyeTaskMonitor();
 	const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(taskMonitor);
 	const tyeClientProvider = httpTyeClientProvider(httpClient);
@@ -74,13 +77,25 @@ export function activate(context: vscode.ExtensionContext): void {
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.debugAll', async () => {
-		const services = await tyeClient.getServices();
-		if(services) {
-			for(const service of services) {
-				if(service.serviceType === 'project') {
-					for(const replicaName of Object.keys(service.replicas)) {
-						const config = {type:'coreclr', name:`Attach to Tye PID: ${service.replicas[replicaName].pid}`,request:'attach', processId:`${service.replicas[replicaName].pid}`};
-						await vscode.debug.startDebugging(undefined, config);
+		const application = tyeApplicationProvider.applications[0];
+
+		if (application) {
+			const tyeClient = tyeClientProvider(application.dashboard);
+
+			if (tyeClient) {
+				const services = await tyeClient.getServices();
+
+				for (const service of services) {
+					if (service.serviceType === 'project') {
+						for (const replicaName of Object.keys(service.replicas)) {
+							const config = {
+								type: 'coreclr',
+								name: localize('extension.sessionName', 'Tye Replica: {0}', replicaName),
+								request: 'attach',
+								processId: `${service.replicas[replicaName].pid}`
+							};
+							await vscode.debug.startDebugging(undefined, config);
+						}
 					}
 				}
 			}
