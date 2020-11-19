@@ -39,6 +39,10 @@
 								"items": {
 									"type": "string"
 								}
+							},
+							"watch": {
+								"type": "boolean'",
+								"description": "%vscode-tye.debuggers.tye.properties.watch.description"
 							}
 						},
 						"required": [ "applicationName" ]
