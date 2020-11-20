@@ -3,14 +3,18 @@
 
 import * as vscode from 'vscode';
 import { Observable } from 'rxjs'
-import { mergeMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { MonitoredTask, TaskMonitor } from 'src/tasks/taskMonitor';
 import { TyeClientProvider } from './tyeClient';
+
+export type TyeProjectService = {
+    replicas: { [key: string]: number | undefined };
+};
 
 export type TyeApplication = {
     readonly dashboard?: vscode.Uri;
     readonly name?: string;
-    readonly replicaPids?: { [key: string]: number };
+    readonly projectServices?: { [key: string]: TyeProjectService };
 };
 
 export interface TyeApplicationProvider {
@@ -35,7 +39,7 @@ export class TaskBasedTyeApplicationProvider extends vscode.Disposable implement
         this._applications =
             taskMonitor
                 .tasks
-                .pipe(mergeMap(tasks => this.toApplications(tasks)));
+                .pipe(switchMap(tasks => this.toApplications(tasks)));
     }
 
     get applications(): Observable<TyeApplication[]> {
@@ -62,19 +66,26 @@ export class TaskBasedTyeApplicationProvider extends vscode.Disposable implement
 
         if (tyeClient) {
             const services = await tyeClient.getServices();
-            const projectServices = (services ?? []).filter(service => service.serviceType === 'project');
-            const replicaPids=
-                projectServices
-                    .map(service => Object.keys(service.replicas).map(replicaName => ({ name: replicaName, pid: service.replicas[replicaName].pid })))
-                    .flat()
-                    .reduce<{ [key: string]: number }>(
-                        (previous, current) => {
-                            previous[current.name] = current.pid;
-                            return previous;
+            const projectServices =
+                (services ?? [])
+                    .filter(service => service.serviceType === 'project')
+                    .reduce<{ [key: string]: TyeProjectService }>(
+                        (serviceMap, service) => {
+                            serviceMap[service.description.name] = {
+                                replicas:
+                                    Object.keys(service.replicas)
+                                        .reduce<{ [key: string]: number }>(
+                                            (replicaMap, replicaName) => {
+                                                replicaMap[replicaName] = service.replicas[replicaName].pid;
+                                                return replicaMap;
+                                            },
+                                            {})
+                            };
+                            return serviceMap;
                         },
                         {});
 
-            return { ...application, replicaPids };
+            return { ...application, projectServices };
         }
 
         return application;
