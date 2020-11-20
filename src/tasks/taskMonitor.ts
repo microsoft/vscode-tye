@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
+import { BehaviorSubject, Observable } from 'rxjs'
 
 export type MonitoredTask = {
     readonly name: string;
@@ -11,9 +12,7 @@ export type MonitoredTask = {
 }
 
 export interface TaskMonitor {
-    readonly tasks: MonitoredTask[];
-
-    readonly tasksChanged: vscode.Event<void>;
+    readonly tasks: Observable<MonitoredTask[]>;
 }
 
 export interface TaskMonitorReporter {
@@ -25,40 +24,38 @@ export interface TaskMonitorReporter {
 }
 
 export class TyeTaskMonitor extends vscode.Disposable implements TaskMonitor, TaskMonitorReporter {
-    private readonly tasksChangedEmitter = new vscode.EventEmitter<void>();
     private readonly taskMap: { [key: string]: MonitoredTask } = {};
+
+    private readonly _tasks = new BehaviorSubject<MonitoredTask[]>([]);
 
     constructor() {
         super(
             () => {
-                this.tasksChangedEmitter.dispose();
+                // TODO: Is this general practice for "disposing" of observables?
+                this._tasks.unsubscribe();
             });
     }
 
-    get tasks(): MonitoredTask[] {
-        return Object.values(this.taskMap);
-    }
-
-    get tasksChanged(): vscode.Event<void> {
-        return this.tasksChangedEmitter.event;
+    get tasks(): Observable<MonitoredTask[]> {
+        return this._tasks;
     }
 
     reportTaskStart(name: string, type: string): void {
         this.taskMap[name] = { name, state: 'started', type };
 
-        this.tasksChangedEmitter.fire();
+        this._tasks.next(Object.values(this.taskMap));
     }
 
     reportTaskRunning(name: string, type: string, options?: unknown): void {
         this.taskMap[name] = { name, options, state: 'running', type};
 
-        this.tasksChangedEmitter.fire();
+        this._tasks.next(Object.values(this.taskMap));
     }
 
     reportTaskEnd(name: string): void {
         delete this.taskMap[name];
 
-        this.tasksChangedEmitter.fire();
+        this._tasks.next(Object.values(this.taskMap));
     }
 
     async reportTask<T = void>(name: string, type: string, callback: (reportTaskRunning: (options?: unknown) => void) => Promise<T>): Promise<T> {

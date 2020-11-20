@@ -1,8 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { MonitoredTask, TaskMonitor } from 'src/tasks/taskMonitor';
 import * as vscode from 'vscode';
+import { Observable } from 'rxjs'
+import { mergeMap } from 'rxjs/operators';
+import { MonitoredTask, TaskMonitor } from 'src/tasks/taskMonitor';
 
 export type TyeApplication = {
     readonly dashboard?: vscode.Uri;
@@ -10,9 +12,7 @@ export type TyeApplication = {
 };
 
 export interface TyeApplicationProvider {
-    readonly applications: TyeApplication[];
-
-    readonly applicationsChanged: vscode.Event<TyeApplication[]>;
+    readonly applications: Observable<TyeApplication[]>;
 }
 
 type TyeRunTaskOptions = {
@@ -21,44 +21,28 @@ type TyeRunTaskOptions = {
 };
 
 export class TaskBasedTyeApplicationProvider extends vscode.Disposable implements TyeApplicationProvider {
-    private readonly applicationsChangedEmitter = new vscode.EventEmitter<TyeApplication[]>();
-    private readonly listener: vscode.Disposable;
-    
-    private _applications: TyeApplication[] | undefined = undefined;
+    private readonly _applications: Observable<TyeApplication[]>;
 
     constructor(private readonly taskMonitor: TaskMonitor) {
         super(
             () => {
-                this.listener.dispose();
-
-                this.applicationsChangedEmitter.dispose();
+                // TODO: Is this general practice for "disposing" of observables?
+                //this._applications.unsubscribe();
             });
 
-        this.listener = this.taskMonitor.tasksChanged(
-            () => {
-                void this.updateApplications();
-            });
-
-        void this.updateApplications();
-    }
-
-    get applications(): TyeApplication[] {
-        if (this._applications === undefined) {
-            // TODO: Ensure this is called only once.
-            void this.updateApplications();
-        }
-
-        return this._applications ?? [];
-    }
-
-    get applicationsChanged(): vscode.Event<TyeApplication[]> {
-        return this.applicationsChangedEmitter.event;
-    }
-
-    private updateApplications(): Promise<void> {
-        let newApplications =
-            this.taskMonitor
+        this._applications =
+            taskMonitor
                 .tasks
+                .pipe(mergeMap(tasks => this.updateApplications(tasks)));
+    }
+
+    get applications(): Observable<TyeApplication[]> {
+        return this._applications;
+    }
+
+    private updateApplications(tasks: MonitoredTask[]): Promise<TyeApplication[]> {
+        let newApplications =
+            tasks
                 .filter(task => task.type === 'tye-run')
                 .map(task => TaskBasedTyeApplicationProvider.ToApplication(task));
 
@@ -68,11 +52,7 @@ export class TaskBasedTyeApplicationProvider extends vscode.Disposable implement
             ];
         }
 
-        this._applications = newApplications;
-
-        this.applicationsChangedEmitter.fire(this._applications);
-
-        return Promise.resolve();
+        return Promise.resolve(newApplications);
     }
 
     private static ToApplication(task: MonitoredTask): TyeApplication {
@@ -80,7 +60,7 @@ export class TaskBasedTyeApplicationProvider extends vscode.Disposable implement
 
         return {
             dashboard: options?.dashboard,
-            name: options.applicationName
+            name: options?.applicationName
         };
     }
 }

@@ -1,6 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import { first } from 'rxjs/operators';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import { TyeApplicationProvider } from 'src/services/tyeApplicationProvider';
@@ -22,7 +23,8 @@ export class TyeDebugConfigurationProvider implements vscode.DebugConfigurationP
     async resolveDebugConfigurationWithSubstitutedVariables(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration, token?: vscode.CancellationToken): Promise<vscode.DebugConfiguration | null | undefined> {
         const tyeDebugConfiguration = <TyeDebugConfiguration>debugConfiguration;
 
-        const application = this.tyeApplicationProvider.applications.find(a => a.name === tyeDebugConfiguration.applicationName);
+        const applications = await this.tyeApplicationProvider.applications.pipe(first()).toPromise();
+        const application = applications.find(a => a.name === tyeDebugConfiguration.applicationName);
 
         if (!application) {
             throw new Error(localize('debug.tyeDebugConfigurationProvider.applicationNotRunning', 'The Tye application "{0}" is not running.', tyeDebugConfiguration.applicationName));

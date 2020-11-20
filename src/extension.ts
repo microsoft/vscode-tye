@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 import * as querystring from 'querystring';
+import { first } from 'rxjs/operators';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import AxiosHttpClient from './services/httpClient';
@@ -77,7 +78,8 @@ export function activate(context: vscode.ExtensionContext): void {
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.debugAll', async () => {
-		const application = tyeApplicationProvider.applications[0];
+        const applications = await tyeApplicationProvider.applications.pipe(first()).toPromise();
+		const application = applications[0];
 
 		if (application) {
 			const tyeClient = tyeClientProvider(application.dashboard);
