@@ -13,4 +13,8 @@ export class MockTyeApplicationProvider implements TyeApplicationProvider{
     get applications(): Observable<TyeApplication[]> {
         return this._applications;
     }
+
+    getApplications(): Promise<TyeApplication[]> {
+        return Promise.resolve([]);
+    }
 }

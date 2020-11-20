@@ -3,7 +3,7 @@
 
 import * as vscode from 'vscode';
 import { Observable } from 'rxjs'
-import { switchMap } from 'rxjs/operators';
+import { first, switchMap } from 'rxjs/operators';
 import { MonitoredTask, TaskMonitor } from 'src/tasks/taskMonitor';
 import { TyeClientProvider } from './tyeClient';
 
@@ -19,6 +19,8 @@ export type TyeApplication = {
 
 export interface TyeApplicationProvider {
     readonly applications: Observable<TyeApplication[]>;
+
+    getApplications(): Promise<TyeApplication[]>;
 }
 
 type TyeRunTaskOptions = {
@@ -44,6 +46,10 @@ export class TaskBasedTyeApplicationProvider extends vscode.Disposable implement
 
     get applications(): Observable<TyeApplication[]> {
         return this._applications;
+    }
+
+    getApplications(): Promise<TyeApplication[]> {
+        return this.applications.pipe(first()).toPromise();
     }
 
     private async toApplications(tasks: MonitoredTask[]): Promise<TyeApplication[]> {
