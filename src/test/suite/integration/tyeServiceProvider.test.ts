@@ -28,7 +28,7 @@ suite('integration/tyeServiceProvider', () => {
     test('TestMockClient', async () => {
         const tyeClient = await buildTestClient();
 
-        assert.equal((await tyeClient.getServices()).length, testDataServiceCount);
+        assert.equal((await tyeClient.getServices())?.length, testDataServiceCount);
     });
 
 	test('TestServicesCollection', async () => {

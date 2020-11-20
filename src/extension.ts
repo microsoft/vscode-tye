@@ -26,8 +26,8 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	const httpClient = new AxiosHttpClient();
 	const taskMonitor = new TyeTaskMonitor();
-	const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(taskMonitor);
 	const tyeClientProvider = httpTyeClientProvider(httpClient);
+	const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(taskMonitor, tyeClientProvider);
 
 	const logsContentProvider = new TyeLogsContentProvider(tyeClientProvider);
 	context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('tye-log', logsContentProvider));
@@ -87,7 +87,7 @@ export function activate(context: vscode.ExtensionContext): void {
 			if (tyeClient) {
 				const services = await tyeClient.getServices();
 
-				for (const service of services) {
+				for (const service of (services ?? [])) {
 					if (service.serviceType === 'project') {
 						for (const replicaName of Object.keys(service.replicas)) {
 							const config = {

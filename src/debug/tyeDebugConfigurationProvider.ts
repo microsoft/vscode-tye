@@ -37,6 +37,11 @@ export class TyeDebugConfigurationProvider implements vscode.DebugConfigurationP
         }
 
         const services = await tyeClient.getServices(token);
+
+        if (!services) {
+            throw new Error(localize('debug.tyeDebugConfigurationProvider.notRunning', 'The Tye application "{0}" is not running.', tyeDebugConfiguration.applicationName));
+        }
+
         const debuggableServices =
             services
                 .filter(service => service.serviceType === 'project')

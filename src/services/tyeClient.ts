@@ -6,7 +6,7 @@ import { HttpClient } from "./httpClient";
 
 export interface TyeClient {
     getLog(serviceName: string, token?: vscode.CancellationToken): Promise<string>;
-    getServices(token?: vscode.CancellationToken): Promise<TyeService[]>;
+    getServices(token?: vscode.CancellationToken): Promise<TyeService[] | undefined>;
 }
 
 export type TyeClientProvider = (dashboard: vscode.Uri | undefined) => (TyeClient | undefined);
