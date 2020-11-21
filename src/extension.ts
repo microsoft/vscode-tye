@@ -13,6 +13,8 @@ import { TyeTaskMonitor } from './tasks/taskMonitor';
 import { TyeDebugConfigurationProvider } from './debug/tyeDebugConfigurationProvider';
 import { TaskBasedTyeApplicationProvider } from './services/tyeApplicationProvider';
 import { getLocalizationPathForFile } from './util/localization';
+import { TyeApplicationDebugSessionWatcher } from './debug/tyeApplicationWatcher';
+import { CoreClrDebugSessionMonitor } from './debug/debugSessionMonitor';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -99,7 +101,7 @@ export function activate(context: vscode.ExtensionContext): void {
 		}
 	}));
 
-	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('tye', new TyeDebugConfigurationProvider(tyeApplicationProvider)));
+	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('tye', new TyeDebugConfigurationProvider(tyeApplicationProvider, new TyeApplicationDebugSessionWatcher(new CoreClrDebugSessionMonitor(), tyeApplicationProvider))));
 
 	context.subscriptions.push(vscode.tasks.registerTaskProvider('tye-run', new TyeRunCommandTaskProvider(taskMonitor)));
 }
