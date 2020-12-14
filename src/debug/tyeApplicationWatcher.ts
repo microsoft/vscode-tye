@@ -36,20 +36,22 @@ export class TyeApplicationDebugSessionWatcher extends vscode.Disposable impleme
 
                             if (application) {
                                 // Application is still running, see if new replicas need attaching to...
-                                if (application?.projectServices) {
-                                    const watchedApplication = this.watchedApplications[watchedApplicationName];
 
-                                    for (const serviceName of Object.keys(application.projectServices)) {
-                                        if (watchedApplication.services === undefined || watchedApplication.services.includes(serviceName)) {
-                                            const service = application.projectServices[serviceName];
+                                if (application.projectServices === undefined) {
+                                    continue;
+                                }
 
-                                            for (const replicaName of Object.keys(service.replicas)) {
-                                                const currentPid = service.replicas[replicaName];
-            
-                                                if (currentPid !== undefined && !debugSessionMonitor.isAttached(currentPid)) {
-    
-                                                    void attachToReplica(watchedApplication.folder, replicaName, currentPid);
-                                                }
+                                const watchedApplication = this.watchedApplications[watchedApplicationName];
+
+                                for (const serviceName of Object.keys(application.projectServices)) {
+                                    if (watchedApplication.services === undefined || watchedApplication.services.includes(serviceName)) {
+                                        const service = application.projectServices[serviceName];
+
+                                        for (const replicaName of Object.keys(service.replicas)) {
+                                            const currentPid = service.replicas[replicaName];
+
+                                            if (currentPid !== undefined && !debugSessionMonitor.isAttached(currentPid)) {
+                                                void attachToReplica(watchedApplication.folder, replicaName, currentPid);
                                             }
                                         }
                                     }
