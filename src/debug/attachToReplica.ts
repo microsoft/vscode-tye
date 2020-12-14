@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import { getLocalizationPathForFile } from '../util/localization';
