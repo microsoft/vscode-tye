@@ -78,7 +78,7 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                                         if (listeningForPipeEvents.test(data)) {
                                             // NOTE: This may be fired multiple times:
                                             //       (1) if the application has more than one service/replica
-                                            //       (2) if the application is in watch mode
+                                            //       (2) if the application is in watch mode and a service is rebuilt and restarted
                                             reportTaskRunning(
                                                 {
                                                     applicationName: tyeDefinition.applicationName,

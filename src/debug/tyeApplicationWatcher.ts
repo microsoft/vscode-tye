@@ -2,13 +2,10 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
-import * as nls from 'vscode-nls';
 import { Subscription } from 'rxjs';
 import { DebugSessionMonitor } from './debugSessionMonitor';
 import { TyeApplicationProvider } from '../services/tyeApplicationProvider';
-import { getLocalizationPathForFile } from '../util/localization';
-
-const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
+import { attachToReplica } from './attachToReplica';
 
 export interface TyeApplicationWatcher {
     watchApplication(applicationName: string, options?: { folder?: vscode.WorkspaceFolder, services?: string[] }): void;
@@ -20,7 +17,7 @@ type WatchedApplication = {
 };
 
 export class TyeApplicationDebugSessionWatcher extends vscode.Disposable implements TyeApplicationWatcher {
-    private readonly applications: { [key: string]: WatchedApplication } = {};
+    private readonly watchedApplications: { [key: string]: WatchedApplication } = {};
     private readonly subscription: Subscription;
 
     constructor(debugSessionMonitor: DebugSessionMonitor, tyeApplicationProvider: TyeApplicationProvider) {
@@ -34,35 +31,32 @@ export class TyeApplicationDebugSessionWatcher extends vscode.Disposable impleme
                 .applications
                 .subscribe(
                     applications => {
-                        for (const applicationName of Object.keys(this.applications)) {
-                            const application = applications.find(a => a.name === applicationName);
+                        for (const watchedApplicationName of Object.keys(this.watchedApplications)) {
+                            const application = applications.find(a => a.name === watchedApplicationName);
 
                             if (application) {
+                                // Application is still running, see if new replicas need attaching to...
                                 if (application?.projectServices) {
-                                    for (const serviceName of Object.keys(application.projectServices)) {
-                                        const service = application.projectServices[serviceName];
-                                        
-                                        for (const replicaName of Object.keys(service.replicas)) {
-                                            const currentPid = service.replicas[replicaName];
-        
-                                            if (currentPid !== undefined && !debugSessionMonitor.isAttached(currentPid)) {
-                                                const watchedApplication = this.applications[applicationName];
+                                    const watchedApplication = this.watchedApplications[watchedApplicationName];
 
-                                                void vscode.debug.startDebugging(
-                                                    watchedApplication.folder,
-                                                    {
-                                                        name: localize('debug.tyeDebugConfigurationProvider.sessionName', 'Tye Replica: {0}', replicaName),
-                                                        type:'coreclr',
-                                                        request:'attach',
-                                                        processId: currentPid.toString()
-                                                    });
+                                    for (const serviceName of Object.keys(application.projectServices)) {
+                                        if (watchedApplication.services === undefined || watchedApplication.services.includes(serviceName)) {
+                                            const service = application.projectServices[serviceName];
+
+                                            for (const replicaName of Object.keys(service.replicas)) {
+                                                const currentPid = service.replicas[replicaName];
+            
+                                                if (currentPid !== undefined && !debugSessionMonitor.isAttached(currentPid)) {
+    
+                                                    void attachToReplica(watchedApplication.folder, replicaName, currentPid);
+                                                }
                                             }
                                         }
                                     }
                                 }
                             } else {
                                 // Application is no longer running, stop watching...
-                                delete this.applications[applicationName];
+                                delete this.watchedApplications[watchedApplicationName];
                             }
                         }
                     });
@@ -71,6 +65,6 @@ export class TyeApplicationDebugSessionWatcher extends vscode.Disposable impleme
     watchApplication(applicationName: string, options?: { folder?: vscode.WorkspaceFolder, services?: string[] }): void {
         const { folder, services } = options ?? {};
 
-        this.applications[applicationName] = { folder, services };
+        this.watchedApplications[applicationName] = { folder, services };
     }
 }

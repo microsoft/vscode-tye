@@ -28,16 +28,10 @@ type TyeRunTaskOptions = {
     readonly dashboard?: vscode.Uri;
 };
 
-export class TaskBasedTyeApplicationProvider extends vscode.Disposable implements TyeApplicationProvider {
+export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
     private readonly _applications: Observable<TyeApplication[]>;
 
     constructor(private readonly taskMonitor: TaskMonitor, private readonly tyeClientProvider: TyeClientProvider) {
-        super(
-            () => {
-                // TODO: Is this general practice for "disposing" of observables?
-                //this._applications.unsubscribe();
-            });
-
         this._applications =
             taskMonitor
                 .tasks

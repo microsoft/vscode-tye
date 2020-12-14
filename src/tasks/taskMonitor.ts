@@ -43,19 +43,19 @@ export class TyeTaskMonitor extends vscode.Disposable implements TaskMonitor, Ta
     reportTaskStart(name: string, type: string): void {
         this.taskMap[name] = { name, state: 'started', type };
 
-        this._tasks.next(Object.values(this.taskMap));
+        this.reportTasksChanged();
     }
 
     reportTaskRunning(name: string, type: string, options?: unknown): void {
         this.taskMap[name] = { name, options, state: 'running', type};
 
-        this._tasks.next(Object.values(this.taskMap));
+        this.reportTasksChanged();
     }
 
     reportTaskEnd(name: string): void {
         delete this.taskMap[name];
 
-        this._tasks.next(Object.values(this.taskMap));
+        this.reportTasksChanged();
     }
 
     async reportTask<T = void>(name: string, type: string, callback: (reportTaskRunning: (options?: unknown) => void) => Promise<T>): Promise<T> {
@@ -66,5 +66,9 @@ export class TyeTaskMonitor extends vscode.Disposable implements TaskMonitor, Ta
         } finally {
             this.reportTaskEnd(name);
         }
+    }
+
+    private reportTasksChanged(): void {
+        this._tasks.next(Object.values(this.taskMap));
     }
 }
