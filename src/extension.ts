@@ -73,7 +73,12 @@ export function activate(context: vscode.ExtensionContext): void {
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.debugAll', async () => {
-        const applications = await tyeApplicationProvider.getApplications();
+		const applications = await tyeApplicationProvider.getApplications();
+		
+		// NOTE: We arbitrarily only attach to processes associated with the first application.
+		//       This matches the tree view, which also shows only that first application.
+		//       Future work will refactor the tree view and debugging for multiple applications
+		//       once Tye has better discovery support.
 		const application = applications[0];
 
 		if (application?.projectServices) {
