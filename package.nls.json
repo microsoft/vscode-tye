@@ -9,6 +9,7 @@
 
     "vscode-tye.debuggers.tye.properties.applicationName.description": "The name of the Tye application whose services to debug.",
     "vscode-tye.debuggers.tye.properties.services.description": "The subset of services to debug else, if unspecified, all services are debuggged.",
+    "vscode-tye.debuggers.tye.properties.watch.description": "Watches for code changes for all projects and reconnects the debugger.",
 
     "vscode-tye.tasks.tye-run.properties.applicationName.description": "The name of the Tye application being run.",
     "vscode-tye.tasks.tye-run.properties.build.description": "Build project files before running.",

@@ -1,18 +1,26 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { MonitoredTask, TaskMonitor } from 'src/tasks/taskMonitor';
 import * as vscode from 'vscode';
+import { Observable } from 'rxjs'
+import { first, switchMap } from 'rxjs/operators';
+import { MonitoredTask, TaskMonitor } from 'src/tasks/taskMonitor';
+import { TyeClientProvider } from './tyeClient';
+
+export type TyeProjectService = {
+    replicas: { [key: string]: number | undefined };
+};
 
 export type TyeApplication = {
     readonly dashboard?: vscode.Uri;
     readonly name?: string;
+    readonly projectServices?: { [key: string]: TyeProjectService };
 };
 
 export interface TyeApplicationProvider {
-    readonly applications: TyeApplication[];
+    readonly applications: Observable<TyeApplication[]>;
 
-    readonly applicationsChanged: vscode.Event<TyeApplication[]>;
+    getApplications(): Promise<TyeApplication[]>;
 }
 
 type TyeRunTaskOptions = {
@@ -20,58 +28,75 @@ type TyeRunTaskOptions = {
     readonly dashboard?: vscode.Uri;
 };
 
-export class TaskBasedTyeApplicationProvider extends vscode.Disposable implements TyeApplicationProvider {
-    private readonly applicationsChangedEmitter = new vscode.EventEmitter<TyeApplication[]>();
-    private readonly listener: vscode.Disposable;
-    
-    private _applications: TyeApplication[] = [];
+export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
+    private readonly _applications: Observable<TyeApplication[]>;
 
-    constructor(taskMonitor: TaskMonitor) {
-        super(
-            () => {
-                this.listener.dispose();
-
-                this.applicationsChangedEmitter.dispose();
-            });
-
-        this.listener = taskMonitor.tasksChanged(
-            () => {
-                this.updateApplications(taskMonitor);
-                
-                this.applicationsChangedEmitter.fire(this.applications);
-            });
-
-        this.updateApplications(taskMonitor);
-    }
-
-    get applications(): TyeApplication[] {
-        return this._applications;
-    }
-
-    get applicationsChanged(): vscode.Event<TyeApplication[]> {
-        return this.applicationsChangedEmitter.event;
-    }
-
-    private updateApplications(taskMonitor: TaskMonitor) {
+    constructor(private readonly taskMonitor: TaskMonitor, private readonly tyeClientProvider: TyeClientProvider) {
         this._applications =
             taskMonitor
                 .tasks
-                .filter(task => task.type === 'tye-run')
-                .map(task => TaskBasedTyeApplicationProvider.ToApplication(task));
+                .pipe(switchMap(tasks => this.toApplications(tasks)));
+    }
 
-        if (this._applications.length === 0) {
-            this._applications = [
+    get applications(): Observable<TyeApplication[]> {
+        return this._applications;
+    }
+
+    getApplications(): Promise<TyeApplication[]> {
+        return this.applications.pipe(first()).toPromise();
+    }
+
+    private async toApplications(tasks: MonitoredTask[]): Promise<TyeApplication[]> {
+        let applications =
+            tasks
+                .filter(task => task.type === 'tye-run')
+                .map(task => TaskBasedTyeApplicationProvider.toApplication(task));
+
+        if (applications.length === 0) {
+            applications = [
                 { dashboard: vscode.Uri.parse('http://localhost:8000') }
             ];
         }
+
+        return await Promise.all(applications.map(application => this.withPids(application)));
     }
 
-    private static ToApplication(task: MonitoredTask): TyeApplication {
+    private async withPids(application: TyeApplication): Promise<TyeApplication> {
+        const tyeClient = this.tyeClientProvider(application.dashboard);
+
+        if (tyeClient) {
+            const services = await tyeClient.getServices();
+            const projectServices =
+                (services ?? [])
+                    .filter(service => service.serviceType === 'project')
+                    .reduce<{ [key: string]: TyeProjectService }>(
+                        (serviceMap, service) => {
+                            serviceMap[service.description.name] = {
+                                replicas:
+                                    Object.keys(service.replicas)
+                                        .reduce<{ [key: string]: number }>(
+                                            (replicaMap, replicaName) => {
+                                                replicaMap[replicaName] = service.replicas[replicaName].pid;
+                                                return replicaMap;
+                                            },
+                                            {})
+                            };
+                            return serviceMap;
+                        },
+                        {});
+
+            return { ...application, projectServices };
+        }
+
+        return application;
+    }
+
+    private static toApplication(task: MonitoredTask): TyeApplication {
         const options = task.options as TyeRunTaskOptions;
 
         return {
             dashboard: options?.dashboard,
-            name: options.applicationName
+            name: options?.applicationName
         };
     }
 }

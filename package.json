@@ -39,9 +39,15 @@
 								"items": {
 									"type": "string"
 								}
+							},
+							"watch": {
+								"type": "boolean",
+								"description": "%vscode-tye.debuggers.tye.properties.watch.description%"
 							}
 						},
-						"required": [ "applicationName" ]
+						"required": [
+							"applicationName"
+						]
 					}
 				}
 			}
@@ -142,7 +148,9 @@
 						"description": "%vscode-tye.tasks.tye-run.properties.watch.description%"
 					}
 				},
-				"required": [ "applicationName" ]
+				"required": [
+					"applicationName"
+				]
 			}
 		],
 		"viewsWelcome": [
@@ -265,6 +273,7 @@
 		"webpack": "^5.4.0"
 	},
 	"dependencies": {
+		"@reactivex/rxjs": "^6.6.3",
 		"axios": "^0.21.0",
 		"fs-extra": "^9.0.1",
 		"vscode-nls": "^5.0.0"

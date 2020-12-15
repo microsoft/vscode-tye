@@ -1,23 +1,26 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import { Subscription } from 'rxjs';
 import * as vscode from 'vscode';
 import { TyeApplication, TyeApplicationProvider } from 'src/services/tyeApplicationProvider';
 import { TyeClientProvider } from '../services/tyeClient';
 
 export class TyeServicesProvider extends vscode.Disposable implements vscode.TreeDataProvider<vscode.TreeItem> {
-    private readonly listener: vscode.Disposable;
+    private readonly listener: Subscription;
+    private cachedApplications: TyeApplication[] = [];
 
     constructor(private workspaceRoot: readonly vscode.WorkspaceFolder[] | undefined,
                 private readonly tyeApplicationProvider: TyeApplicationProvider,
                 private readonly tyeClientProvider: TyeClientProvider) {
         super(
             () => {
-                this.listener.dispose();
+                this.listener.unsubscribe();
             });
 
-        this.listener = tyeApplicationProvider.applicationsChanged(
-            () => {
+        this.listener = tyeApplicationProvider.applications.subscribe(
+            applications => {
+                this.cachedApplications = applications;
                 this.refresh();
             });
     }
@@ -35,7 +38,7 @@ export class TyeServicesProvider extends vscode.Disposable implements vscode.Tre
     }
 
     // TODO: Support multiple services; currently, just pick the first one...
-    const application = this.tyeApplicationProvider.applications[0];
+    const application = this.cachedApplications[0];
     const tyeClient = this.tyeClientProvider(application?.dashboard);
 
     if (tyeClient) {

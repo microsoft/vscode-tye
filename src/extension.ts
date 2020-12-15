@@ -3,7 +3,6 @@
 
 import * as querystring from 'querystring';
 import * as vscode from 'vscode';
-import * as nls from 'vscode-nls';
 import AxiosHttpClient from './services/httpClient';
 import { TyeServicesProvider, ReplicaNode, ServiceNode } from './views/tyeServicesProvider';
 import { httpTyeClientProvider } from './services/tyeClient';
@@ -12,21 +11,19 @@ import TyeRunCommandTaskProvider from './tasks/tyeRunTaskProvider';
 import { TyeTaskMonitor } from './tasks/taskMonitor';
 import { TyeDebugConfigurationProvider } from './debug/tyeDebugConfigurationProvider';
 import { TaskBasedTyeApplicationProvider } from './services/tyeApplicationProvider';
-import { getLocalizationPathForFile } from './util/localization';
-
-const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
+import { TyeApplicationDebugSessionWatcher } from './debug/tyeApplicationWatcher';
+import { CoreClrDebugSessionMonitor } from './debug/debugSessionMonitor';
+import { attachToReplica } from './debug/attachToReplica';
 
 export function activate(context: vscode.ExtensionContext): void {
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.debugTyeService', async (pid: string) => {
-			const config = {type:'coreclr', name:`Attach to Tye PID: ${pid}`,request:'attach', processId:`${pid}`};
-			await vscode.debug.startDebugging(undefined, config);
-	}));
-
 	const httpClient = new AxiosHttpClient();
 	const taskMonitor = new TyeTaskMonitor();
-	const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(taskMonitor);
+
+	context.subscriptions.push(taskMonitor);
+
 	const tyeClientProvider = httpTyeClientProvider(httpClient);
+	const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(taskMonitor, tyeClientProvider);
 
 	const logsContentProvider = new TyeLogsContentProvider(tyeClientProvider);
 	context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('tye-log', logsContentProvider));
@@ -56,8 +53,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.attachService', async (node: ReplicaNode) => {
 		const replica: TyeReplica = node.replica;
-		const config = {type:'coreclr', name:`Attach to Tye PID: ${replica.pid}`,request:'attach', processId:`${replica.pid}`};
-		await vscode.debug.startDebugging(undefined, config);
+		await attachToReplica(undefined, replica.name, replica.pid);
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.showLogs', async (node: ServiceNode) => {
@@ -77,32 +73,36 @@ export function activate(context: vscode.ExtensionContext): void {
 	}));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.debugAll', async () => {
-		const application = tyeApplicationProvider.applications[0];
+		const applications = await tyeApplicationProvider.getApplications();
+		
+		// NOTE: We arbitrarily only attach to processes associated with the first application.
+		//       This matches the tree view, which also shows only that first application.
+		//       Future work will refactor the tree view and debugging for multiple applications
+		//       once Tye has better discovery support.
+		const application = applications[0];
 
-		if (application) {
-			const tyeClient = tyeClientProvider(application.dashboard);
+		if (application?.projectServices) {
+			for (const service of Object.values(application.projectServices)) {
+					for (const replicaName of Object.keys(service.replicas)) {
+						const pid = service.replicas[replicaName];
 
-			if (tyeClient) {
-				const services = await tyeClient.getServices();
-
-				for (const service of services) {
-					if (service.serviceType === 'project') {
-						for (const replicaName of Object.keys(service.replicas)) {
-							const config = {
-								type: 'coreclr',
-								name: localize('extension.sessionName', 'Tye Replica: {0}', replicaName),
-								request: 'attach',
-								processId: `${service.replicas[replicaName].pid}`
-							};
-							await vscode.debug.startDebugging(undefined, config);
+						if (pid !== undefined) {
+							await attachToReplica(undefined, replicaName, pid);
 						}
 					}
-				}
 			}
 		}
 	}));
 
-	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('tye', new TyeDebugConfigurationProvider(tyeApplicationProvider, tyeClientProvider)));
+	const debugSessionMonitor = new CoreClrDebugSessionMonitor();
+
+	context.subscriptions.push(debugSessionMonitor);
+
+	const applicationWatcher = new TyeApplicationDebugSessionWatcher(debugSessionMonitor, tyeApplicationProvider);
+
+	context.subscriptions.push(applicationWatcher);
+
+	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('tye', new TyeDebugConfigurationProvider(tyeApplicationProvider, applicationWatcher)));
 
 	context.subscriptions.push(vscode.tasks.registerTaskProvider('tye-run', new TyeRunCommandTaskProvider(taskMonitor)));
 }
