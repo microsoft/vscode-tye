@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import mdns = require('multicast-dns');
 import { defer, fromEvent, Observable } from 'rxjs';
-import { map, publishReplay, refCount, startWith, scan } from 'rxjs/operators';
+import { filter, map, publishReplay, refCount, startWith, scan } from 'rxjs/operators';
 
 export class MdnsClient extends vscode.Disposable{
     private readonly instance = mdns();
@@ -12,10 +12,10 @@ export class MdnsClient extends vscode.Disposable{
                 this.instance.destroy();
             });
 
-            this.packets = fromEvent<mdns.MdnsPacket>(this.instance, 'response');
+            this.packets = fromEvent<[mdns.MdnsPacket, mdns.MdnsResponseInfo]>(this.instance, 'response');
         }
 
-    public readonly packets: Observable<mdns.MdnsPacket>;
+    public readonly packets: Observable<[mdns.MdnsPacket, mdns.MdnsResponseInfo]>;
 
     query(query: mdns.MdnsQuery): Promise<void> {
         return new Promise(
@@ -93,8 +93,12 @@ class MulticastDnsMdnsServiceClient extends vscode.Disposable implements MdnsSer
                         return this.instance.packets;
                     })
                     .pipe(
+                        // Filter out responses that do not include answers to our query (to avoid unnecessary churn downstream)...
+                        filter(response => response[0].answers.some(answer => isPointerAnswer(answer) && answer.name === this.type)),
                         scan(
-                            (knownServices, packet) => {
+                            (knownServices, response) => {
+                                const packet = response[0];
+
                                 const upServices: MdnsService[] = [];
                                 const downServices: string[] = [];
 
@@ -115,6 +119,7 @@ class MulticastDnsMdnsServiceClient extends vscode.Disposable implements MdnsSer
                                 upServices.forEach(service => {
                                     packet
                                         .answers
+                                        .concat(packet.additionals)
                                         .filter(answer => answer.name === service.name)
                                         .filter(isServerAnswer)
                                         .forEach(answer => {
@@ -124,6 +129,7 @@ class MulticastDnsMdnsServiceClient extends vscode.Disposable implements MdnsSer
 
                                     packet
                                         .answers
+                                        .concat(packet.additionals)
                                         .filter(answer => answer.name === service.name)
                                         .filter(isTextAnswer)
                                         .forEach(answer => {
@@ -132,6 +138,7 @@ class MulticastDnsMdnsServiceClient extends vscode.Disposable implements MdnsSer
 
                                     packet
                                         .answers
+                                        .concat(packet.additionals)
                                         .filter(answer => answer.name === service.fqdn)
                                         .filter(isAddressAnswer)
                                         .forEach(answer => {

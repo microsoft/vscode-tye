@@ -44,6 +44,7 @@ declare namespace mdns
     }
 
     interface MdnsPacket {
+        additionals: MdnsAnswer[];
         answers: MdnsAnswer[];
         flag_aa: boolean;
         flag_ad: boolean;

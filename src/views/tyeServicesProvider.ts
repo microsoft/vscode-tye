@@ -30,13 +30,6 @@ export class TyeServicesProvider extends vscode.Disposable implements vscode.Tre
   }
 
   async getChildren(element?: ServiceNode): Promise<vscode.TreeItem[]> {
-    if (!this.workspaceRoot) {
-      //In this case you don't have any code open, so we don't really want to
-      //list the nodes for attaching, we will rely on the welcome screen to guide
-      //people.
-      return Promise.resolve([]);
-    }
-
     // TODO: Support multiple services; currently, just pick the first one...
     const application = this.cachedApplications[0];
     const tyeClient = this.tyeClientProvider(application?.dashboard);
@@ -128,6 +121,7 @@ export class ReplicaNode extends TyeNode {
     this.service = service;
     this.contextValue = service.serviceType;
     if(this.service.serviceType === 'project') {
+      // TODO: Disable debugging when no workspace is open.  (Does it matter?  What if the *wrong* workspace is currently open?)
       this.contextValue += ' attachable'
     }
     if(this.isBrowsable) {
