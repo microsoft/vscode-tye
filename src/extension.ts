@@ -10,10 +10,11 @@ import { TyeLogsContentProvider } from './views/tyeLogsContentProvider';
 import TyeRunCommandTaskProvider from './tasks/tyeRunTaskProvider';
 import { TyeTaskMonitor } from './tasks/taskMonitor';
 import { TyeDebugConfigurationProvider } from './debug/tyeDebugConfigurationProvider';
-import { TaskBasedTyeApplicationProvider } from './services/tyeApplicationProvider';
+import { MdnsBasedTyeApplicationProvider } from './services/tyeApplicationProvider';
 import { TyeApplicationDebugSessionWatcher } from './debug/tyeApplicationWatcher';
 import { CoreClrDebugSessionMonitor } from './debug/debugSessionMonitor';
 import { attachToReplica } from './debug/attachToReplica';
+import MulticastDnsMdnsProvider from './services/mdnsProvider';
 
 export function activate(context: vscode.ExtensionContext): void {
 
@@ -23,7 +24,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	context.subscriptions.push(taskMonitor);
 
 	const tyeClientProvider = httpTyeClientProvider(httpClient);
-	const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(taskMonitor, tyeClientProvider);
+	const tyeApplicationProvider = new MdnsBasedTyeApplicationProvider(new MulticastDnsMdnsProvider(), tyeClientProvider);
 
 	const logsContentProvider = new TyeLogsContentProvider(tyeClientProvider);
 	context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('tye-log', logsContentProvider));
