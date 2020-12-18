@@ -8,7 +8,7 @@ import { TyeDashboardNode } from "./tyeDashboardNode";
 import { TyeServiceNode } from "./tyeServiceNode";
 import { TyeClientProvider } from "src/services/tyeClient";
 
-export class ApplicationNode implements TyeNode {
+export class TyeApplicationNode implements TyeNode {
     constructor(private readonly application: TyeApplication, private readonly tyeClientProvider: TyeClientProvider) {
     }
 

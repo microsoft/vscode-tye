@@ -4,7 +4,7 @@
 import * as assert from 'assert';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { TyeServicesTreeDataProvider } from 'src/views/services/servicesTreeDataProvider';
+import { TyeServicesTreeDataProvider } from 'src/views/services/tyeServicesTreeDataProvider';
 import { TyeReplicaNode } from 'src/views/services/tyeReplicaNode';
 
 import { TyeClient } from '../../../services/tyeClient';

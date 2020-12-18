@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import { TyeApplication, TyeApplicationProvider } from 'src/services/tyeApplicationProvider';
 import { Subscription } from 'rxjs';
 import { TyeNode } from '../tyeNode';
-import { ApplicationNode } from './applicationNode';
+import { TyeApplicationNode } from './tyeApplicationNode';
 import { TyeClientProvider } from 'src/services/tyeClient';
 
 export class TyeServicesTreeDataProvider extends vscode.Disposable implements vscode.TreeDataProvider<TyeNode> {
@@ -36,7 +36,7 @@ export class TyeServicesTreeDataProvider extends vscode.Disposable implements vs
         if (element) {
             return element.getChildren();
         } else {
-            return this.cachedApplications.map(application => new ApplicationNode(application, this.tyeClientProvider));
+            return this.cachedApplications.map(application => new TyeApplicationNode(application, this.tyeClientProvider));
         }
     }
 

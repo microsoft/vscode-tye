@@ -14,7 +14,7 @@ import { TyeApplicationDebugSessionWatcher } from './debug/tyeApplicationWatcher
 import { CoreClrDebugSessionMonitor } from './debug/debugSessionMonitor';
 import { attachToReplica } from './debug/attachToReplica';
 import MulticastDnsMdnsProvider from './services/mdnsProvider';
-import { TyeServicesTreeDataProvider } from './views/services/servicesTreeDataProvider';
+import { TyeServicesTreeDataProvider } from './views/services/tyeServicesTreeDataProvider';
 import { TyeReplicaNode } from './views/services/tyeReplicaNode';
 import { TyeServiceNode } from './views/services/tyeServiceNode';
 
