@@ -23,11 +23,6 @@ export interface TyeApplicationProvider {
     getApplications(): Promise<TyeApplication[]>;
 }
 
-type TyeRunTaskOptions = {
-    readonly applicationName: string;
-    readonly dashboard?: vscode.Uri;
-};
-
 export class MdnsBasedTyeApplicationProvider extends vscode.Disposable implements TyeApplicationProvider {
     private readonly mdnsServiceClient: MdnsServiceClient;
 
