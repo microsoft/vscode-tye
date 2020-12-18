@@ -36,7 +36,7 @@ export function activate(context: vscode.ExtensionContext): void {
 		treeProvider
 	));
 
-	const servicesTreeDataProvider = new TyeServicesTreeDataProvider(tyeApplicationProvider);
+	const servicesTreeDataProvider = new TyeServicesTreeDataProvider(tyeApplicationProvider, tyeClientProvider);
 	context.subscriptions.push(servicesTreeDataProvider);
 
 	context.subscriptions.push(vscode.window.registerTreeDataProvider(

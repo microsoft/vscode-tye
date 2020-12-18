@@ -3,13 +3,14 @@ import { TyeApplication, TyeApplicationProvider } from 'src/services/tyeApplicat
 import { Subscription } from 'rxjs';
 import { TyeNode } from '../tyeNode';
 import { ApplicationNode } from './applicationNode';
+import { TyeClientProvider } from 'src/services/tyeClient';
 
 export class TyeServicesTreeDataProvider extends vscode.Disposable implements vscode.TreeDataProvider<TyeNode> {
     private readonly onDidChangeTreeDataEmitter = new vscode.EventEmitter<void | TyeNode | null | undefined>();
     private readonly listener: Subscription;
     private cachedApplications: TyeApplication[] = [];
 
-    constructor(tyeApplicationProvider: TyeApplicationProvider) {
+    constructor(tyeApplicationProvider: TyeApplicationProvider, private readonly tyeClientProvider: TyeClientProvider) {
         super(
             () => {
                 this.listener.unsubscribe();
@@ -32,7 +33,7 @@ export class TyeServicesTreeDataProvider extends vscode.Disposable implements vs
         if (element) {
             return element.getChildren();
         } else {
-            return this.cachedApplications.map(application => new ApplicationNode(application));
+            return this.cachedApplications.map(application => new ApplicationNode(application, this.tyeClientProvider));
         }
     }
 
