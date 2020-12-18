@@ -1,38 +1,8 @@
 import * as vscode from 'vscode';
 import isEqual = require('lodash.isequal');
-import mdns = require('multicast-dns');
-import { defer, fromEvent, Observable } from 'rxjs';
+import { defer, Observable } from 'rxjs';
 import { distinctUntilChanged, filter, map, publishReplay, refCount, startWith, scan } from 'rxjs/operators';
-
-export class MdnsClient extends vscode.Disposable{
-    private readonly instance = mdns();
-
-    constructor() {
-        super(
-            () => {
-                this.instance.destroy();
-            });
-
-            this.packets = fromEvent<[mdns.MdnsPacket, mdns.MdnsResponseInfo]>(this.instance, 'response');
-        }
-
-    public readonly packets: Observable<[mdns.MdnsPacket, mdns.MdnsResponseInfo]>;
-
-    query(query: mdns.MdnsQuery): Promise<void> {
-        return new Promise(
-            (resolve, reject) => {
-                this.instance.query(
-                    query,
-                    (err: Error | undefined) => {
-                        if (err) {
-                            return reject(err);
-                        } else {
-                            return resolve();
-                        }
-                    });
-            });
-    }
-}
+import { MdnsClient } from './mdnsClient';
 
 export interface MdnsService {
     address: string;
