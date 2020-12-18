@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 declare namespace mdns
 {
     type MdnsRecordType = 'A' | 'PTR' | 'SRV' | 'TXT';
