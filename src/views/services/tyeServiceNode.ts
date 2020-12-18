@@ -8,11 +8,23 @@ export class TyeServiceNode implements TyeNode {
 
     getChildren(): vscode.ProviderResult<TyeNode[]> {
         return this.service.replicas
-            ? Object.values(this.service.replicas).map(replica => new TyeReplicaNode(replica))
+            ? Object.values(this.service.replicas).map(replica => new TyeReplicaNode(this.service, replica))
             : undefined;
     }
 
     getTreeItem(): vscode.TreeItem | Thenable<vscode.TreeItem> {
-        return new vscode.TreeItem(this.service.description.name, vscode.TreeItemCollapsibleState.Collapsed);
+        const treeItem = new vscode.TreeItem(this.service.description.name, vscode.TreeItemCollapsibleState.Collapsed);
+
+        treeItem.contextValue = this.service.serviceType;
+
+        treeItem.contextValue += " hasLogs"
+
+        if (this.service.serviceType === 'container') {
+            treeItem.iconPath = new vscode.ThemeIcon('package');
+        } else {
+            treeItem.iconPath = new vscode.ThemeIcon('project');
+        }
+
+        return treeItem;
     }
 }

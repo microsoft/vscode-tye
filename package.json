@@ -235,6 +235,22 @@
 					"command": "vscode-tye.commands.showLogs",
 					"when": "view == vscode-tye.views.services && viewItem =~ /hasLogs/",
 					"group": "inline"
+				},
+
+				{
+					"command": "vscode-tye.commands.browseService",
+					"when": "view == vscode-tye.views.services2 && viewItem =~ /browsable/",
+					"group": "inline"
+				},
+				{
+					"command": "vscode-tye.commands.attachService",
+					"when": "view == vscode-tye.views.services2 && viewItem =~ /attachable/",
+					"group": "inline"
+				},
+				{
+					"command": "vscode-tye.commands.showLogs",
+					"when": "view == vscode-tye.views.services2 && viewItem =~ /hasLogs/",
+					"group": "inline"
 				}
 			]
 		}
