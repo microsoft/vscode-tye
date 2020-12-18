@@ -1,13 +1,15 @@
-import { TyeNode } from "../tyeNode";
-
 import * as vscode from 'vscode';
+import { TyeNode } from "../tyeNode";
+import { TyeReplicaNode } from "./tyeReplicaNode";
 
 export class TyeServiceNode implements TyeNode {
     constructor(private readonly service: TyeService) {
     }
 
     getChildren(): vscode.ProviderResult<TyeNode[]> {
-        return undefined;
+        return this.service.replicas
+            ? Object.values(this.service.replicas).map(replica => new TyeReplicaNode(replica))
+            : undefined;
     }
 
     getTreeItem(): vscode.TreeItem | Thenable<vscode.TreeItem> {
