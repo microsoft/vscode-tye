@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import * as vscode from 'vscode';
 import { TyeApplication, TyeApplicationProvider } from 'src/services/tyeApplicationProvider';
 import { Subscription } from 'rxjs';

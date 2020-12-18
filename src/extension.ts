@@ -4,7 +4,6 @@
 import * as querystring from 'querystring';
 import * as vscode from 'vscode';
 import AxiosHttpClient from './services/httpClient';
-import { TyeServicesProvider, ReplicaNode, ServiceNode } from './views/tyeServicesProvider';
 import { httpTyeClientProvider } from './services/tyeClient';
 import { TyeLogsContentProvider } from './views/tyeLogsContentProvider';
 import TyeRunCommandTaskProvider from './tasks/tyeRunTaskProvider';
@@ -16,6 +15,8 @@ import { CoreClrDebugSessionMonitor } from './debug/debugSessionMonitor';
 import { attachToReplica } from './debug/attachToReplica';
 import MulticastDnsMdnsProvider from './services/mdnsProvider';
 import { TyeServicesTreeDataProvider } from './views/services/servicesTreeDataProvider';
+import { TyeReplicaNode } from './views/services/tyeReplicaNode';
+import { TyeServiceNode } from './views/services/tyeServiceNode';
 
 export function activate(context: vscode.ExtensionContext): void {
 
@@ -30,12 +31,6 @@ export function activate(context: vscode.ExtensionContext): void {
 	const logsContentProvider = new TyeLogsContentProvider(tyeClientProvider);
 	context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('tye-log', logsContentProvider));
 
-	const treeProvider = new TyeServicesProvider(vscode.workspace.workspaceFolders, tyeApplicationProvider, tyeClientProvider);
-	context.subscriptions.push(vscode.window.registerTreeDataProvider(
-		'vscode-tye.views.services',
-		treeProvider
-	));
-
 	const servicesTreeDataProvider = new TyeServicesTreeDataProvider(tyeApplicationProvider, tyeClientProvider);
 	context.subscriptions.push(servicesTreeDataProvider);
 
@@ -48,7 +43,7 @@ export function activate(context: vscode.ExtensionContext): void {
 		servicesTreeDataProvider.refresh()
 	));
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.browseService', async (serviceNode: ReplicaNode) => {
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.browseService', async (serviceNode: TyeReplicaNode) => {
 		const uri = serviceNode.BrowserUri;
 		if(uri) {
 			await vscode.env.openExternal(uri);
@@ -61,12 +56,12 @@ export function activate(context: vscode.ExtensionContext): void {
 		}
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.attachService', async (node: ReplicaNode) => {
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.attachService', async (node: TyeReplicaNode) => {
 		const replica: TyeReplica = node.replica;
 		await attachToReplica(undefined, replica.name, replica.pid);
 	}));
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.showLogs', async (node: ServiceNode) => {
+	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.showLogs', async (node: TyeServiceNode) => {
 		const dashboard = node.application.dashboard;
 		const service: TyeService = node.service;
 

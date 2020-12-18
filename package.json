@@ -19,7 +19,7 @@
 	"activationEvents": [
 		"onCommand:workbench.action.tasks.runTask",
 		"onDebugResolve:tye",
-		"onView:vscode-tye.views.services"
+		"onView:vscode-tye.views.services2"
 	],
 	"main": "./main.js",
 	"contributes": {
@@ -155,10 +155,6 @@
 		],
 		"viewsWelcome": [
 			{
-				"view": "vscode-tye.views.services",
-				"contents": "%vscode-tye.views.services.contents%"
-			},
-			{
 				"view": "vscode-tye.views.services2",
 				"contents": "%vscode-tye.views.services2.contents%"
 			}
@@ -174,10 +170,6 @@
 		},
 		"views": {
 			"microsoft-tye": [
-				{
-					"id": "vscode-tye.views.services",
-					"name": "%vscode-tye.views.services.name%"
-				},
 				{
 					"id": "vscode-tye.views.services2",
 					"name": "%vscode-tye.views.services2.name%"
@@ -236,22 +228,6 @@
 				}
 			],
 			"view/item/context": [
-				{
-					"command": "vscode-tye.commands.browseService",
-					"when": "view == vscode-tye.views.services && viewItem =~ /browsable/",
-					"group": "inline"
-				},
-				{
-					"command": "vscode-tye.commands.attachService",
-					"when": "view == vscode-tye.views.services && viewItem =~ /attachable/",
-					"group": "inline"
-				},
-				{
-					"command": "vscode-tye.commands.showLogs",
-					"when": "view == vscode-tye.views.services && viewItem =~ /hasLogs/",
-					"group": "inline"
-				},
-
 				{
 					"command": "vscode-tye.commands.browseService",
 					"when": "view == vscode-tye.views.services2 && viewItem =~ /browsable/",

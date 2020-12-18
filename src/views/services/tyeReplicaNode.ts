@@ -1,9 +1,12 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { TyeNode } from "../tyeNode";
 
 import * as vscode from 'vscode';
 
 export class TyeReplicaNode implements TyeNode {
-    constructor(private readonly service: TyeService, private readonly replica: TyeReplica) {
+    constructor(public readonly service: TyeService, public readonly replica: TyeReplica) {
     }
 
     getChildren(): vscode.ProviderResult<TyeNode[]> {
