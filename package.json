@@ -173,6 +173,10 @@
 				{
 					"id": "vscode-tye.views.services",
 					"name": "%vscode-tye.views.services.name%"
+				},
+				{
+					"id": "vscode-tye.views.services2",
+					"name": "%vscode-tye.views.services2.name%"
 				}
 			]
 		},

@@ -15,6 +15,7 @@ import { TyeApplicationDebugSessionWatcher } from './debug/tyeApplicationWatcher
 import { CoreClrDebugSessionMonitor } from './debug/debugSessionMonitor';
 import { attachToReplica } from './debug/attachToReplica';
 import MulticastDnsMdnsProvider from './services/mdnsProvider';
+import { TyeServicesTreeDataProvider } from './views/services/servicesTreeDataProvider';
 
 export function activate(context: vscode.ExtensionContext): void {
 
@@ -33,6 +34,14 @@ export function activate(context: vscode.ExtensionContext): void {
 	context.subscriptions.push(vscode.window.registerTreeDataProvider(
 		'vscode-tye.views.services',
 		treeProvider
+	));
+
+	const servicesTreeDataProvider = new TyeServicesTreeDataProvider(tyeApplicationProvider);
+	context.subscriptions.push(servicesTreeDataProvider);
+
+	context.subscriptions.push(vscode.window.registerTreeDataProvider(
+		'vscode-tye.views.services2',
+		servicesTreeDataProvider
 	));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.refreshEntry', () =>
