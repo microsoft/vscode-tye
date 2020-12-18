@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
+import isEqual = require('lodash.isequal');
 import mdns = require('multicast-dns');
 import { defer, fromEvent, Observable } from 'rxjs';
-import { filter, map, publishReplay, refCount, startWith, scan } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, publishReplay, refCount, startWith, scan } from 'rxjs/operators';
 
 export class MdnsClient extends vscode.Disposable{
     private readonly instance = mdns();
@@ -162,7 +163,8 @@ class MulticastDnsMdnsServiceClient extends vscode.Disposable implements MdnsSer
                                 return knownServices;
                             },
                             <{ [key: string]: MdnsService }>{}),
-                            map(services => Object.values(services))
+                            map(services => Object.values(services)),
+                            distinctUntilChanged(isEqual),
                     )
                     .pipe(
                         startWith([]),
