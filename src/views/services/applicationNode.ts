@@ -23,7 +23,7 @@ export class ApplicationNode implements TyeNode {
                 if (tyeClient) {
                     const services = await tyeClient.getServices();
                     
-                    return nodes.concat((services ?? []).map(service => new TyeServiceNode(service)));
+                    return nodes.concat((services ?? []).map(service => new TyeServiceNode(this.application, service)));
                 }
                 
                 return nodes;

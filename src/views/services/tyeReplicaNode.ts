@@ -31,11 +31,31 @@ export class TyeReplicaNode implements TyeNode {
         if (this.replica.environment) {
             return this.replica.environment[`service__${this.service.description.name}__host`.toUpperCase()] !== undefined;
         }
-    
+
         if (this.service.serviceType === 'ingress') {
             return true;
         }
-    
+
         return false;
+    }
+
+    get BrowserUri() : vscode.Uri | undefined {
+        if(!this.isBrowsable){
+            return undefined;
+        }
+
+        let host = 'localhost';
+        let port = this.replica.ports[0];
+        let protocol = 'http';
+    
+        //We want to prefer the environment variable so that it matches as closely as possible to GetServiceUri.
+        //Which is what code would get if accessing this service.
+        if(this.replica.environment) {
+            host = this.replica.environment[`service__${this.service.description.name}__host`.toUpperCase()];
+            port = Number.parseInt(this.replica.environment[`service__${this.service.description.name}__port`.toUpperCase()]);
+            protocol = this.replica.environment[`service__${this.service.description.name}__protocol`.toUpperCase()] ?? 'http';
+        }
+
+        return vscode.Uri.parse(`${protocol}://${host}:${port}`);
     }
 }

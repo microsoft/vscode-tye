@@ -45,7 +45,7 @@ export function activate(context: vscode.ExtensionContext): void {
 	));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.refreshEntry', () =>
-		treeProvider.refresh()
+		servicesTreeDataProvider.refresh()
 	));
 
 	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.browseService', async (serviceNode: ReplicaNode) => {
