@@ -157,6 +157,10 @@
 			{
 				"view": "vscode-tye.views.services",
 				"contents": "%vscode-tye.views.services.contents%"
+			},
+			{
+				"view": "vscode-tye.views.services2",
+				"contents": "%vscode-tye.views.services2.contents%"
 			}
 		],
 		"viewsContainers": {

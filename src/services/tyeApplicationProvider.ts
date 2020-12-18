@@ -46,15 +46,9 @@ export class MdnsBasedTyeApplicationProvider extends vscode.Disposable implement
     }
 
     private async toApplications(services: MdnsService[]): Promise<TyeApplication[]> {
-        let applications =
+        const applications =
             services
                 .map(service => MdnsBasedTyeApplicationProvider.toApplication(service));
-
-        if (applications.length === 0) {
-            applications = [
-                { dashboard: vscode.Uri.parse('http://localhost:8000') }
-            ];
-        }
 
         return await Promise.all(applications.map(application => this.withPids(application)));
     }
