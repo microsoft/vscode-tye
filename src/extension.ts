@@ -40,45 +40,43 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			actionContext.telemetry.properties.isActivationEvent = 'true';
 
 			const httpClient = new AxiosHttpClient();
-			const taskMonitor = new TyeTaskMonitor();
-		
-			context.subscriptions.push(taskMonitor);
+			const taskMonitor = registerDisposable(new TyeTaskMonitor());
 		
 			const tyeClientProvider = httpTyeClientProvider(httpClient);
 			const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(taskMonitor, tyeClientProvider);
 		
 			const logsContentProvider = new TyeLogsContentProvider(tyeClientProvider);
-			context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('tye-log', logsContentProvider));
+			registerDisposable(vscode.workspace.registerTextDocumentContentProvider('tye-log', logsContentProvider));
 		
 			const treeProvider = new TyeServicesProvider(vscode.workspace.workspaceFolders, tyeApplicationProvider, tyeClientProvider);
-			context.subscriptions.push(vscode.window.registerTreeDataProvider(
+			registerDisposable(vscode.window.registerTreeDataProvider(
 				'vscode-tye.views.services',
 				treeProvider
 			));
 		
-			context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.refreshEntry', () =>
+			registerDisposable(vscode.commands.registerCommand('vscode-tye.commands.refreshEntry', () =>
 				treeProvider.refresh()
 			));
 		
-			context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.browseService', async (serviceNode: ReplicaNode) => {
+			registerDisposable(vscode.commands.registerCommand('vscode-tye.commands.browseService', async (serviceNode: ReplicaNode) => {
 				const uri = serviceNode.BrowserUri;
 				if(uri) {
 					await vscode.env.openExternal(uri);
 				}
 			}));
 		
-			context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.launchTyeDashboard', async (dashboard: vscode.Uri) => {
+			registerDisposable(vscode.commands.registerCommand('vscode-tye.commands.launchTyeDashboard', async (dashboard: vscode.Uri) => {
 				if (dashboard?.scheme === 'http' || dashboard?.scheme === 'https') {
 					await vscode.env.openExternal(dashboard);
 				}
 			}));
 		
-			context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.attachService', async (node: ReplicaNode) => {
+			registerDisposable(vscode.commands.registerCommand('vscode-tye.commands.attachService', async (node: ReplicaNode) => {
 				const replica: TyeReplica = node.replica;
 				await attachToReplica(undefined, replica.name, replica.pid);
 			}));
 		
-			context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.showLogs', async (node: ServiceNode) => {
+			registerDisposable(vscode.commands.registerCommand('vscode-tye.commands.showLogs', async (node: ServiceNode) => {
 				const dashboard = node.application.dashboard;
 				const service: TyeService = node.service;
 		
@@ -94,7 +92,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 				await vscode.window.showTextDocument(doc, {preview:false});
 			}));
 		
-			context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.debugAll', async () => {
+			registerDisposable(vscode.commands.registerCommand('vscode-tye.commands.debugAll', async () => {
 				const applications = await tyeApplicationProvider.getApplications();
 				
 				// NOTE: We arbitrarily only attach to processes associated with the first application.
@@ -118,15 +116,15 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 		
 			const debugSessionMonitor = new CoreClrDebugSessionMonitor();
 		
-			context.subscriptions.push(debugSessionMonitor);
+			registerDisposable(debugSessionMonitor);
 		
 			const applicationWatcher = new TyeApplicationDebugSessionWatcher(debugSessionMonitor, tyeApplicationProvider);
 		
-			context.subscriptions.push(applicationWatcher);
+			registerDisposable(applicationWatcher);
 		
-			context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('tye', new TyeDebugConfigurationProvider(tyeApplicationProvider, applicationWatcher)));
+			registerDisposable(vscode.debug.registerDebugConfigurationProvider('tye', new TyeDebugConfigurationProvider(tyeApplicationProvider, applicationWatcher)));
 		
-			context.subscriptions.push(vscode.tasks.registerTaskProvider('tye-run', new TyeRunCommandTaskProvider(taskMonitor)));
+			registerDisposable(vscode.tasks.registerTaskProvider('tye-run', new TyeRunCommandTaskProvider(taskMonitor)));
 
 			return Promise.resolve();
 		});
