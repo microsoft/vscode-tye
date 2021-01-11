@@ -18,6 +18,7 @@
 		"Other"
 	],
 	"activationEvents": [
+		"onCommand:vscode-tye.commands.scaffolding.scaffoldTyeTasks",
 		"onCommand:workbench.action.tasks.runTask",
 		"onDebugResolve:tye",
 		"onView:vscode-tye.views.services"
@@ -196,6 +197,11 @@
 			{
 				"command": "vscode-tye.commands.attachService",
 				"title": "%vscode-tye.commands.attachService.title%",
+				"icon": "$(debug)"
+			},
+			{
+				"command": "vscode-tye.commands.scaffolding.scaffoldTyeTasks",
+				"title": "%vscode-tye.commands.scaffolding.scaffoldTyeTasks.title%",
 				"icon": "$(debug)"
 			},
 			{
