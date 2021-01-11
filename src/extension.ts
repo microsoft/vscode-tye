@@ -45,10 +45,10 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const tyeClientProvider = httpTyeClientProvider(httpClient);
 			const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(taskMonitor, tyeClientProvider);
 		
-			const logsContentProvider = new TyeLogsContentProvider(tyeClientProvider);
-			registerDisposable(vscode.workspace.registerTextDocumentContentProvider('tye-log', logsContentProvider));
+			registerDisposable(vscode.workspace.registerTextDocumentContentProvider('tye-log', new TyeLogsContentProvider(tyeClientProvider)));
 		
 			const treeProvider = new TyeServicesProvider(vscode.workspace.workspaceFolders, tyeApplicationProvider, tyeClientProvider);
+
 			registerDisposable(vscode.window.registerTreeDataProvider(
 				'vscode-tye.views.services',
 				treeProvider
@@ -114,13 +114,8 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 				}
 			}));
 		
-			const debugSessionMonitor = new CoreClrDebugSessionMonitor();
-		
-			registerDisposable(debugSessionMonitor);
-		
-			const applicationWatcher = new TyeApplicationDebugSessionWatcher(debugSessionMonitor, tyeApplicationProvider);
-		
-			registerDisposable(applicationWatcher);
+			const debugSessionMonitor = registerDisposable(new CoreClrDebugSessionMonitor());
+			const applicationWatcher = registerDisposable(new TyeApplicationDebugSessionWatcher(debugSessionMonitor, tyeApplicationProvider));
 		
 			registerDisposable(vscode.debug.registerDebugConfigurationProvider('tye', new TyeDebugConfigurationProvider(tyeApplicationProvider, applicationWatcher)));
 		
