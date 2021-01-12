@@ -14,95 +14,125 @@ import { TaskBasedTyeApplicationProvider } from './services/tyeApplicationProvid
 import { TyeApplicationDebugSessionWatcher } from './debug/tyeApplicationWatcher';
 import { CoreClrDebugSessionMonitor } from './debug/debugSessionMonitor';
 import { attachToReplica } from './debug/attachToReplica';
+import { AzureUserInput, createAzExtOutputChannel, registerUIExtensionVariables, IActionContext } from 'vscode-azureextensionui';
+import ext from './ext';
+import AzureTelemetryProvider from './services/telemetryProvider';
 
-export function activate(context: vscode.ExtensionContext): void {
+export function activate(context: vscode.ExtensionContext): Promise<void> {
+	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
+		context.subscriptions.push(disposable);
+		
+		return disposable;
+	}
 
-	const httpClient = new AxiosHttpClient();
-	const taskMonitor = new TyeTaskMonitor();
+	ext.context = context;
+	ext.ignoreBundle = true;
+	ext.outputChannel = registerDisposable(createAzExtOutputChannel('Tye', 'tye'));
+	ext.ui = new AzureUserInput(context.globalState);
 
-	context.subscriptions.push(taskMonitor);
+	registerUIExtensionVariables(ext);
 
-	const tyeClientProvider = httpTyeClientProvider(httpClient);
-	const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(taskMonitor, tyeClientProvider);
+	const telemetryProvider = new AzureTelemetryProvider();
 
-	const logsContentProvider = new TyeLogsContentProvider(tyeClientProvider);
-	context.subscriptions.push(vscode.workspace.registerTextDocumentContentProvider('tye-log', logsContentProvider));
+	return telemetryProvider.callWithTelemetry(
+		'vscode-tye.extension.activate',
+		(actionContext: IActionContext) => {
+			actionContext.telemetry.properties.isActivationEvent = 'true';
 
-	const treeProvider = new TyeServicesProvider(vscode.workspace.workspaceFolders, tyeApplicationProvider, tyeClientProvider);
-	context.subscriptions.push(vscode.window.registerTreeDataProvider(
-		'vscode-tye.views.services',
-		treeProvider
-	));
+			const httpClient = new AxiosHttpClient();
+			const taskMonitor = registerDisposable(new TyeTaskMonitor());
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.refreshEntry', () =>
-		treeProvider.refresh()
-	));
+			const tyeClientProvider = httpTyeClientProvider(httpClient);
+			const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(taskMonitor, tyeClientProvider);
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.browseService', async (serviceNode: ReplicaNode) => {
-		const uri = serviceNode.BrowserUri;
-		if(uri) {
-			await vscode.env.openExternal(uri);
-		}
-	}));
+			registerDisposable(vscode.workspace.registerTextDocumentContentProvider('tye-log', new TyeLogsContentProvider(tyeClientProvider)));
+		
+			const treeProvider = new TyeServicesProvider(vscode.workspace.workspaceFolders, tyeApplicationProvider, tyeClientProvider);
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.launchTyeDashboard', async (dashboard: vscode.Uri) => {
-		if (dashboard?.scheme === 'http' || dashboard?.scheme === 'https') {
-			await vscode.env.openExternal(dashboard);
-		}
-	}));
+			registerDisposable(vscode.window.registerTreeDataProvider(
+				'vscode-tye.views.services',
+				treeProvider
+			));
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.attachService', async (node: ReplicaNode) => {
-		const replica: TyeReplica = node.replica;
-		await attachToReplica(undefined, replica.name, replica.pid);
-	}));
+			telemetryProvider.registerCommandWithTelemetry(
+				'vscode-tye.commands.refreshEntry',
+				() => {
+					treeProvider.refresh()
+				});
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.showLogs', async (node: ServiceNode) => {
-		const dashboard = node.application.dashboard;
-		const service: TyeService = node.service;
-
-		const logUri =
-			vscode.Uri
-				.parse(`tye-log://logs/${service.description.name}`)
-				.with({
-					query: querystring.stringify({ dashboard: dashboard?.toString() })
+			telemetryProvider.registerCommandWithTelemetry(
+				'vscode-tye.commands.browseService',
+				async (contextx, serviceNode: ReplicaNode) => {
+					const uri = serviceNode.BrowserUri;
+					if(uri) {
+						await vscode.env.openExternal(uri);
+					}
 			});
 
-		const doc = await vscode.workspace.openTextDocument(logUri);
+			telemetryProvider.registerCommandWithTelemetry(
+				'vscode-tye.commands.launchTyeDashboard',
+					async (context, dashboard: vscode.Uri) => {
+					if (dashboard?.scheme === 'http' || dashboard?.scheme === 'https') {
+						await vscode.env.openExternal(dashboard);
+					}
+				});
 
-		await vscode.window.showTextDocument(doc, {preview:false});
-	}));
+			telemetryProvider.registerCommandWithTelemetry(
+					'vscode-tye.commands.attachService',
+					async (context, node: ReplicaNode) => {
+					const replica: TyeReplica = node.replica;
+					await attachToReplica(undefined, replica.name, replica.pid);
+				});
 
-	context.subscriptions.push(vscode.commands.registerCommand('vscode-tye.commands.debugAll', async () => {
-		const applications = await tyeApplicationProvider.getApplications();
-		
-		// NOTE: We arbitrarily only attach to processes associated with the first application.
-		//       This matches the tree view, which also shows only that first application.
-		//       Future work will refactor the tree view and debugging for multiple applications
-		//       once Tye has better discovery support.
-		const application = applications[0];
+			telemetryProvider.registerCommandWithTelemetry(
+				'vscode-tye.commands.showLogs',
+				async (context, node: ServiceNode) => {
+					const dashboard = node.application.dashboard;
+					const service: TyeService = node.service;
 
-		if (application?.projectServices) {
-			for (const service of Object.values(application.projectServices)) {
-					for (const replicaName of Object.keys(service.replicas)) {
-						const pid = service.replicas[replicaName];
+					const logUri =
+						vscode.Uri
+							.parse(`tye-log://logs/${service.description.name}`)
+							.with({
+								query: querystring.stringify({ dashboard: dashboard?.toString() })
+						});
 
-						if (pid !== undefined) {
-							await attachToReplica(undefined, replicaName, pid);
+					const doc = await vscode.workspace.openTextDocument(logUri);
+
+					await vscode.window.showTextDocument(doc, {preview:false});
+				});
+
+			telemetryProvider.registerCommandWithTelemetry(
+				'vscode-tye.commands.debugAll',
+				async () => {
+					const applications = await tyeApplicationProvider.getApplications();
+
+					// NOTE: We arbitrarily only attach to processes associated with the first application.
+					//       This matches the tree view, which also shows only that first application.
+					//       Future work will refactor the tree view and debugging for multiple applications
+					//       once Tye has better discovery support.
+					const application = applications[0];
+
+					if (application?.projectServices) {
+						for (const service of Object.values(application.projectServices)) {
+								for (const replicaName of Object.keys(service.replicas)) {
+									const pid = service.replicas[replicaName];
+
+									if (pid !== undefined) {
+										await attachToReplica(undefined, replicaName, pid);
+									}
+								}
 						}
 					}
-			}
-		}
-	}));
+				});
+		
+			const debugSessionMonitor = registerDisposable(new CoreClrDebugSessionMonitor());
+			const applicationWatcher = registerDisposable(new TyeApplicationDebugSessionWatcher(debugSessionMonitor, tyeApplicationProvider));
+		
+			registerDisposable(vscode.debug.registerDebugConfigurationProvider('tye', new TyeDebugConfigurationProvider(tyeApplicationProvider, applicationWatcher)));
+		
+			registerDisposable(vscode.tasks.registerTaskProvider('tye-run', new TyeRunCommandTaskProvider(taskMonitor, telemetryProvider)));
 
-	const debugSessionMonitor = new CoreClrDebugSessionMonitor();
-
-	context.subscriptions.push(debugSessionMonitor);
-
-	const applicationWatcher = new TyeApplicationDebugSessionWatcher(debugSessionMonitor, tyeApplicationProvider);
-
-	context.subscriptions.push(applicationWatcher);
-
-	context.subscriptions.push(vscode.debug.registerDebugConfigurationProvider('tye', new TyeDebugConfigurationProvider(tyeApplicationProvider, applicationWatcher)));
-
-	context.subscriptions.push(vscode.tasks.registerTaskProvider('tye-run', new TyeRunCommandTaskProvider(taskMonitor)));
+			return Promise.resolve();
+		});
 }
