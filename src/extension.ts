@@ -20,6 +20,7 @@ import AzureTelemetryProvider from './services/telemetryProvider';
 import createScaffoldTyeTasksCommand from './commands/scaffolding/scaffoldTyeTasks';
 import LocalScaffolder from './scaffolding/scaffolder';
 import { AggregateUserInput } from './services/userInput';
+import { WorkspaceTyeApplicationConfigurationProvider, YamlTyeApplicationConfigurationReader } from './services/tyeApplicationConfiguration';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -92,7 +93,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.scaffolding.scaffoldTyeTasks',
-				createScaffoldTyeTasksCommand(scaffolder, ui));
+				createScaffoldTyeTasksCommand(new WorkspaceTyeApplicationConfigurationProvider(new YamlTyeApplicationConfigurationReader()), scaffolder, ui));
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.showLogs',

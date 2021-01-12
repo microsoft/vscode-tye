@@ -10,6 +10,7 @@ import { ConflictHandler, ConflictUniquenessPredicate } from '../../scaffolding/
 import { names, range } from '../../util/generators';
 import { getLocalizationPathForFile } from '../../util/localization';
 import { Scaffolder } from 'src/scaffolding/scaffolder';
+import { TyeApplicationConfigurationProvider } from 'src/services/tyeApplicationConfiguration';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -28,14 +29,24 @@ async function createUniqueName(prefix: string, isUnique: ConflictUniquenessPred
     return name.value;
 }
 
-export async function scaffoldTyeTasks(context: IActionContext, scaffolder: Scaffolder, ui: UserInput): Promise<void> {
-    const folder = vscode.workspace.workspaceFolders?.[0];
+export async function scaffoldTyeTasks(context: IActionContext, configurationProvider: TyeApplicationConfigurationProvider, scaffolder: Scaffolder, ui: UserInput): Promise<void> {
+    const configurations = await configurationProvider.getConfigurations();
 
-    if (!folder) {
+    if (configurations.length === 0) {
         context.errorHandling.suppressReportIssue = true;
 
-        throw new Error(localize('commands.scaffolding.scaffoldTyeTasks.noFolderOrWorkspace', 'Open a folder or workspace.'));
+        throw new Error(localize('commands.scaffolding.scaffoldTyeTasks.noTyeYaml', 'No Tye YAML file exists in the open workspace, or no workspace or folder has been opened.'));
     }
+
+    // TODO: Support multiple configuration files.
+    if (configurations.length > 1) {
+        context.errorHandling.suppressReportIssue = true;
+
+        throw new Error(localize('commands.scaffolding.scaffoldTyeTasks.tooManyTyeYamls', 'Scaffolding supports only a single Tye YAML file per workspace.'));
+    }
+
+    const workspaceConfiguration = configurations[0];
+    const configuration = await workspaceConfiguration.getConfiguration();
 
     const onTaskConflict: ConflictHandler =
         async (label, isUnique) => {
@@ -58,10 +69,10 @@ export async function scaffoldTyeTasks(context: IActionContext, scaffolder: Scaf
 
     await scaffolder.scaffoldTask(
         'tye-run',
-        folder,
+        workspaceConfiguration.folder,
         label => {
             const tyeRunTask: TyeRunTaskDefinition = {
-                applicationName: 'tyeAppChangeThis',
+                applicationName: configuration.name,
                 label,
                 type: 'tye-run'
             };
@@ -71,6 +82,6 @@ export async function scaffoldTyeTasks(context: IActionContext, scaffolder: Scaf
         onTaskConflict);
 }
 
-const createScaffoldTyeTasksCommand = (scaffolder: Scaffolder, ui: UserInput) => (context: IActionContext): Promise<void> => scaffoldTyeTasks(context, scaffolder, ui);
+const createScaffoldTyeTasksCommand = (configurationProvider: TyeApplicationConfigurationProvider, scaffolder: Scaffolder, ui: UserInput) => (context: IActionContext): Promise<void> => scaffoldTyeTasks(context, configurationProvider, scaffolder, ui);
 
 export default createScaffoldTyeTasksCommand;
