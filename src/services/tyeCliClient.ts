@@ -19,7 +19,7 @@ export default class LocalTyeCliClient implements TyeCliClient {
         const command =
             CommandLineBuilder
                 .create('tye init')
-                .withFlagArg('--force', options?.force == true)
+                .withFlagArg('--force', options?.force === true)
                 .withFlagArg('--no-default', options?.noDefault === true)
                 .withQuotedArg(options?.path)
                 .build();

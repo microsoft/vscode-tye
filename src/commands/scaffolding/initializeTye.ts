@@ -21,7 +21,8 @@ export async function initializeTye(context: IActionContext, tyeCliClient: TyeCl
     // TODO: Support multiple folders.
     const folder = folders[0];
 
-    await tyeCliClient.init({ path: folder.uri.fsPath });
+    // TODO: Add conflict resolution.
+    await tyeCliClient.init({ force: true, path: folder.uri.fsPath });
 }
 
 const createInitializeTyeCommand = (tyeCliClient: TyeCliClient) => (context: IActionContext): Promise<void> => initializeTye(context, tyeCliClient);
