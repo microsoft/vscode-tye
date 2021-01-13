@@ -166,7 +166,7 @@
 				{
 					"id": "microsoft-tye",
 					"title": "%vscode-tye.activityBar.microsoft-tye.title%",
-					"icon": "resources/dep.png"
+					"icon": "$(server)"
 				}
 			]
 		},
