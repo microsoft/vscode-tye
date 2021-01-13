@@ -11,6 +11,7 @@ import { names, range } from '../../util/generators';
 import { getLocalizationPathForFile } from '../../util/localization';
 import { Scaffolder } from 'src/scaffolding/scaffolder';
 import { TyeApplicationConfigurationProvider } from 'src/services/tyeApplicationConfiguration';
+import { TyeDebugConfiguration } from 'src/debug/tyeDebugConfigurationProvider';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -67,7 +68,7 @@ export async function scaffoldTyeTasks(context: IActionContext, configurationPro
             }
         };
 
-    await scaffolder.scaffoldTask(
+    const preLaunchTask = await scaffolder.scaffoldTask(
         'tye-run',
         workspaceConfiguration.folder,
         label => {
@@ -80,7 +81,39 @@ export async function scaffoldTyeTasks(context: IActionContext, configurationPro
             return tyeRunTask;
         },
         onTaskConflict);
-}
+
+        await scaffolder.scaffoldConfiguration(
+            localize('commands.scaffolding.scaffoldTyeTasks.configurationName', 'Debug with Tye'),
+            workspaceConfiguration.folder,
+            name => {
+                const tyeConfiguration: TyeDebugConfiguration = {
+                    applicationName: configuration.name,
+                    name,
+                    preLaunchTask,
+                    request: 'launch',
+                    type: 'tye'
+                };
+                
+                return tyeConfiguration;
+            },
+            async (name, isUnique) => {
+                const overwrite: vscode.MessageItem = { title: localize('commands.scaffolding.scaffoldTyeTasks.overwriteConfiguration', 'Overwrite') };
+                const newConfiguration: vscode.MessageItem = { title: localize('commands.scaffolding.scaffoldTyeTasks.createConfiguration', 'Create configuration') };
+    
+                const result = await ui.showWarningMessage(
+                    localize('commands.scaffolding.scaffoldTyeTasks.configurationExists', 'The configuration \'{0}\' already exists. Do you want to overwrite it or create a new configuration?', name),
+                    { modal: true },
+                    overwrite, newConfiguration);
+    
+                if (result === overwrite) {
+                    return { 'type': 'overwrite' };
+                } else {
+                    name = await createUniqueName(localize('commands.scaffolding.scaffoldTyeTasks.configurationPrefix', '{0} - ', name), isUnique);
+    
+                    return { 'type': 'rename', name };
+                }
+            });
+    }
 
 const createScaffoldTyeTasksCommand = (configurationProvider: TyeApplicationConfigurationProvider, scaffolder: Scaffolder, ui: UserInput) => (context: IActionContext): Promise<void> => scaffoldTyeTasks(context, configurationProvider, scaffolder, ui);
 
