@@ -18,7 +18,12 @@
 		"Other"
 	],
 	"activationEvents": [
+		"onCommand:vscode-tye.commands.attachService",
+		"onCommand:vscode-tye.commands.browseService",
+		"onCommand:vscode-tye.commands.debugAll",
+		"onCommand:vscode-tye.commands.refreshEntry",
 		"onCommand:vscode-tye.commands.scaffolding.scaffoldTyeTasks",
+		"onCommand:vscode-tye.commands.showLogs",
 		"onCommand:workbench.action.tasks.runTask",
 		"onDebugResolve:tye",
 		"onView:vscode-tye.views.services"
@@ -180,37 +185,65 @@
 		},
 		"commands": [
 			{
+				"category": "Tye",
 				"command": "vscode-tye.commands.refreshEntry",
 				"title": "%vscode-tye.commands.refreshEntry.title%",
 				"icon": "$(refresh)"
 			},
 			{
+				"category": "Tye",
 				"command": "vscode-tye.commands.debugAll",
 				"title": "%vscode-tye.commands.debugAll.title%",
 				"icon": "$(debug)"
 			},
 			{
+				"category": "Tye",
 				"command": "vscode-tye.commands.browseService",
 				"title": "%vscode-tye.commands.browseService.title%",
 				"icon": "$(browser)"
 			},
 			{
+				"category": "Tye",
 				"command": "vscode-tye.commands.attachService",
 				"title": "%vscode-tye.commands.attachService.title%",
 				"icon": "$(debug)"
 			},
 			{
+				"category": "Tye",
 				"command": "vscode-tye.commands.scaffolding.scaffoldTyeTasks",
 				"title": "%vscode-tye.commands.scaffolding.scaffoldTyeTasks.title%",
 				"icon": "$(debug)"
 			},
 			{
+				"category": "Tye",
 				"command": "vscode-tye.commands.showLogs",
 				"title": "%vscode-tye.commands.showLogs.title%",
 				"icon": "$(file-text)"
 			}
 		],
 		"menus": {
+			"commandPalette": [
+				{
+					"command": "vscode-tye.commands.attachService",
+					"when": "never"
+				},
+				{
+					"command": "vscode-tye.commands.browseService",
+					"when": "never"
+				},
+				{
+					"command": "vscode-tye.commands.debugAll",
+					"when": "never"
+				},
+				{
+					"command": "vscode-tye.commands.refreshEntry",
+					"when": "never"
+				},
+				{
+					"command": "vscode-tye.commands.showLogs",
+					"when": "never"
+				}
+			],
 			"view/title": [
 				{
 					"command": "vscode-tye.commands.refreshEntry",
