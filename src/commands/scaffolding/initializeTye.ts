@@ -9,8 +9,8 @@ import { TyeCliClient } from "../../services/tyeCliClient";
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
-export async function initializeTye(context: IActionContext, tyeCliClient: TyeCliClient): Promise<void> {
-    const folders = vscode.workspace.workspaceFolders;
+export async function initializeTye(context: IActionContext, folderProvider: () => (readonly vscode.WorkspaceFolder[] | undefined), tyeCliClient: TyeCliClient): Promise<void> {
+    const folders = folderProvider();
 
     if (!folders || folders.length === 0) {
         context.errorHandling.suppressReportIssue = true;
@@ -25,6 +25,6 @@ export async function initializeTye(context: IActionContext, tyeCliClient: TyeCl
     await tyeCliClient.init({ force: true, path: folder.uri.fsPath });
 }
 
-const createInitializeTyeCommand = (tyeCliClient: TyeCliClient) => (context: IActionContext): Promise<void> => initializeTye(context, tyeCliClient);
+const createInitializeTyeCommand = (tyeCliClient: TyeCliClient) => (context: IActionContext): Promise<void> => initializeTye(context, () => vscode.workspace.workspaceFolders, tyeCliClient);
 
 export default createInitializeTyeCommand;
