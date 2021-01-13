@@ -17,6 +17,10 @@ import { attachToReplica } from './debug/attachToReplica';
 import { AzureUserInput, createAzExtOutputChannel, registerUIExtensionVariables, IActionContext } from 'vscode-azureextensionui';
 import ext from './ext';
 import AzureTelemetryProvider from './services/telemetryProvider';
+import createScaffoldTyeTasksCommand from './commands/scaffolding/scaffoldTyeTasks';
+import LocalScaffolder from './scaffolding/scaffolder';
+import { AggregateUserInput } from './services/userInput';
+import { WorkspaceTyeApplicationConfigurationProvider, YamlTyeApplicationConfigurationReader } from './services/tyeApplicationConfiguration';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -67,22 +71,29 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 					if(uri) {
 						await vscode.env.openExternal(uri);
 					}
-			});
+				});
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.launchTyeDashboard',
-					async (context, dashboard: vscode.Uri) => {
+				async (context, dashboard: vscode.Uri) => {
 					if (dashboard?.scheme === 'http' || dashboard?.scheme === 'https') {
 						await vscode.env.openExternal(dashboard);
 					}
 				});
 
 			telemetryProvider.registerCommandWithTelemetry(
-					'vscode-tye.commands.attachService',
-					async (context, node: ReplicaNode) => {
+				'vscode-tye.commands.attachService',
+				async (context, node: ReplicaNode) => {
 					const replica: TyeReplica = node.replica;
 					await attachToReplica(undefined, replica.name, replica.pid);
 				});
+
+			const scaffolder = new LocalScaffolder();
+			const ui = new AggregateUserInput(ext.ui);
+
+			telemetryProvider.registerCommandWithTelemetry(
+				'vscode-tye.commands.scaffolding.scaffoldTyeTasks',
+				createScaffoldTyeTasksCommand(new WorkspaceTyeApplicationConfigurationProvider(new YamlTyeApplicationConfigurationReader()), scaffolder, ui));
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.showLogs',
