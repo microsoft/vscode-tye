@@ -21,6 +21,7 @@ import createScaffoldTyeTasksCommand from './commands/scaffolding/scaffoldTyeTas
 import LocalScaffolder from './scaffolding/scaffolder';
 import { AggregateUserInput } from './services/userInput';
 import { WorkspaceTyeApplicationConfigurationProvider, YamlTyeApplicationConfigurationReader } from './services/tyeApplicationConfiguration';
+import createInitializeTyeCommand from './commands/scaffolding/initializeTye';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -90,6 +91,10 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 
 			const scaffolder = new LocalScaffolder();
 			const ui = new AggregateUserInput(ext.ui);
+
+			telemetryProvider.registerCommandWithTelemetry(
+				'vscode-tye.commands.scaffolding.initTye',
+				createInitializeTyeCommand());
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.scaffolding.scaffoldTyeTasks',
