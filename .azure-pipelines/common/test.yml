@@ -14,4 +14,4 @@ steps:
     customCommand: run test
   env:
     DISPLAY: :10 # Only necessary for linux tests
-    VSCODE_DAPR_IGNORE_BUNDLE: true
+    VSCODE_TYE_IGNORE_BUNDLE: true
