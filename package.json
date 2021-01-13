@@ -2,7 +2,7 @@
 	"name": "vscode-tye",
 	"displayName": "Tye",
 	"description": "Makes it easy to debug and interact with applications using Tye.",
-	"version": "0.0.1",
+	"version": "0.1.0-alpha",
 	"preview": true,
 	"publisher": "ms-azuretools",
 	"license": "SEE LICENSE IN LICENSE.txt",
@@ -12,7 +12,7 @@
 		"url": "https://github.com/Microsoft/vscode-tye/"
 	},
 	"engines": {
-		"vscode": "^1.51.0"
+		"vscode": "^1.52.1"
 	},
 	"categories": [
 		"Other"
