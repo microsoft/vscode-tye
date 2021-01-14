@@ -6,10 +6,26 @@ import * as nls from 'vscode-nls';
 import { IActionContext } from "vscode-azureextensionui";
 import { getLocalizationPathForFile } from '../../util/localization';
 import { TyeCliClient } from "../../services/tyeCliClient";
+import { TyeApplicationConfigurationProvider } from 'src/services/tyeApplicationConfiguration';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
-export async function initializeTye(context: IActionContext, folderProvider: () => (readonly vscode.WorkspaceFolder[] | undefined), tyeCliClient: TyeCliClient): Promise<void> {
+function folderProvider(): readonly vscode.WorkspaceFolder[] | undefined {
+    return vscode.workspace.workspaceFolders;
+}
+
+async function openProvider(uri: vscode.Uri): Promise<void> {
+    const document = await vscode.workspace.openTextDocument(uri);
+
+    await vscode.window.showTextDocument(document);
+}
+
+export async function initializeTye(
+    context: IActionContext,
+    folderProvider: () => (readonly vscode.WorkspaceFolder[] | undefined),
+    openProvider: (uri: vscode.Uri) => Promise<void>,
+    tyeApplicationConfigurationProvider: TyeApplicationConfigurationProvider,
+    tyeCliClient: TyeCliClient): Promise<void> {
     const folders = folderProvider();
 
     if (!folders || folders.length === 0) {
@@ -23,8 +39,15 @@ export async function initializeTye(context: IActionContext, folderProvider: () 
 
     // TODO: Add conflict resolution.
     await tyeCliClient.init({ force: true, path: folder.uri.fsPath });
+
+    const configurations = await tyeApplicationConfigurationProvider.getConfigurations();
+    const configuration = configurations[0];
+
+    if (configuration) {
+        await openProvider(configuration.file);
+    }
 }
 
-const createInitializeTyeCommand = (tyeCliClient: TyeCliClient) => (context: IActionContext): Promise<void> => initializeTye(context, () => vscode.workspace.workspaceFolders, tyeCliClient);
+const createInitializeTyeCommand = (tyeApplicationConfigurationProvider: TyeApplicationConfigurationProvider, tyeCliClient: TyeCliClient) => (context: IActionContext): Promise<void> => initializeTye(context, folderProvider, openProvider, tyeApplicationConfigurationProvider, tyeCliClient);
 
 export default createInitializeTyeCommand;

@@ -92,14 +92,15 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 
 			const scaffolder = new LocalScaffolder();
 			const ui = new AggregateUserInput(ext.ui);
+			const tyeApplicationConfigurationProvider = new WorkspaceTyeApplicationConfigurationProvider(new YamlTyeApplicationConfigurationReader());
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.scaffolding.initTye',
-				createInitializeTyeCommand(new LocalTyeCliClient()));
+				createInitializeTyeCommand(tyeApplicationConfigurationProvider, new LocalTyeCliClient()));
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.scaffolding.scaffoldTyeTasks',
-				createScaffoldTyeTasksCommand(new WorkspaceTyeApplicationConfigurationProvider(new YamlTyeApplicationConfigurationReader()), scaffolder, ui));
+				createScaffoldTyeTasksCommand(tyeApplicationConfigurationProvider, scaffolder, ui));
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.showLogs',
