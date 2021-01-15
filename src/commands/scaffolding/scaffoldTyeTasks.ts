@@ -9,9 +9,9 @@ import { IActionContext } from 'vscode-azureextensionui';
 import { ConflictHandler, ConflictUniquenessPredicate } from '../../scaffolding/conflicts';
 import { names, range } from '../../util/generators';
 import { getLocalizationPathForFile } from '../../util/localization';
-import { Scaffolder } from 'src/scaffolding/scaffolder';
-import { TyeApplicationConfigurationProvider } from 'src/services/tyeApplicationConfiguration';
-import { TyeDebugConfiguration } from 'src/debug/tyeDebugConfigurationProvider';
+import { Scaffolder } from '../../scaffolding/scaffolder';
+import { TyeApplicationConfigurationProvider } from '../../services/tyeApplicationConfiguration';
+import { TyeDebugConfiguration } from '../../debug/tyeDebugConfigurationProvider';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
