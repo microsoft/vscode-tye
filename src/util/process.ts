@@ -110,7 +110,7 @@ export class Process extends vscode.Disposable {
                     const tokenListener = token.onCancellationRequested(
                         () => {
                             tokenListener.dispose();
-                            
+
                             if (os.platform() === 'win32') {
                                 // NOTE: Windows does not support SIGTERM/SIGINT/SIGBREAK, so there can be no graceful process shutdown.
                                 //       As a partial mitigation, use `taskkill` to kill the entire process tree.
