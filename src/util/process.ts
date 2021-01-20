@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 import * as cp from 'child_process';
+import * as os from 'os';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import * as localization from './localization';
@@ -108,9 +109,16 @@ export class Process extends vscode.Disposable {
                 if (token) {
                     const tokenListener = token.onCancellationRequested(
                         () => {
-                            process.kill();
-
                             tokenListener.dispose();
+
+                            if (os.platform() === 'win32') {
+                                // NOTE: Windows does not support SIGTERM/SIGINT/SIGBREAK, so there can be no graceful process shutdown.
+                                //       As a partial mitigation, use `taskkill` to kill the entire process tree.
+                                void Process.exec(`taskkill /pid ${process.pid} /t /f`);
+                            } else {
+                                // NOTE: Defaults to SIGTERM which allows process opportunity to shutdown gracefully.
+                                process.kill();
+                            }
                         });
                 }
             });
