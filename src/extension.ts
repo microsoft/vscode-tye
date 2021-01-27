@@ -52,7 +52,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const taskMonitor = registerDisposable(new TyeTaskMonitor());
 
 			const tyeClientProvider = httpTyeClientProvider(httpClient);
-			const tyeApplicationProvider = new MdnsBasedTyeApplicationProvider(new MulticastDnsMdnsProvider(), tyeClientProvider);
+			const tyeApplicationProvider = new MdnsBasedTyeApplicationProvider(new MulticastDnsMdnsProvider(), taskMonitor, tyeClientProvider);
 
 			registerDisposable(vscode.workspace.registerTextDocumentContentProvider('tye-log', new TyeLogsContentProvider(tyeClientProvider)));
 		

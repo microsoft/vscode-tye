@@ -2,10 +2,11 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
-import { Observable } from 'rxjs'
+import { merge, Observable } from 'rxjs'
 import { first, switchMap } from 'rxjs/operators';
 import { TyeClientProvider } from './tyeClient';
 import { MdnsService, MdnsServiceClient, MdnsServiceProvider } from './mdnsProvider';
+import { TaskMonitor } from 'src/tasks/taskMonitor';
 
 export type TyeProjectService = {
     replicas: { [key: string]: number | undefined };
@@ -26,7 +27,7 @@ export interface TyeApplicationProvider {
 export class MdnsBasedTyeApplicationProvider extends vscode.Disposable implements TyeApplicationProvider {
     private readonly mdnsServiceClient: MdnsServiceClient;
 
-    constructor(private readonly mdnsServiceProvider: MdnsServiceProvider, private readonly tyeClientProvider: TyeClientProvider) {
+    constructor(private readonly mdnsServiceProvider: MdnsServiceProvider, private readonly taskMonitor: TaskMonitor, private readonly tyeClientProvider: TyeClientProvider) {
         super(
             () => {
                 this.mdnsServiceClient.dispose();
@@ -34,8 +35,9 @@ export class MdnsBasedTyeApplicationProvider extends vscode.Disposable implement
 
         this.mdnsServiceClient = mdnsServiceProvider.createClient('_microsoft-tye._tcp.local');
 
-        this.applications =
-            this.mdnsServiceClient.services
+        this.applications = merge(
+            this.mdnsServiceClient.services,
+            taskMonitor.tasks.pipe(switchMap(() => this.mdnsServiceClient.services.pipe(first()))))
             .pipe(switchMap(services => this.toApplications(services)));
     }
 

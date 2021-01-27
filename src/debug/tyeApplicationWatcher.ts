@@ -32,7 +32,8 @@ export class TyeApplicationDebugSessionWatcher extends vscode.Disposable impleme
                 .subscribe(
                     applications => {
                         for (const watchedApplicationName of Object.keys(this.watchedApplications)) {
-                            const application = applications.find(a => a.name === watchedApplicationName);
+                            // TODO: Once applications names are properly broadcast via mDNS, do not default to the first application (if name is not found).
+                            const application = applications.find(a => a.name === watchedApplicationName) ?? applications[0];
 
                             if (application) {
                                 // Application is still running, see if new replicas need attaching to...
