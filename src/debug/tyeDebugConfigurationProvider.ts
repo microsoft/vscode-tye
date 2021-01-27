@@ -24,7 +24,9 @@ export class TyeDebugConfigurationProvider implements vscode.DebugConfigurationP
         const tyeDebugConfiguration = <TyeDebugConfiguration>debugConfiguration;
 
         const applications = await this.tyeApplicationProvider.getApplications();
-        const application = applications.find(a => a.name === tyeDebugConfiguration.applicationName);
+
+        // TODO: Once applications names are properly broadcast via mDNS, do not default to the first application (if name is not found).
+        const application = applications.find(a => a.name === tyeDebugConfiguration.applicationName) ?? applications[0];
 
         if (!application) {
             throw new Error(localize('debug.tyeDebugConfigurationProvider.applicationNotRunning', 'The Tye application "{0}" is not running.', tyeDebugConfiguration.applicationName));

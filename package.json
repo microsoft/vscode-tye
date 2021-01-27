@@ -2,21 +2,29 @@
 	"name": "vscode-tye",
 	"displayName": "Tye",
 	"description": "Makes it easy to debug and interact with applications using Tye.",
-	"version": "0.0.1",
+	"version": "0.1.0-alpha",
 	"preview": true,
 	"publisher": "ms-azuretools",
 	"license": "SEE LICENSE IN LICENSE.txt",
+	"aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
 	"homepage": "https://github.com/Microsoft/vscode-tye/",
 	"repository": {
 		"url": "https://github.com/Microsoft/vscode-tye/"
 	},
 	"engines": {
-		"vscode": "^1.51.0"
+		"vscode": "^1.52.1"
 	},
 	"categories": [
 		"Other"
 	],
 	"activationEvents": [
+		"onCommand:vscode-tye.commands.attachService",
+		"onCommand:vscode-tye.commands.browseService",
+		"onCommand:vscode-tye.commands.debugAll",
+		"onCommand:vscode-tye.commands.refreshEntry",
+		"onCommand:vscode-tye.commands.scaffolding.initTye",
+		"onCommand:vscode-tye.commands.scaffolding.scaffoldTyeTasks",
+		"onCommand:vscode-tye.commands.showLogs",
 		"onCommand:workbench.action.tasks.runTask",
 		"onDebugResolve:tye",
 		"onView:vscode-tye.views.services2"
@@ -164,7 +172,7 @@
 				{
 					"id": "microsoft-tye",
 					"title": "%vscode-tye.activityBar.microsoft-tye.title%",
-					"icon": "resources/dep.png"
+					"icon": "$(server)"
 				}
 			]
 		},
@@ -178,32 +186,69 @@
 		},
 		"commands": [
 			{
+				"category": "Tye",
 				"command": "vscode-tye.commands.refreshEntry",
 				"title": "%vscode-tye.commands.refreshEntry.title%",
 				"icon": "$(refresh)"
 			},
 			{
+				"category": "Tye",
 				"command": "vscode-tye.commands.debugAll",
 				"title": "%vscode-tye.commands.debugAll.title%",
 				"icon": "$(debug)"
 			},
 			{
+				"category": "Tye",
 				"command": "vscode-tye.commands.browseService",
 				"title": "%vscode-tye.commands.browseService.title%",
 				"icon": "$(browser)"
 			},
 			{
+				"category": "Tye",
 				"command": "vscode-tye.commands.attachService",
 				"title": "%vscode-tye.commands.attachService.title%",
 				"icon": "$(debug)"
 			},
 			{
+				"category": "Tye",
+				"command": "vscode-tye.commands.scaffolding.initTye",
+				"title": "%vscode-tye.commands.scaffolding.initTye.title%"
+			},
+			{
+				"category": "Tye",
+				"command": "vscode-tye.commands.scaffolding.scaffoldTye",
+				"title": "%vscode-tye.commands.scaffolding.scaffoldTyeTasks.title%"
+			},
+			{
+				"category": "Tye",
 				"command": "vscode-tye.commands.showLogs",
 				"title": "%vscode-tye.commands.showLogs.title%",
 				"icon": "$(file-text)"
 			}
 		],
 		"menus": {
+			"commandPalette": [
+				{
+					"command": "vscode-tye.commands.attachService",
+					"when": "never"
+				},
+				{
+					"command": "vscode-tye.commands.browseService",
+					"when": "never"
+				},
+				{
+					"command": "vscode-tye.commands.debugAll",
+					"when": "never"
+				},
+				{
+					"command": "vscode-tye.commands.refreshEntry",
+					"when": "never"
+				},
+				{
+					"command": "vscode-tye.commands.showLogs",
+					"when": "never"
+				}
+			],
 			"view/title": [
 				{
 					"command": "vscode-tye.commands.refreshEntry",
@@ -252,6 +297,8 @@
 		"clean": "gulp clean",
 		"lint": "gulp lint",
 		"package": "gulp package",
+		"ci-build": "gulp ci-build",
+		"ci-package": "gulp ci-package",
 		"test": "gulp test"
 	},
 	"devDependencies": {
@@ -259,6 +306,7 @@
 		"@types/glob": "^7.1.3",
 		"@types/gulp": "^4.0.7",
 		"@types/gulp-sourcemaps": "^0.0.32",
+		"@types/js-yaml": "^4.0.0",
 		"@types/lodash.isequal": "^4.5.5",
 		"@types/mocha": "^8.0.4",
 		"@types/node": "^12.19.4",
@@ -288,8 +336,10 @@
 		"@reactivex/rxjs": "^6.6.3",
 		"axios": "^0.21.0",
 		"fs-extra": "^9.0.1",
+		"js-yaml": "^4.0.0",
 		"lodash.isequal": "^4.5.0",
 		"multicast-dns": "^7.2.2",
+		"vscode-azureextensionui": "^0.38.3",
 		"vscode-nls": "^5.0.0"
 	}
 }

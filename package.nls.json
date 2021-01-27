@@ -5,6 +5,8 @@
     "vscode-tye.commands.debugAll.title": "Debug",
     "vscode-tye.commands.browseService.title": "Browse",
     "vscode-tye.commands.attachService.title": "Attach",
+    "vscode-tye.commands.scaffolding.initTye.title": "Initialize Tye",
+    "vscode-tye.commands.scaffolding.scaffoldTyeTasks.title": "Scaffold Tye Tasks",
     "vscode-tye.commands.showLogs.title": "Logs",
 
     "vscode-tye.debuggers.tye.properties.applicationName.description": "The name of the Tye application whose services to debug.",
