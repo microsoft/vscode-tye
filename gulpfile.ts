@@ -95,7 +95,7 @@ function compilePackedTaskFactory(mode: 'production' | 'development'): () => Pro
                         const info = stats?.toJson();
 
                         if (stats?.hasErrors()) {
-                            return reject(new Error(info!.errors!.map((error: Error) => error.message).join('\n')));
+                            return reject(new Error(info!.errors!.map((error: { message: string }) => error.message).join('\n')));
                         }
 
                         if (stats?.hasWarnings()) {
