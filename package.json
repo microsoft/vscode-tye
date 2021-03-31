@@ -216,7 +216,7 @@
 			},
 			{
 				"category": "Tye",
-				"command": "vscode-tye.commands.scaffolding.scaffoldTye",
+				"command": "vscode-tye.commands.scaffolding.scaffoldTyeTasks",
 				"title": "%vscode-tye.commands.scaffolding.scaffoldTyeTasks.title%"
 			},
 			{
