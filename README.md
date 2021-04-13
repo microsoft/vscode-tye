@@ -7,12 +7,15 @@ The Tye extension makes it easier to run and debug applications that are using [
 ### Docker
 
 Using Tye requires Docker to be installed.
+[Install Docker](https://docs.docker.com/get-docker/) on your machine and add it to the system path.
 
 ### Tye
 
 Using the Tye tooling requires a project to be run using the Tye CLI.
+Instructions for installing Tye can be found [here](https://github.com/dotnet/tye/blob/main/docs/getting_started.md).
 
 ### Visual Studio Code
+[Download](https://code.visualstudio.com/Download) and install Visual Studio Code on your machine.
 
 ## Feature Overview
 
