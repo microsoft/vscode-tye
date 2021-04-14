@@ -172,7 +172,7 @@
 				{
 					"id": "microsoft-tye",
 					"title": "%vscode-tye.activityBar.microsoft-tye.title%",
-					"icon": "$(server)"
+					"icon": "resources/brand-tye-white.svg"
 				}
 			]
 		},
@@ -195,7 +195,7 @@
 				"category": "Tye",
 				"command": "vscode-tye.commands.debugAll",
 				"title": "%vscode-tye.commands.debugAll.title%",
-				"icon": "$(debug)"
+				"icon": "$(debug-alt)"
 			},
 			{
 				"category": "Tye",
@@ -207,7 +207,7 @@
 				"category": "Tye",
 				"command": "vscode-tye.commands.attachService",
 				"title": "%vscode-tye.commands.attachService.title%",
-				"icon": "$(debug)"
+				"icon": "$(debug-alt)"
 			},
 			{
 				"category": "Tye",
@@ -223,7 +223,7 @@
 				"category": "Tye",
 				"command": "vscode-tye.commands.showLogs",
 				"title": "%vscode-tye.commands.showLogs.title%",
-				"icon": "$(file-text)"
+				"icon": "$(output)"
 			}
 		],
 		"menus": {
