@@ -95,7 +95,7 @@ class DashboardNode extends TyeNode {
 
   command = {command: 'vscode-tye.commands.launchTyeDashboard', title: '', arguments: [this.dashboard]};
 
-  iconPath = new vscode.ThemeIcon('book');
+  iconPath = new vscode.ThemeIcon('dashboard');
 
   contextValue = 'information';
 }
@@ -127,6 +127,7 @@ export class ReplicaNode extends TyeNode {
     this.replica = replica;
     this.service = service;
     this.contextValue = service.serviceType;
+    this.iconPath = new vscode.ThemeIcon('server-process');
     if(this.service.serviceType === 'project') {
       this.contextValue += ' attachable'
     }
