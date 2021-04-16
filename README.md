@@ -18,6 +18,16 @@ Instructions for installing Tye CLI can be found [here](https://github.com/dotne
 [Download](https://code.visualstudio.com/Download) and install Visual Studio Code on your machine.
 
 ## Feature Overview
+### View running Tye instance
+#### Browse to the running service
+#### launch Tye dashboard
+### Task integration for running Tye
+#### Create a task `Tye run`
+### Debug integration for attaching the debugger
+#### attach the debugger to already running service
+#### debug all services
+### Scaffolding of tasks/debug configuration
+#### Scaffold the task and debug configuration
 
 ## Contributing
 
