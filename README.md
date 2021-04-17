@@ -18,16 +18,40 @@ Instructions for installing Tye CLI can be found [here](https://github.com/dotne
 [Download](https://code.visualstudio.com/Download) and install Visual Studio Code on your machine.
 
 ## Feature Overview
+The Tye extension lets you view and debug Tye services.
+
 ### View running Tye instance
-#### Browse to the running service
-#### launch Tye dashboard
-### Task integration for running Tye
-#### Create a task `Tye run`
-### Debug integration for attaching the debugger
-#### attach the debugger to already running service
-#### debug all services
-### Scaffolding of tasks/debug configuration
-#### Scaffold the task and debug configuration
+You can view the running Tye instance, view all services and it's replicas, view logs and open the services in the browser.
+
+![View running Tye instance](resources/readme/tye-view.gif)
+
+### Generating Tye assets
+You can add `tye.yaml` file to your workspace by opening the Command Palette (<kbd>F1</kbd>) and using **Tye: Initialize Tye** command. The command will generate `tye.yaml` based on the microsoervices present in the project.
+
+![Initialize Tye](resources/readme/tye-init.gif)
+
+### Generating task and launch configuration
+You can add the task **tye-run** to run the Tye application and a debug launch configuration **Debug with Tye** to debug the Tye application by opening the Command Palette (<kbd>F1</kbd>) and using the **Tye: Scaffold Tye Tasks** command.
+
+![Generating tasks and launch configuration](resources/readme/tye-scaffold.gif)
+
+### Running and debugging the Tye application
+The extension offers command to run the Tye application, attach the debugger to already running service or start the Tye application with debugger attached to all debuggable services.
+
+#### Run the Tye application
+You can run the Tye application by running the task **tye-run**.
+
+![Run the Tye application](resources/readme/tye-run.gif)
+
+#### Debug an already running service
+You can attach the debugger to an already running service by clicking on the **Attach** icon on any replica of the service you want to debug.
+
+![Debug an already running service](resources/readme/tye-debug-attach.gif)
+
+#### Debug with Tye
+You can attach the debugger to all the running and services by using the **Debug with Tye** launch configuration.
+
+![Debug with Tye](resources/readme/tye-debug-all.gif)
 
 ## Contributing
 
