@@ -24,6 +24,10 @@ import { WorkspaceTyeApplicationConfigurationProvider, YamlTyeApplicationConfigu
 import createInitializeTyeCommand from './commands/scaffolding/initializeTye';
 import LocalTyeCliClient from './services/tyeCliClient';
 import HelpTreeDataProvider from './views/help/helpTreeDataProvider';
+import createReadDocumentationCommand from './commands/help/readDocumentation';
+import createGetStartedCommand from './commands/help/getStarted';
+import createReportIssueCommand from './commands/help/reportIssue';
+import createReviewIssuesCommand from './commands/help/reviewIssues';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -150,6 +154,11 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 					}
 				});
 		
+			telemetryProvider.registerCommandWithTelemetry('vscode-tye.help.readDocumentation', createReadDocumentationCommand(ui));
+			telemetryProvider.registerCommandWithTelemetry('vscode-tye.help.getStarted', createGetStartedCommand(ui));
+			telemetryProvider.registerCommandWithTelemetry('vscode-tye.help.reportIssue', createReportIssueCommand(ui));
+			telemetryProvider.registerCommandWithTelemetry('vscode-tye.help.reviewIssues', createReviewIssuesCommand(ui));
+	
 			const debugSessionMonitor = registerDisposable(new CoreClrDebugSessionMonitor());
 			const applicationWatcher = registerDisposable(new TyeApplicationDebugSessionWatcher(debugSessionMonitor, tyeApplicationProvider));
 		

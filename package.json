@@ -25,6 +25,10 @@
 		"onCommand:vscode-tye.commands.scaffolding.initTye",
 		"onCommand:vscode-tye.commands.scaffolding.scaffoldTyeTasks",
 		"onCommand:vscode-tye.commands.showLogs",
+		"onCommand:vscode-tye.help.getStarted",
+		"onCommand:vscode-tye.help.readDocumentation",
+		"onCommand:vscode-tye.help.reportIssue",
+		"onCommand:vscode-tye.help.reviewIssues",
 		"onCommand:workbench.action.tasks.runTask",
 		"onDebugResolve:tye",
 		"onView:vscode-tye.views.services"
@@ -228,6 +232,26 @@
 				"command": "vscode-tye.commands.showLogs",
 				"title": "%vscode-tye.commands.showLogs.title%",
 				"icon": "$(output)"
+			},
+			{
+				"command": "vscode-tye.help.getStarted",
+				"title": "%vscode-tye.help.getStarted.title%",
+				"category": "Tye"
+			},
+			{
+				"command": "vscode-tye.help.readDocumentation",
+				"title": "%vscode-tye.help.readDocumentation.title%",
+				"category": "Tye"
+			},
+			{
+				"command": "vscode-tye.help.reportIssue",
+				"title": "%vscode-tye.help.reportIssue.title%",
+				"category": "Tye"
+			},
+			{
+				"command": "vscode-tye.help.reviewIssues",
+				"title": "%vscode-tye.help.reviewIssues.title%",
+				"category": "Tye"
 			}
 		],
 		"menus": {
