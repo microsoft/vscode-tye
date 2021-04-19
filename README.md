@@ -20,13 +20,13 @@ Instructions for installing Tye CLI can be found [here](https://github.com/dotne
 ## Feature Overview
 The Tye extension lets you view and debug Tye services.
 
-### View running Tye instance
+### View running Tye application
 You can view the running Tye instance, view all services and it's replicas, view logs and open the services in the browser.
 
-![View running Tye instance](resources/readme/tye-view.gif)
+![View running Tye application](resources/readme/tye-view.gif)
 
 ### Generating Tye assets
-You can add `tye.yaml` file to your workspace by opening the Command Palette (<kbd>F1</kbd>) and using **Tye: Initialize Tye** command. The command will generate `tye.yaml` based on the microsoervices present in the project.
+You can add `tye.yaml` file to your workspace by opening the Command Palette (<kbd>F1</kbd>) and using **Tye: Initialize Tye** command. The command will generate `tye.yaml` based on .NET projects in the solution currently open in the workspace.
 
 ![Initialize Tye](resources/readme/tye-init.gif)
 
