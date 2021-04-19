@@ -24,7 +24,7 @@ async function createUniqueName(prefix: string, isUnique: ConflictUniquenessPred
     }
 
     if (name.done) {
-        throw new Error(localize('commands.scaffoldDaprTasks.uniqueNameError', 'Unable to generate a unique name.'));
+        throw new Error(localize('commands.scaffoldTyeTasks.uniqueNameError', 'Unable to generate a unique name.'));
     }
 
     return name.value;

@@ -23,6 +23,7 @@ import { AggregateUserInput } from './services/userInput';
 import { WorkspaceTyeApplicationConfigurationProvider, YamlTyeApplicationConfigurationReader } from './services/tyeApplicationConfiguration';
 import createInitializeTyeCommand from './commands/scaffolding/initializeTye';
 import LocalTyeCliClient from './services/tyeCliClient';
+import HelpTreeDataProvider from './views/help/helpTreeDataProvider';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -59,6 +60,11 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 				'vscode-tye.views.services',
 				treeProvider
 			));
+
+			registerDisposable(
+				vscode.window.registerTreeDataProvider(
+					'vscode-tye.views.help',
+					new HelpTreeDataProvider()));
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.refreshEntry',
