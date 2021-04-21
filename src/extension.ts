@@ -28,6 +28,7 @@ import createReadDocumentationCommand from './commands/help/readDocumentation';
 import createGetStartedCommand from './commands/help/getStarted';
 import createReportIssueCommand from './commands/help/reportIssue';
 import createReviewIssuesCommand from './commands/help/reviewIssues';
+import { TyeServicesTreeDataProvider } from './views/services/tyeServicesTreeDataProvider';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -59,10 +60,16 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			registerDisposable(vscode.workspace.registerTextDocumentContentProvider('tye-log', new TyeLogsContentProvider(tyeClientProvider)));
 		
 			const treeProvider = new TyeServicesProvider(vscode.workspace.workspaceFolders, tyeApplicationProvider, tyeClientProvider);
+			const treeProvider2 = new TyeServicesTreeDataProvider(tyeApplicationProvider, tyeClientProvider);
 
 			registerDisposable(vscode.window.registerTreeDataProvider(
 				'vscode-tye.views.services',
 				treeProvider
+			));
+
+			registerDisposable(vscode.window.registerTreeDataProvider(
+				'vscode-tye.views.services2',
+				treeProvider2
 			));
 
 			registerDisposable(
@@ -73,7 +80,8 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.refreshEntry',
 				() => {
-					treeProvider.refresh()
+					treeProvider.refresh();
+					treeProvider2.refresh();
 				});
 
 			telemetryProvider.registerCommandWithTelemetry(

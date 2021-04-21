@@ -4,5 +4,6 @@
 import * as vscode from 'vscode';
 
 export default interface TreeNode {
-    getTreeItem(): Promise<vscode.TreeItem>;
+    getChildren?: () => TreeNode[] | Promise<TreeNode[]>;   
+    getTreeItem(): vscode.TreeItem | Promise<vscode.TreeItem>;
 }
