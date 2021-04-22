@@ -39,7 +39,7 @@ export class TyeReplicaNode implements TyeNode {
     }
 
     get BrowserUri() : vscode.Uri | undefined {
-        if(!this.isBrowsable){
+        if (!this.isBrowsable){
             return undefined;
         }
 
@@ -49,7 +49,7 @@ export class TyeReplicaNode implements TyeNode {
     
         //We want to prefer the environment variable so that it matches as closely as possible to GetServiceUri.
         //Which is what code would get if accessing this service.
-        if(this.replica.environment) {
+        if (this.replica.environment) {
             host = this.replica.environment[`service__${this.service.description.name}__host`.toUpperCase()];
             port = Number.parseInt(this.replica.environment[`service__${this.service.description.name}__port`.toUpperCase()]);
             protocol = this.replica.environment[`service__${this.service.description.name}__protocol`.toUpperCase()] ?? 'http';
