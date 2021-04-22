@@ -21,7 +21,7 @@ Instructions for installing Tye CLI can be found [here](https://github.com/dotne
 The Tye extension lets you view and debug Tye services.
 
 ### View running Tye application
-You can view the running Tye instance, view all services and it's replicas, view logs and open the services in the browser.
+You can view the running Tye application, view all services and it's replicas, view logs and open the services in the browser.
 
 ![View running Tye application](resources/readme/tye-view.gif)
 
@@ -49,9 +49,20 @@ You can attach the debugger to an already running service by clicking on the **A
 ![Debug an already running service](resources/readme/tye-debug-attach.gif)
 
 #### Debug with Tye
-You can attach the debugger to all the running and services by using the **Debug with Tye** launch configuration.
+The **Debug with Tye** launch configuration helps you debug multiple services at a time.
+The default scaffolded configuration attaches the debugger to all debuggable services, but it can be configured to attach to only a subset of services.
 
-![Debug with Tye](resources/readme/tye-debug-all.gif)
+![Debugging all services](resources/readme/tye-debug-all.gif)
+
+##### Configuring a subset of services to debug
+Services to debug can be configured by adding `services` property in the **Debug with Tye** launch configuration.
+
+![Configuring subset of services for debugging](resources/readme/tye-debug-subset.gif)
+
+##### Enabling the `watch` mode for debugging
+The Tye extension lets you start the Tye application in the `watch` mode and subsequently attach the debugger in the `watch` mode. With the `watch` mode on, the debugger watches for any code changes and re-attaches to the re-spawned services.
+
+![Watch mode](resources/readme/tye-debug-watch.gif)
 
 ## Contributing
 
