@@ -6,7 +6,7 @@ import * as nls from 'vscode-nls';
 import { IActionContext } from "vscode-azureextensionui";
 import { getLocalizationPathForFile } from '../../util/localization';
 import { TyeCliClient } from "../../services/tyeCliClient";
-import { TyeApplicationConfigurationProvider } from 'src/services/tyeApplicationConfiguration';
+import { TyeApplicationConfigurationProvider } from '../../services/tyeApplicationConfiguration';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 

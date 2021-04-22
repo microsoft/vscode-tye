@@ -4,7 +4,7 @@
 import * as vscode from 'vscode';
 import { Observable } from 'rxjs'
 import { first, switchMap } from 'rxjs/operators';
-import { MonitoredTask, TaskMonitor } from 'src/tasks/taskMonitor';
+import { MonitoredTask, TaskMonitor } from '../tasks/taskMonitor';
 import { TyeClientProvider } from './tyeClient';
 
 export type TyeProjectService = {

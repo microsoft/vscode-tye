@@ -6,7 +6,7 @@ import CommandLineBuilder from "../util/commandLineBuilder";
 import { TaskDefinition } from "vscode";
 import CommandTaskProvider from "./commandTaskProvider";
 import { TaskMonitorReporter } from "./taskMonitor";
-import { TelemetryProvider } from 'src/services/telemetryProvider';
+import { TelemetryProvider } from '../services/telemetryProvider';
 
 export type TyeLogProvider = 'console' | 'elastic' | 'ai' | 'seq';
 export type TyeDistributedTraceProvider = 'zipkin';

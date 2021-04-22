@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
-import { TyeApplication } from 'src/services/tyeApplicationProvider';
+import { TyeApplication } from '../../services/tyeApplicationProvider';
 import TyeNode from '../treeNode';
 import { TyeReplicaNode } from "./tyeReplicaNode";
 

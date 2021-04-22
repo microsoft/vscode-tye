@@ -2,11 +2,11 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
-import { TyeApplication, TyeApplicationProvider } from 'src/services/tyeApplicationProvider';
+import { TyeApplication, TyeApplicationProvider } from '../../services/tyeApplicationProvider';
 import { Subscription } from 'rxjs';
 import TreeNode from '../treeNode';
 import { TyeApplicationNode } from './tyeApplicationNode';
-import { TyeClientProvider } from 'src/services/tyeClient';
+import { TyeClientProvider } from '../../services/tyeClient';
 
 export class TyeServicesTreeDataProvider extends vscode.Disposable implements vscode.TreeDataProvider<TreeNode> {
     private readonly onDidChangeTreeDataEmitter = new vscode.EventEmitter<void | TreeNode | null | undefined>();
