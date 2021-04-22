@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { TyeApplication, TyeApplicationProvider } from "src/services/tyeApplicationProvider";
+import { TyeApplication, TyeApplicationProvider } from "../../../services/tyeApplicationProvider";
 import { BehaviorSubject, Observable } from 'rxjs';
 import * as vscode from 'vscode';
 

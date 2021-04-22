@@ -4,9 +4,10 @@
 import * as assert from 'assert';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-
+import { TyeReplicaNode } from '../../../views/services/tyeReplicaNode';
+import { TyeServiceNode } from '../../../views/services/tyeServiceNode';
+import { TyeServicesTreeDataProvider } from '../../../views/services/tyeServicesTreeDataProvider';
 import { TyeClient } from '../../../services/tyeClient';
-import { TyeServicesProvider, ReplicaNode, ServiceNode } from '../../../views/tyeServicesProvider';
 import { MockTyeApplicationProvider } from './mockTyeApplicationProvider';
 import { MockTyeClient } from './mockTyeClient';
 
@@ -19,9 +20,9 @@ suite('integration/ingressServiceTests', () => {
         return new MockTyeClient(data);
     }
 
-    async function buildTestProvider(): Promise<TyeServicesProvider> {
+    async function buildTestProvider(): Promise<TyeServicesTreeDataProvider> {
         const testClient = await buildTestClient();
-        return new TyeServicesProvider([], new MockTyeApplicationProvider(), () => testClient);
+        return new TyeServicesTreeDataProvider(new MockTyeApplicationProvider(), () => testClient);
     }
 
     test('TestMockClient', async () => {
@@ -35,7 +36,7 @@ suite('integration/ingressServiceTests', () => {
 
         const treeItems = await provider.getChildren();
         //Nodes in services + 1 Dashboard node.
-        assert.equal(treeItems.length, testDataServiceCount + 1);
+        assert.equal(treeItems?.length, testDataServiceCount + 1);
     });
 
     test('ingressIsBrowsable', async () => {
@@ -43,12 +44,13 @@ suite('integration/ingressServiceTests', () => {
 
         const treeItems = await provider.getChildren();
 
-        for(const node of treeItems) {
-            const children = await provider.getChildren(node as ServiceNode);
-            for(const replica of children) {
-                if(replica instanceof ReplicaNode && replica.service.serviceType == "ingress") {
-                    assert.equal(true, replica.contextValue?.includes('browsable'));
-                    assert.equal(false, replica.contextValue?.includes('attachable'));
+        for(const node of treeItems ?? []) {
+            const children = await provider.getChildren(node as TyeServiceNode);
+            for(const replica of children ?? []) {
+                if(replica instanceof TyeReplicaNode && replica.service.serviceType == "ingress") {
+                    const treeItem = replica.getTreeItem();
+                    assert.equal(true, treeItem.contextValue?.includes('browsable'));
+                    assert.equal(false, treeItem.contextValue?.includes('attachable'));
                 }
             }
         }

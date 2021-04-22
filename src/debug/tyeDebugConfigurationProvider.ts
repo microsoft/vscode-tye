@@ -3,7 +3,7 @@
 
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
-import { TyeApplicationProvider } from 'src/services/tyeApplicationProvider';
+import { TyeApplicationProvider } from '../services/tyeApplicationProvider';
 import { getLocalizationPathForFile } from '../util/localization';
 import { TyeApplicationWatcher } from './tyeApplicationWatcher';
 import { attachToReplica } from './attachToReplica';

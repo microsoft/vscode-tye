@@ -31,6 +31,7 @@
 		"onCommand:vscode-tye.help.reviewIssues",
 		"onCommand:workbench.action.tasks.runTask",
 		"onDebugResolve:tye",
+		"onView:vscode-tye.views.help",
 		"onView:vscode-tye.views.services"
 	],
 	"main": "./main.js",

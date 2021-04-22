@@ -3,7 +3,7 @@
 
 import * as querystring from 'querystring';
 import * as vscode from 'vscode';
-import { TyeClientProvider } from 'src/services/tyeClient';
+import { TyeClientProvider } from '../services/tyeClient';
 
 export class TyeLogsContentProvider implements vscode.TextDocumentContentProvider {
     
