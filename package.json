@@ -31,6 +31,7 @@
 		"onCommand:vscode-tye.help.reviewIssues",
 		"onCommand:workbench.action.tasks.runTask",
 		"onDebugResolve:tye",
+		"onView:vscode-tye.views.help",
 		"onView:vscode-tye.views.services"
 	],
 	"main": "./main.js",
@@ -169,10 +170,6 @@
 			{
 				"view": "vscode-tye.views.services",
 				"contents": "%vscode-tye.views.services.contents%"
-			},
-			{
-				"view": "vscode-tye.views.services2",
-				"contents": "%vscode-tye.views.services.contents%"
 			}
 		],
 		"viewsContainers": {
@@ -189,10 +186,6 @@
 				{
 					"id": "vscode-tye.views.services",
 					"name": "%vscode-tye.views.services.name%"
-				},
-				{
-					"id": "vscode-tye.views.services2",
-					"name": "Tye Services #2"
 				},
 				{
 					"id": "vscode-tye.views.help",
