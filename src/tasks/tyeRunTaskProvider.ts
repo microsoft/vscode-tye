@@ -7,6 +7,7 @@ import { TaskDefinition } from "vscode";
 import CommandTaskProvider from "./commandTaskProvider";
 import { TaskMonitorReporter } from "./taskMonitor";
 import { TelemetryProvider } from '../services/telemetryProvider';
+import { IActionContext } from 'vscode-azureextensionui';
 
 export type TyeLogProvider = 'console' | 'elastic' | 'ai' | 'seq';
 export type TyeDistributedTraceProvider = 'zipkin';
@@ -33,14 +34,14 @@ const dashboardRunningOn = /Dashboard running on (?<location>.*)$/gm;
 const listeningForPipeEvents = /Listening for event pipe events/;
 
 export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
-    constructor(taskMonitorReporter: TaskMonitorReporter, telemetryProvider: TelemetryProvider) {
+    constructor(private readonly memento: vscode.Memento, taskMonitorReporter: TaskMonitorReporter, telemetryProvider: TelemetryProvider) {
         super(
             (name, definition, callback) => {
                 let dashboard: vscode.Uri | undefined = undefined;
 
                 return telemetryProvider.callWithTelemetry(
                     'vscode-tye.tasks.tye-run',
-                    () => {
+                    (context: IActionContext) => {
                         return taskMonitorReporter.reportTask(
                             name,
                             definition.type,
@@ -80,6 +81,7 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                                                 }
                                                 
                                                 if (listeningForPipeEvents.test(data)) {
+                                                    context.telemetry.properties['runSuccessful'] = 'true';
                                                     // NOTE: This may be fired multiple times:
                                                     //       (1) if the application has more than one service/replica
                                                     //       (2) if the application is in watch mode and a service is rebuilt and restarted
