@@ -48,7 +48,10 @@ export class WorkspaceTyeApplicationConfigurationProvider implements TyeApplicat
 
                 const configuration = await this.configurationReader.readConfiguration(contentString);
 
-                // TODO: If no application name is provided, use basename (lowercased) of YAML parent folder.
+                if (!configuration.name)
+                {
+                    configuration.name = vscode.workspace.getWorkspaceFolder(file)?.name?.toLowerCase() || '';
+                }
 
                 return configuration;
             }
