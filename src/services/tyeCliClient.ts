@@ -16,11 +16,8 @@ export interface TyeCliClient {
 }
 
 export default class LocalTyeCliClient implements TyeCliClient {
-    constructor(tyePathProvider : TyePathProvider) {
-        this.tyePathProvider = tyePathProvider;
+    constructor(private readonly tyePathProvider : TyePathProvider) {
     }
-
-    private readonly tyePathProvider : TyePathProvider;
 
     async init(options?: InitOptions): Promise<void> {
         const tyePath = await this.tyePathProvider.getTyePath();

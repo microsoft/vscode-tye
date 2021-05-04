@@ -1,10 +1,11 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import * as os from 'os';
+import * as path from 'path';
 import CommandLineBuilder from '../util/commandLineBuilder';
 import { SettingsProvider } from './settingsProvider';
 import { Process } from '../util/process';
-import { isLinux, isMac } from '../util/osUtils';
 
 export interface TyePathProvider {
     getTyePath() : Promise<string>;
@@ -38,19 +39,11 @@ export default class LocalTyePathProvider implements TyePathProvider {
         const commandLineBuilder = CommandLineBuilder.create("tye", "--version");
         const result = await Process.exec(commandLineBuilder.build());
 
-        if (result.code == 0)
+        if (result.code === 0)
         {
             return "tye";
         }
 
-        if (isMac() || isLinux())
-        {
-            return "~/.dotnet/tools/tye";
-        }
-        else
-        {
-            const userProfile = process.env.USERPROFILE ?? '';
-            return userProfile.concat("\\.dotnet\\tools\\tye.exe");
-        }
+        return path.join(os.homedir(), ".dotnet/tools/tye");
     }
 }
