@@ -255,6 +255,15 @@
 				"category": "Tye"
 			}
 		],
+		"configuration": {
+			"title": "Tye",
+			"properties": {
+				"tye.paths.tyePath": {
+					"type": "string",
+					"description": "%vscode-tye.configuration.paths.tyePath.description%"
+				}
+			}
+		},
 		"menus": {
 			"commandPalette": [
 				{

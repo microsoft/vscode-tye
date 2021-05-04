@@ -8,8 +8,9 @@ export type NamedArgValue = string | number | boolean | vscode.ShellQuotedString
 export default class CommandLineBuilder {
     private readonly args: vscode.ShellQuotedString[] = [];
 
-    public static create(...args: (string | vscode.ShellQuotedString | undefined)[]): CommandLineBuilder {
+    public static create(command: (string | vscode.ShellQuotedString), ...args: (string | vscode.ShellQuotedString | undefined)[]): CommandLineBuilder {
         const builder = new CommandLineBuilder();
+        builder.withArg(command);
 
         if (args !== undefined) {
             for (const arg of args) {

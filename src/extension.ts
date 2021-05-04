@@ -30,6 +30,8 @@ import createReviewIssuesCommand from './commands/help/reviewIssues';
 import { TyeServicesTreeDataProvider } from './views/services/tyeServicesTreeDataProvider';
 import { TyeReplicaNode } from './views/services/tyeReplicaNode';
 import { TyeServiceNode } from './views/services/tyeServiceNode';
+import VsCodeSettingsProvider from './services/settingsProvider';
+import LocalTyePathProvider from './services/tyePathProvider';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -104,11 +106,13 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 
 			const scaffolder = new LocalScaffolder();
 			const ui = new AggregateUserInput(ext.ui);
+			const settingsProvider = new VsCodeSettingsProvider();
+			const tyePathProvider = new LocalTyePathProvider(settingsProvider);
 			const tyeApplicationConfigurationProvider = new WorkspaceTyeApplicationConfigurationProvider(new YamlTyeApplicationConfigurationReader());
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.scaffolding.initTye',
-				createInitializeTyeCommand(tyeApplicationConfigurationProvider, new LocalTyeCliClient()));
+				createInitializeTyeCommand(tyeApplicationConfigurationProvider, new LocalTyeCliClient(tyePathProvider)));
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.scaffolding.scaffoldTyeTasks',
@@ -166,7 +170,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 		
 			registerDisposable(vscode.debug.registerDebugConfigurationProvider('tye', new TyeDebugConfigurationProvider(tyeApplicationProvider, applicationWatcher)));
 		
-			registerDisposable(vscode.tasks.registerTaskProvider('tye-run', new TyeRunCommandTaskProvider(taskMonitor, telemetryProvider)));
+			registerDisposable(vscode.tasks.registerTaskProvider('tye-run', new TyeRunCommandTaskProvider(taskMonitor, telemetryProvider, tyePathProvider)));
 
 			return Promise.resolve();
 		});
