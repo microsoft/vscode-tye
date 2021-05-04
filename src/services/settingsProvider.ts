@@ -4,15 +4,15 @@
 import * as vscode from 'vscode';
 
 export interface SettingsProvider {
-    readonly tyePath: string;
+    readonly tyePath: (string | undefined);
 }
 
 export default class VsCodeSettingsProvider implements SettingsProvider {
-    get tyePath(): string {
-        return this.getConfigurationValue('tyePath') || 'tye';
+    get tyePath(): (string | undefined) {
+        return this.getConfigurationValue('tyePath');
     }
 
-    private getConfigurationValue(name: string): string | undefined {
+    private getConfigurationValue(name: string): (string | undefined) {
         const configuration = vscode.workspace.getConfiguration('tye.paths');
 
         return configuration.get(name);

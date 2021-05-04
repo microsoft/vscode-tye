@@ -7,7 +7,7 @@ import { TaskDefinition } from 'vscode';
 import CommandTaskProvider from './commandTaskProvider';
 import { TaskMonitorReporter } from './taskMonitor';
 import { TelemetryProvider } from '../services/telemetryProvider';
-import { SettingsProvider } from '../services/settingsProvider';
+import { TyePathProvider } from '../services/tyePathProvider';
 
 export type TyeLogProvider = 'console' | 'elastic' | 'ai' | 'seq';
 export type TyeDistributedTraceProvider = 'zipkin';
@@ -34,7 +34,7 @@ const dashboardRunningOn = /Dashboard running on (?<location>.*)$/gm;
 const listeningForPipeEvents = /Listening for event pipe events/;
 
 export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
-    constructor(taskMonitorReporter: TaskMonitorReporter, telemetryProvider: TelemetryProvider, settingsProvider: SettingsProvider) {
+    constructor(taskMonitorReporter: TaskMonitorReporter, telemetryProvider: TelemetryProvider, tyePathProvider: TyePathProvider) {
         super(
             (name, definition, callback) => {
                 let dashboard: vscode.Uri | undefined = undefined;
@@ -45,12 +45,13 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                         return taskMonitorReporter.reportTask(
                             name,
                             definition.type,
-                            reportTaskRunning => {
+                            async reportTaskRunning => {
                                 const tyeDefinition = <TyeRunTaskDefinition>definition;
+                                const tyePath = await tyePathProvider.getTyePath();
 
                                 const command =
                                     CommandLineBuilder
-                                        .create(settingsProvider.tyePath, 'run')
+                                        .create(tyePath, 'run')
                                         .withFlagArg('--no-build', tyeDefinition.build === false)
                                         .withNamedArg('--port', tyeDefinition.port)
                                         .withNamedArg('--logs', tyeDefinition.logs)

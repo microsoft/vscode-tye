@@ -3,7 +3,7 @@
 
 import CommandLineBuilder from '../util/commandLineBuilder';
 import { Process } from '../util/process';
-import { SettingsProvider } from './settingsProvider';
+import { TyePathProvider } from './tyePathProvider';
 
 export interface InitOptions {
     readonly force?: boolean;
@@ -16,16 +16,17 @@ export interface TyeCliClient {
 }
 
 export default class LocalTyeCliClient implements TyeCliClient {
-    constructor(settingsProvider : SettingsProvider) {
-        this.settingsProvider = settingsProvider;
+    constructor(tyePathProvider : TyePathProvider) {
+        this.tyePathProvider = tyePathProvider;
     }
 
-    private readonly settingsProvider : SettingsProvider;
+    private readonly tyePathProvider : TyePathProvider;
 
     async init(options?: InitOptions): Promise<void> {
+        const tyePath = await this.tyePathProvider.getTyePath();
         const command =
             CommandLineBuilder
-                .create(this.settingsProvider.tyePath, 'init')
+                .create(tyePath, 'init')
                 .withFlagArg('--force', options?.force === true)
                 .withFlagArg('--no-default', options?.noDefault === true)
                 .withQuotedArg(options?.path)
