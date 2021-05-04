@@ -67,7 +67,7 @@ suite('integration/tyeServiceProvider', () => {
             const children = await provider.getChildren(node as TyeServiceNode);
             for(const replica of children ?? []) {
                 const treeItem = await replica.getTreeItem();
-                if(replica instanceof TyeReplicaNode && replica.service.serviceType == "container") {
+                if(replica instanceof TyeReplicaNode && replica.service.serviceType == 'container') {
                     assert.equal(false, treeItem.contextValue?.includes('attachable'));
                 }
             }

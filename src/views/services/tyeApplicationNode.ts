@@ -2,11 +2,11 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
-import TreeNode from "../treeNode";
-import { TyeApplication } from "src/services/tyeApplicationProvider";
-import { TyeDashboardNode } from "./tyeDashboardNode";
-import { TyeServiceNode } from "./tyeServiceNode";
-import { TyeClientProvider } from "src/services/tyeClient";
+import TreeNode from '../treeNode';
+import { TyeApplication } from '../../services/tyeApplicationProvider';
+import { TyeDashboardNode } from './tyeDashboardNode';
+import { TyeServiceNode } from './tyeServiceNode';
+import { TyeClientProvider } from '../../services/tyeClient';
 
 export class TyeApplicationNode implements TreeNode {
     constructor(private readonly application: TyeApplication, private readonly tyeClientProvider: TyeClientProvider) {

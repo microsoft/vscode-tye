@@ -1,8 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import CommandLineBuilder from "../util/commandLineBuilder";
-import { Process } from "../util/process";
+import CommandLineBuilder from '../util/commandLineBuilder';
+import { Process } from '../util/process';
 
 export interface InitOptions {
     readonly force?: boolean;

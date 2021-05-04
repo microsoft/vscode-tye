@@ -4,7 +4,7 @@
 import * as vscode from 'vscode';
 import { TyeApplication } from '../../services/tyeApplicationProvider';
 import TyeNode from '../treeNode';
-import { TyeReplicaNode } from "./tyeReplicaNode";
+import { TyeReplicaNode } from './tyeReplicaNode';
 
 export class TyeServiceNode implements TyeNode {
     constructor(public readonly application: TyeApplication, public readonly service: TyeService) {
@@ -21,7 +21,7 @@ export class TyeServiceNode implements TyeNode {
 
         treeItem.contextValue = this.service.serviceType;
 
-        treeItem.contextValue += " hasLogs"
+        treeItem.contextValue += ' hasLogs'
 
         if (this.service.serviceType === 'container') {
             treeItem.iconPath = new vscode.ThemeIcon('package');

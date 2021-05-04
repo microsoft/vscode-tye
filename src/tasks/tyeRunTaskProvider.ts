@@ -2,10 +2,10 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
-import CommandLineBuilder from "../util/commandLineBuilder";
-import { TaskDefinition } from "vscode";
-import CommandTaskProvider from "./commandTaskProvider";
-import { TaskMonitorReporter } from "./taskMonitor";
+import CommandLineBuilder from '../util/commandLineBuilder';
+import { TaskDefinition } from 'vscode';
+import CommandTaskProvider from './commandTaskProvider';
+import { TaskMonitorReporter } from './taskMonitor';
 import { TelemetryProvider } from '../services/telemetryProvider';
 
 export type TyeLogProvider = 'console' | 'elastic' | 'ai' | 'seq';
