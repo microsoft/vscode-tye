@@ -17,10 +17,10 @@ export interface TaskMonitor {
 
 export interface TaskMonitorReporter {
     reportTaskStart(name: string, type: string): void;
-    reportTaskRunning(name: string, type: string, options?: unknown): void;
+    reportTaskRunning(name: string, type: string, options?: unknown): Promise<void>;
     reportTaskEnd(name: string): void;
 
-    reportTask<T = void>(name: string, type: string, callback: (reportTaskRunning: (options?: unknown) => void) => Promise<T>): Promise<T>;
+    reportTask<T = void>(name: string, type: string, callback: (reportTaskRunning: (options?: unknown) => Promise<void>) => Promise<T>): Promise<T>;
 }
 
 export class TyeTaskMonitor extends vscode.Disposable implements TaskMonitor, TaskMonitorReporter {
@@ -46,10 +46,11 @@ export class TyeTaskMonitor extends vscode.Disposable implements TaskMonitor, Ta
         this.reportTasksChanged();
     }
 
-    reportTaskRunning(name: string, type: string, options?: unknown): void {
+    reportTaskRunning(name: string, type: string, options?: unknown): Promise<void> {
         this.taskMap[name] = { name, options, state: 'running', type};
 
         this.reportTasksChanged();
+        return Promise.resolve();
     }
 
     reportTaskEnd(name: string): void {
@@ -58,11 +59,11 @@ export class TyeTaskMonitor extends vscode.Disposable implements TaskMonitor, Ta
         this.reportTasksChanged();
     }
 
-    async reportTask<T = void>(name: string, type: string, callback: (reportTaskRunning: (options?: unknown) => void) => Promise<T>): Promise<T> {
+    async reportTask<T = void>(name: string, type: string, callback: (reportTaskRunning: (options?: unknown) => Promise<void>) => Promise<T>): Promise<T> {
         this.reportTaskStart(name, type);
 
         try {
-            return await callback(options => this.reportTaskRunning(name, type, options));
+            return await callback(async options => await this.reportTaskRunning(name, type, options));
         } finally {
             this.reportTaskEnd(name);
         }

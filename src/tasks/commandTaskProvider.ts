@@ -12,7 +12,7 @@ import { getLocalizationPathForFile } from '../util/localization';
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 interface CommandTaskSpawnOptions extends cp.SpawnOptions {
-    onStdOut?: (data: string) => void;
+    onStdOut?: (data: string) => Promise<void>;
     onStdErr?: (data: string) => void;
 }
 
@@ -43,10 +43,10 @@ export default class CommandTaskProvider extends CustomExecutionTaskProvider {
                                 });
 
                             process.onStdOut(
-                                data => {
+                                async data => {
                                     writer.write(data);
 
-                                    spawnOptions.onStdOut?.(data);
+                                    await spawnOptions.onStdOut?.(data);
                                 });
 
                             if (spawnOptions.cwd === undefined) {

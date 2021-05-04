@@ -72,7 +72,7 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                                     {
                                         cwd: definition.cwd,
                                         onStdOut:
-                                            data => {
+                                            async data => {
                                                 if (dashboard === undefined) {
                                                     const match = dashboardRunningOn.exec(data);
                                                     
@@ -85,7 +85,7 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                                                     // NOTE: This may be fired multiple times:
                                                     //       (1) if the application has more than one service/replica
                                                     //       (2) if the application is in watch mode and a service is rebuilt and restarted
-                                                    reportTaskRunning(
+                                                    await reportTaskRunning(
                                                         {
                                                             applicationName: tyeDefinition.applicationName,
                                                             dashboard
