@@ -4,7 +4,7 @@
 import * as cp from 'child_process';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
-import CustomExecutionTaskProvider from "./customExecutionTaskProvider";
+import CustomExecutionTaskProvider from './customExecutionTaskProvider';
 import { Process } from '../util/process';
 import { TaskDefinition } from './taskDefinition';
 import { getLocalizationPathForFile } from '../util/localization';

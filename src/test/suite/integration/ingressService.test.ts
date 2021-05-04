@@ -47,7 +47,7 @@ suite('integration/ingressServiceTests', () => {
         for(const node of treeItems ?? []) {
             const children = await provider.getChildren(node as TyeServiceNode);
             for(const replica of children ?? []) {
-                if(replica instanceof TyeReplicaNode && replica.service.serviceType == "ingress") {
+                if(replica instanceof TyeReplicaNode && replica.service.serviceType == 'ingress') {
                     const treeItem = replica.getTreeItem();
                     assert.equal(true, treeItem.contextValue?.includes('browsable'));
                     assert.equal(false, treeItem.contextValue?.includes('attachable'));

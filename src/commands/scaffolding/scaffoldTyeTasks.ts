@@ -3,7 +3,7 @@
 
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
-import { TyeRunTaskDefinition } from "../../tasks/tyeRunTaskProvider";
+import { TyeRunTaskDefinition } from '../../tasks/tyeRunTaskProvider';
 import { UserInput } from '../../services/userInput';
 import { IActionContext } from 'vscode-azureextensionui';
 import { ConflictHandler, ConflictUniquenessPredicate } from '../../scaffolding/conflicts';
