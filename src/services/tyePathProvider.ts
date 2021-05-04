@@ -12,12 +12,9 @@ export interface TyePathProvider {
 }
 
 export default class LocalTyePathProvider implements TyePathProvider {
-    constructor(settingsProvider: SettingsProvider)
-    {
-        this.settingsProvider = settingsProvider;
+    constructor(private readonly settingsProvider: SettingsProvider) {
     }
 
-    private readonly settingsProvider: SettingsProvider;
     private cachedTyePath : string | undefined = undefined;
 
     async getTyePath(): Promise<string> {
@@ -36,14 +33,21 @@ export default class LocalTyePathProvider implements TyePathProvider {
 
     private async tryGetTyePath() : Promise<string>
     {
-        const commandLineBuilder = CommandLineBuilder.create("tye", "--version");
-        const result = await Process.exec(commandLineBuilder.build());
-
-        if (result.code === 0)
+        try
         {
-            return "tye";
+            const commandLineBuilder = CommandLineBuilder.create('tye', '--version');
+            const result = await Process.exec(commandLineBuilder.build());
+
+            if (result.code === 0)
+            {
+                return 'tye';
+            }
+        }
+        catch
+        {
+            // Best effort; In case of error, fallback to homedir.
         }
 
-        return path.join(os.homedir(), ".dotnet/tools/tye");
+        return path.join(os.homedir(), '.dotnet', 'tools', 'tye');
     }
 }
