@@ -6,7 +6,7 @@ import { load } from 'js-yaml';
 import { TextDecoder } from 'util';
 
 export interface TyeApplicationConfiguration {
-    name: string;
+    readonly name: string;
 }
 
 export interface TyeApplicationConfigurationReader {
@@ -46,9 +46,12 @@ export class WorkspaceTyeApplicationConfigurationProvider implements TyeApplicat
                 const content = await vscode.workspace.fs.readFile(file);
                 const contentString = new TextDecoder('utf8').decode(content);
 
-                const configuration = await this.configurationReader.readConfiguration(contentString);
+                let configuration = await this.configurationReader.readConfiguration(contentString);
 
-                // TODO: If no application name is provided, use basename (lowercased) of YAML parent folder.
+                if (!configuration.name)
+                {
+                    configuration = { ...configuration, name: vscode.workspace.getWorkspaceFolder(file)?.name?.toLowerCase() || '' };
+                }
 
                 return configuration;
             }
