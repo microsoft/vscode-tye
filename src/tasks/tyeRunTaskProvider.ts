@@ -103,7 +103,7 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                 const applications = await tyeApplicationProvider.getApplications();
 
                 // NOTE: We arbitrarily pick the first application. This matches the tree view, which also shows only that first application.
-				//       Future work will refactor this logic to shutdown the appropriate application once Tye has better discovery support.
+                //       Future work will refactor this logic to shutdown the appropriate application once Tye has better discovery support.
                 const application = applications[0];
                 const tyeClient = tyeClientProvider(application.dashboard);
 
