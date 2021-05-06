@@ -15,6 +15,7 @@ export interface HttpPostOptions {
 export interface HttpClient {
     get(url: string, token?: vscode.CancellationToken): Promise<HttpResponse>;
     post(url: string, data?: unknown, options?: HttpPostOptions, token?: vscode.CancellationToken): Promise<HttpResponse>;
+    delete(url: string, token?: vscode.CancellationToken) : Promise<void>
 }
 
 export default class AxiosHttpClient implements HttpClient {
@@ -53,6 +54,20 @@ export default class AxiosHttpClient implements HttpClient {
 
             return { data: response.data };
         } finally {
+            if (tokenListener) {
+                tokenListener.dispose();
+            }
+        }
+    }
+
+    async delete(url: string, token?: vscode.CancellationToken): Promise<void> {
+        const cancelTokenSource = axios.CancelToken.source();
+        const tokenListener = token ? token.onCancellationRequested(() => cancelTokenSource.cancel()) : undefined;
+
+        try {
+            await axios.delete(url, { cancelToken: cancelTokenSource.token });
+        }
+        finally {
             if (tokenListener) {
                 tokenListener.dispose();
             }

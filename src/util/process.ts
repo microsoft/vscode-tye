@@ -17,6 +17,8 @@ function bufferToString(buffer: Buffer): string {
     return buffer.toString().replace(/\0/g, '').replace(/\r?\n$/g, '');
 }
 
+export type OnBeforeProcessCancelledCallback = () => Promise<void>;
+
 export class Process extends vscode.Disposable {
     private readonly onStdErrEmitter = new vscode.EventEmitter<string>();
     private readonly onStdOutEmitter = new vscode.EventEmitter<string>();
@@ -32,7 +34,7 @@ export class Process extends vscode.Disposable {
     onStdErr = this.onStdErrEmitter.event;
     onStdOut = this.onStdOutEmitter.event;
 
-    static async exec(command: string, options?: cp.ExecOptions, token?: vscode.CancellationToken): Promise<{ code: number; stderr: string; stdout: string }> {
+    static async exec(command: string, options?: cp.ExecOptions, onBeforeProcessCancelled?: OnBeforeProcessCancelledCallback, token?: vscode.CancellationToken): Promise<{ code: number; stderr: string; stdout: string }> {
         const process = new Process();
 
         let stdoutBytesWritten = 0;
@@ -52,7 +54,7 @@ export class Process extends vscode.Disposable {
                     stdoutBytesWritten += stdoutBuffer.write(data, stdoutBytesWritten);
                 });
 
-            const code = await process.spawn(command, options, token);
+            const code = await process.spawn(command, options, onBeforeProcessCancelled, token);
 
             return {
                 code,
@@ -64,7 +66,7 @@ export class Process extends vscode.Disposable {
         }
     }
 
-    spawn(command: string, options?: cp.SpawnOptions, token?: vscode.CancellationToken): Promise<number> {
+    spawn(command: string, options?: cp.SpawnOptions, onBeforeProcessCancelled?: OnBeforeProcessCancelledCallback, token?: vscode.CancellationToken): Promise<number> {
         return new Promise(
             (resolve, reject) => {
 
@@ -108,8 +110,13 @@ export class Process extends vscode.Disposable {
 
                 if (token) {
                     const tokenListener = token.onCancellationRequested(
-                        () => {
+                        async () => {
                             tokenListener.dispose();
+
+                            if (onBeforeProcessCancelled)
+                            {
+                                await onBeforeProcessCancelled();
+                            }
 
                             if (os.platform() === 'win32') {
                                 // NOTE: Windows does not support SIGTERM/SIGINT/SIGBREAK, so there can be no graceful process shutdown.

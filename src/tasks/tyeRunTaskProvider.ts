@@ -8,6 +8,8 @@ import CommandTaskProvider from './commandTaskProvider';
 import { TaskMonitorReporter } from './taskMonitor';
 import { TelemetryProvider } from '../services/telemetryProvider';
 import { TyePathProvider } from '../services/tyePathProvider';
+import { TyeClientProvider } from '../services/tyeClient';
+import { TyeApplicationProvider } from '../services/tyeApplicationProvider';
 
 export type TyeLogProvider = 'console' | 'elastic' | 'ai' | 'seq';
 export type TyeDistributedTraceProvider = 'zipkin';
@@ -34,7 +36,7 @@ const dashboardRunningOn = /Dashboard running on (?<location>.*)$/gm;
 const listeningForPipeEvents = /Listening for event pipe events/;
 
 export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
-    constructor(taskMonitorReporter: TaskMonitorReporter, telemetryProvider: TelemetryProvider, tyePathProvider: TyePathProvider) {
+    constructor(taskMonitorReporter: TaskMonitorReporter, telemetryProvider: TelemetryProvider, tyePathProvider: TyePathProvider, tyeClientProvider: TyeClientProvider, tyeApplicationProvider: TyeApplicationProvider) {
         super(
             (name, definition, callback) => {
                 let dashboard: vscode.Uri | undefined = undefined;
@@ -95,6 +97,16 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                                     });
                             });
                     });
+            },
+            async () => {
+                const applications = await tyeApplicationProvider.getApplications();
+
+                // NOTE: We arbitrarily pick the first application. This matches the tree view, which also shows only that first application.
+				//       Future work will refactor this logic to shutdown the appropriate application once Tye has better discovery support.
+                const application = applications[0];
+
+                const tyeClient = tyeClientProvider(application.dashboard);
+                await tyeClient?.shutDown();
             },
             /* isBackgroundTask: */ true,
             /* problemMatchers: */ ['$tye-run']);

@@ -5,7 +5,7 @@ import * as cp from 'child_process';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import CustomExecutionTaskProvider from './customExecutionTaskProvider';
-import { Process } from '../util/process';
+import { OnBeforeProcessCancelledCallback, Process } from '../util/process';
 import { TaskDefinition } from './taskDefinition';
 import { getLocalizationPathForFile } from '../util/localization';
 
@@ -22,6 +22,7 @@ export type CommandTaskProviderCallback = (name: string, definition: TaskDefinit
 export default class CommandTaskProvider extends CustomExecutionTaskProvider {
     constructor(
         callback: CommandTaskProviderCallback,
+        onCommandCancelledCallback?: OnBeforeProcessCancelledCallback,
         isBackgroundTask?: boolean,
         problemMatchers?: string[]) {
         super(
@@ -60,7 +61,7 @@ export default class CommandTaskProvider extends CustomExecutionTaskProvider {
                             writer.writeLine(localize('tasks.commandTaskProvider.executingMessage', '> Executing command: {0} <', command), 'bold');
                             writer.writeLine('');
 
-                            await process.spawn(command, spawnOptions, token);
+                            await process.spawn(command, spawnOptions, onCommandCancelledCallback, token);
                         } finally {
                             process.dispose();
                         }
