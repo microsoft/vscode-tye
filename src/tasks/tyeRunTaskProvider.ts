@@ -2,6 +2,7 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
+import * as cp from 'child_process';
 import CommandLineBuilder from '../util/commandLineBuilder';
 import { TaskDefinition } from 'vscode';
 import CommandTaskProvider from './commandTaskProvider';
@@ -98,17 +99,33 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                             });
                     });
             },
-            async () => {
+            async (process: cp.ChildProcess) => {
                 const applications = await tyeApplicationProvider.getApplications();
 
                 // NOTE: We arbitrarily pick the first application. This matches the tree view, which also shows only that first application.
 				//       Future work will refactor this logic to shutdown the appropriate application once Tye has better discovery support.
                 const application = applications[0];
-
                 const tyeClient = tyeClientProvider(application.dashboard);
-                await tyeClient?.shutDown();
+
+                if (tyeClient)
+                {
+                    const tyeProcessShutdownTimeoutMs = 10 * 1000; // 10 seconds timeout for the tye process to shutdown.
+                    const tyeProcessShutdownPromise = new Promise<void>((resolve) => process.once('close', () => resolve()));
+
+                    await tyeClient.shutDown();
+                    await awaitWithTimeout(tyeProcessShutdownTimeoutMs, tyeProcessShutdownPromise);
+                }
             },
             /* isBackgroundTask: */ true,
             /* problemMatchers: */ ['$tye-run']);
+
+            function awaitWithTimeout(timeout: number, promise: Promise<void>)
+            {
+                const timeoutPromise = new Promise((resolve, reject) => {
+                    setTimeout(() => reject(), timeout);
+                });
+
+                return Promise.race([promise, timeoutPromise]);
+            }
     }
 }

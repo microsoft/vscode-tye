@@ -17,7 +17,7 @@ function bufferToString(buffer: Buffer): string {
     return buffer.toString().replace(/\0/g, '').replace(/\r?\n$/g, '');
 }
 
-export type OnBeforeProcessCancelledCallback = () => Promise<void>;
+export type OnBeforeProcessCancelledCallback = (proces: cp.ChildProcess) => Promise<void>;
 
 export class Process extends vscode.Disposable {
     private readonly onStdErrEmitter = new vscode.EventEmitter<string>();
@@ -115,7 +115,7 @@ export class Process extends vscode.Disposable {
 
                             if (onBeforeProcessCancelled)
                             {
-                                await onBeforeProcessCancelled();
+                                await onBeforeProcessCancelled(process);
                             }
 
                             if (os.platform() === 'win32') {
