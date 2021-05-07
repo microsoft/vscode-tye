@@ -5,7 +5,7 @@ import * as cp from 'child_process';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import CustomExecutionTaskProvider from './customExecutionTaskProvider';
-import { OnBeforeProcessCancelledCallback, Process } from '../util/process';
+import { Process, ProcessCancellationOptions } from '../util/process';
 import { TaskDefinition } from './taskDefinition';
 import { getLocalizationPathForFile } from '../util/localization';
 
@@ -14,6 +14,7 @@ const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 interface CommandTaskSpawnOptions extends cp.SpawnOptions {
     onStdOut?: (data: string) => void;
     onStdErr?: (data: string) => void;
+    onCancellation?: () => Promise<ProcessCancellationOptions>;
 }
 
 export type CommandTaskSpawnCallback = (command: string, options?: CommandTaskSpawnOptions) => Promise<void>;
@@ -22,7 +23,6 @@ export type CommandTaskProviderCallback = (name: string, definition: TaskDefinit
 export default class CommandTaskProvider extends CustomExecutionTaskProvider {
     constructor(
         callback: CommandTaskProviderCallback,
-        onCommandCancelledCallback?: OnBeforeProcessCancelledCallback,
         isBackgroundTask?: boolean,
         problemMatchers?: string[]) {
         super(
@@ -61,7 +61,7 @@ export default class CommandTaskProvider extends CustomExecutionTaskProvider {
                             writer.writeLine(localize('tasks.commandTaskProvider.executingMessage', '> Executing command: {0} <', command), 'bold');
                             writer.writeLine('');
 
-                            await process.spawn(command, spawnOptions, onCommandCancelledCallback, token);
+                            await process.spawn(command, spawnOptions, spawnOptions.onCancellation, token);
                         } finally {
                             process.dispose();
                         }

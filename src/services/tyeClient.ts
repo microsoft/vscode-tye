@@ -17,8 +17,7 @@ export class HttpTyeClient implements TyeClient {
     constructor(private readonly httpClient: HttpClient, private readonly apiEndpoint = 'http://localhost:8000/api/v1') {
     }
 
-    public async shutDown(token?: vscode.CancellationToken): Promise<void>
-    {
+    public async shutDown(token?: vscode.CancellationToken): Promise<void> {
         await this.httpClient.delete(`${this.apiEndpoint}/control`, token);
     }
 

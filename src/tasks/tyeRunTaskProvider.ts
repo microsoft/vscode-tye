@@ -2,7 +2,6 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
-import * as cp from 'child_process';
 import CommandLineBuilder from '../util/commandLineBuilder';
 import { TaskDefinition } from 'vscode';
 import CommandTaskProvider from './commandTaskProvider';
@@ -11,6 +10,7 @@ import { TelemetryProvider } from '../services/telemetryProvider';
 import { TyePathProvider } from '../services/tyePathProvider';
 import { TyeClientProvider } from '../services/tyeClient';
 import { TyeApplicationProvider } from '../services/tyeApplicationProvider';
+import { ProcessCancellationOptions } from '../util/process';
 
 export type TyeLogProvider = 'console' | 'elastic' | 'ai' | 'seq';
 export type TyeDistributedTraceProvider = 'zipkin';
@@ -74,6 +74,22 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                                     command,
                                     {
                                         cwd: definition.cwd,
+                                        onCancellation: async () : Promise<ProcessCancellationOptions> => {
+                                            const applications = await tyeApplicationProvider.getApplications();
+
+                                            // NOTE: We arbitrarily pick the first application. This matches the tree view, which also shows only that first application.
+                                            //       Future work will refactor this logic to shutdown the appropriate application once Tye has better discovery support.
+                                            const application = applications[0];
+                                            const tyeClient = tyeClientProvider(application.dashboard);
+
+                                            if (tyeClient) {
+                                                await tyeClient.shutDown();
+                                                const tyeProcessShutdownTimeout = 60 * 1000; // set timeout to be 1 minute for the tye process to shutdown.
+                                                return new ProcessCancellationOptions(true, tyeProcessShutdownTimeout);
+                                            }
+
+                                            return new ProcessCancellationOptions(false);
+                                        },
                                         onStdOut:
                                             data => {
                                                 if (dashboard === undefined) {
@@ -99,33 +115,7 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                             });
                     });
             },
-            async (process: cp.ChildProcess) => {
-                const applications = await tyeApplicationProvider.getApplications();
-
-                // NOTE: We arbitrarily pick the first application. This matches the tree view, which also shows only that first application.
-                //       Future work will refactor this logic to shutdown the appropriate application once Tye has better discovery support.
-                const application = applications[0];
-                const tyeClient = tyeClientProvider(application.dashboard);
-
-                if (tyeClient)
-                {
-                    const tyeProcessShutdownTimeoutMs = 10 * 1000; // 10 seconds timeout for the tye process to shutdown.
-                    const tyeProcessShutdownPromise = new Promise<void>((resolve) => process.once('close', () => resolve()));
-
-                    await tyeClient.shutDown();
-                    await awaitWithTimeout(tyeProcessShutdownTimeoutMs, tyeProcessShutdownPromise);
-                }
-            },
             /* isBackgroundTask: */ true,
             /* problemMatchers: */ ['$tye-run']);
-
-            function awaitWithTimeout(timeout: number, promise: Promise<void>)
-            {
-                const timeoutPromise = new Promise((resolve, reject) => {
-                    setTimeout(() => reject(), timeout);
-                });
-
-                return Promise.race([promise, timeoutPromise]);
-            }
     }
 }

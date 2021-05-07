@@ -17,7 +17,13 @@ function bufferToString(buffer: Buffer): string {
     return buffer.toString().replace(/\0/g, '').replace(/\r?\n$/g, '');
 }
 
-export type OnBeforeProcessCancelledCallback = (proces: cp.ChildProcess) => Promise<void>;
+export class ProcessCancellationOptions
+{
+    constructor(public readonly waitForProcessClose: boolean, public readonly waitForProcessCloseTimeout?: number) {
+    }
+}
+
+export type OnBeforeProcessCancelledCallback = () => Promise<ProcessCancellationOptions>;
 
 export class Process extends vscode.Disposable {
     private readonly onStdErrEmitter = new vscode.EventEmitter<string>();
@@ -113,9 +119,20 @@ export class Process extends vscode.Disposable {
                         async () => {
                             tokenListener.dispose();
 
-                            if (onBeforeProcessCancelled)
-                            {
-                                await onBeforeProcessCancelled(process);
+                            if (onBeforeProcessCancelled) {
+                                try {
+                                    const cancellationOptions = await onBeforeProcessCancelled();
+
+                                    if (cancellationOptions.waitForProcessClose) {
+                                        const timeoutMs = cancellationOptions.waitForProcessCloseTimeout || 60 * 1000; // 1 minute default timeout for any process to shutdown.
+                                        const processClosePromise = new Promise<void>((resolve) => process.once('close', () => resolve()));
+                                        await awaitWithTimeout(timeoutMs, processClosePromise);
+                                    }
+                                }
+                                catch
+                                {
+                                    // Best effort, if any errors occur, force kill the process.
+                                }
                             }
 
                             if (os.platform() === 'win32') {
@@ -127,6 +144,15 @@ export class Process extends vscode.Disposable {
                                 process.kill();
                             }
                         });
+                }
+
+                function awaitWithTimeout(timeout: number, promise: Promise<void>)
+                {
+                    const timeoutPromise = new Promise((resolve, reject) => {
+                        setTimeout(() => reject(), timeout);
+                    });
+
+                    return Promise.race([promise, timeoutPromise]);
                 }
             });
     }
