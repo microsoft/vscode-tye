@@ -81,6 +81,7 @@
 					}
 				],
 				"background": {
+					"activeOnStart": true,
 					"beginsPattern": "^.*Executing application",
 					"endsPattern": "^.*Listening for event pipe events"
 				}
