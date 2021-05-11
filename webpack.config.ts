@@ -46,7 +46,7 @@ export const config: webpack.Configuration = {
     },
     optimization: {
         minimizer: [
-            new TerserPlugin({
+            <webpack.WebpackPluginInstance><unknown>new TerserPlugin({
                 terserOptions: {
                     // Don't mangle class names.  Otherwise parseError() will not recognize user cancelled errors (because their constructor name
                     // will match the mangled name, not UserCancelledError).  Also makes debugging easier in minified code.
