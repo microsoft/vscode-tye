@@ -6,6 +6,7 @@ import * as os from 'os';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import * as localization from './localization';
+import { awaitWithTimeout } from './promiseUtil';
 
 const localize = nls.loadMessageBundle(localization.getLocalizationPathForFile(__filename));
 
@@ -17,13 +18,11 @@ function bufferToString(buffer: Buffer): string {
     return buffer.toString().replace(/\0/g, '').replace(/\r?\n$/g, '');
 }
 
-export class ProcessCancellationOptions
+export interface ProcessCancellationOptions
 {
-    constructor(public readonly waitForProcessClose: boolean, public readonly waitForProcessCloseTimeout?: number) {
-    }
+    readonly waitForProcessClose: boolean,
+    readonly waitForProcessCloseTimeout?: number
 }
-
-export type OnBeforeProcessCancelledCallback = () => Promise<ProcessCancellationOptions>;
 
 export class Process extends vscode.Disposable {
     private readonly onStdErrEmitter = new vscode.EventEmitter<string>();
@@ -40,7 +39,7 @@ export class Process extends vscode.Disposable {
     onStdErr = this.onStdErrEmitter.event;
     onStdOut = this.onStdOutEmitter.event;
 
-    static async exec(command: string, options?: cp.ExecOptions, onBeforeProcessCancelled?: OnBeforeProcessCancelledCallback, token?: vscode.CancellationToken): Promise<{ code: number; stderr: string; stdout: string }> {
+    static async exec(command: string, options?: cp.ExecOptions & { onCancellation?: () => Promise<ProcessCancellationOptions> }, token?: vscode.CancellationToken): Promise<{ code: number; stderr: string; stdout: string }> {
         const process = new Process();
 
         let stdoutBytesWritten = 0;
@@ -60,7 +59,7 @@ export class Process extends vscode.Disposable {
                     stdoutBytesWritten += stdoutBuffer.write(data, stdoutBytesWritten);
                 });
 
-            const code = await process.spawn(command, options, onBeforeProcessCancelled, token);
+            const code = await process.spawn(command, options, token);
 
             return {
                 code,
@@ -72,7 +71,7 @@ export class Process extends vscode.Disposable {
         }
     }
 
-    spawn(command: string, options?: cp.SpawnOptions, onBeforeProcessCancelled?: OnBeforeProcessCancelledCallback, token?: vscode.CancellationToken): Promise<number> {
+    spawn(command: string, options?: cp.SpawnOptions & { onCancellation?: () => Promise<ProcessCancellationOptions> }, token?: vscode.CancellationToken): Promise<number> {
         return new Promise(
             (resolve, reject) => {
 
@@ -119,14 +118,25 @@ export class Process extends vscode.Disposable {
                         async () => {
                             tokenListener.dispose();
 
-                            if (onBeforeProcessCancelled) {
+                            if (options?.onCancellation) {
                                 try {
-                                    const cancellationOptions = await onBeforeProcessCancelled();
+                                    const cancellationOptions = await options?.onCancellation();
 
                                     if (cancellationOptions.waitForProcessClose) {
+                                        let processCloseListener: () => void = () => { return; }; // Not required, but makes the compiler happy.
+
                                         const timeoutMs = cancellationOptions.waitForProcessCloseTimeout || 60 * 1000; // 1 minute default timeout for any process to shutdown.
-                                        const processClosePromise = new Promise<void>((resolve) => process.once('close', () => resolve()));
-                                        await awaitWithTimeout(timeoutMs, processClosePromise);
+                                        const processClosePromise = new Promise<void>((resolve) => {
+                                            processCloseListener = () => resolve();
+                                            process.once('close', processCloseListener)
+                                        });
+
+                                        try {
+                                            await awaitWithTimeout(timeoutMs, processClosePromise);
+                                        }
+                                        catch {
+                                            process.removeListener('close', processCloseListener);
+                                        }
                                     }
                                 }
                                 catch
@@ -144,15 +154,6 @@ export class Process extends vscode.Disposable {
                                 process.kill();
                             }
                         });
-                }
-
-                function awaitWithTimeout(timeout: number, promise: Promise<void>)
-                {
-                    const timeoutPromise = new Promise((resolve, reject) => {
-                        setTimeout(() => reject(), timeout);
-                    });
-
-                    return Promise.race([promise, timeoutPromise]);
                 }
             });
     }

@@ -85,10 +85,15 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                                             if (tyeClient) {
                                                 await tyeClient.shutDown();
                                                 const tyeProcessShutdownTimeout = 60 * 1000; // set timeout to be 1 minute for the tye process to shutdown.
-                                                return new ProcessCancellationOptions(true, tyeProcessShutdownTimeout);
+                                                return { 
+                                                    waitForProcessClose: true,
+                                                    waitForProcessCloseTimeout: tyeProcessShutdownTimeout
+                                                };
                                             }
 
-                                            return new ProcessCancellationOptions(false);
+                                            return {
+                                                waitForProcessClose: false
+                                            };
                                         },
                                         onStdOut:
                                             data => {

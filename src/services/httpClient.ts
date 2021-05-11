@@ -20,7 +20,7 @@ export interface HttpClient {
 
 export default class AxiosHttpClient implements HttpClient {
     async get(url: string, token?: vscode.CancellationToken): Promise<HttpResponse> {
-        return this.withCancellationToken(token, async (axiosToken, tokenListener) => {
+        return this.withCancellationToken(token, async (axiosToken) => {
             try {
                 const response = await axios.get(url, { cancelToken: axiosToken });
 
@@ -28,53 +28,45 @@ export default class AxiosHttpClient implements HttpClient {
                 return { data: response.data };
             } catch(error) {
                 return { data: undefined };
-            } finally {
-                if (tokenListener) {
-                    tokenListener.dispose();
-                }
             }
         });
     }
 
     async post(url: string, data?: unknown, options?: HttpPostOptions, token?: vscode.CancellationToken): Promise<HttpResponse> {
-        return this.withCancellationToken(token, async (axiosToken, tokenListener) => {
-            try {
-                const response = await axios.post(
-                    url,
-                    options?.json ? JSON.stringify(data) : data,
-                    {
-                        cancelToken: axiosToken,
-                        headers: {
-                            'content-type': options?.json ? 'application/json' : undefined
-                        }
-                    });
-                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-                return { data: response.data };
-            } finally {
-                if (tokenListener) {
-                    tokenListener.dispose();
-                }
-            }
+        return this.withCancellationToken(token, async (axiosToken) => {
+            const response = await axios.post(
+                url,
+                options?.json ? JSON.stringify(data) : data,
+                {
+                    cancelToken: axiosToken,
+                    headers: {
+                        'content-type': options?.json ? 'application/json' : undefined
+                    }
+                });
+
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+            return { data: response.data };
         });
     }
 
     async delete(url: string, token?: vscode.CancellationToken): Promise<void> {
-        return this.withCancellationToken(token, async (axiosToken, tokenListener) => {
-            try {
-                await axios.delete(url, { cancelToken: axiosToken });
-            }
-            finally {
-                if (tokenListener) {
-                    tokenListener.dispose();
-                }
-            }
+        return this.withCancellationToken(token, async (axiosToken) => {
+            await axios.delete(url, { cancelToken: axiosToken });
         });
     }
 
-    async withCancellationToken<T>(token: vscode.CancellationToken | undefined, callback: (axiosToken: CancelToken, tokenListener: vscode.Disposable | undefined) => Promise<T>): Promise<T>
+    async withCancellationToken<T>(token: vscode.CancellationToken | undefined, callback: (axiosToken: CancelToken) => Promise<T>): Promise<T>
     {
         const cancelTokenSource = axios.CancelToken.source();
         const tokenListener = token ? token.onCancellationRequested(() => cancelTokenSource.cancel()) : undefined;
-        return callback(cancelTokenSource.token, tokenListener);
+
+        try {
+            return callback(cancelTokenSource.token);
+        }
+        finally {
+            if (tokenListener) {
+                tokenListener.dispose();
+            }
+        }
     }
 }

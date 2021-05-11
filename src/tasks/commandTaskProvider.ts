@@ -61,7 +61,7 @@ export default class CommandTaskProvider extends CustomExecutionTaskProvider {
                             writer.writeLine(localize('tasks.commandTaskProvider.executingMessage', '> Executing command: {0} <', command), 'bold');
                             writer.writeLine('');
 
-                            await process.spawn(command, spawnOptions, spawnOptions.onCancellation, token);
+                            await process.spawn(command, spawnOptions, token);
                         } finally {
                             process.dispose();
                         }
