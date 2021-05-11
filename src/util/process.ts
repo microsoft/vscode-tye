@@ -6,6 +6,7 @@ import * as os from 'os';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import * as localization from './localization';
+import { awaitWithTimeout } from './promiseUtil';
 
 const localize = nls.loadMessageBundle(localization.getLocalizationPathForFile(__filename));
 
@@ -15,6 +16,12 @@ function bufferToString(buffer: Buffer): string {
     // Node.js treats null bytes as part of the length, which makes everything mad
     // There's also a trailing newline everything hates, so we'll remove
     return buffer.toString().replace(/\0/g, '').replace(/\r?\n$/g, '');
+}
+
+export interface ProcessCancellationOptions
+{
+    readonly waitForProcessClose: boolean,
+    readonly waitForProcessCloseTimeout?: number
 }
 
 export class Process extends vscode.Disposable {
@@ -32,7 +39,7 @@ export class Process extends vscode.Disposable {
     onStdErr = this.onStdErrEmitter.event;
     onStdOut = this.onStdOutEmitter.event;
 
-    static async exec(command: string, options?: cp.ExecOptions, token?: vscode.CancellationToken): Promise<{ code: number; stderr: string; stdout: string }> {
+    static async exec(command: string, options?: cp.ExecOptions & { onCancellation?: () => Promise<ProcessCancellationOptions> }, token?: vscode.CancellationToken): Promise<{ code: number; stderr: string; stdout: string }> {
         const process = new Process();
 
         let stdoutBytesWritten = 0;
@@ -64,7 +71,7 @@ export class Process extends vscode.Disposable {
         }
     }
 
-    spawn(command: string, options?: cp.SpawnOptions, token?: vscode.CancellationToken): Promise<number> {
+    spawn(command: string, options?: cp.SpawnOptions & { onCancellation?: () => Promise<ProcessCancellationOptions> }, token?: vscode.CancellationToken): Promise<number> {
         return new Promise(
             (resolve, reject) => {
 
@@ -108,8 +115,35 @@ export class Process extends vscode.Disposable {
 
                 if (token) {
                     const tokenListener = token.onCancellationRequested(
-                        () => {
+                        async () => {
                             tokenListener.dispose();
+
+                            if (options?.onCancellation) {
+                                try {
+                                    const cancellationOptions = await options?.onCancellation();
+
+                                    if (cancellationOptions.waitForProcessClose) {
+                                        let processCloseListener: () => void = () => { return; }; // Not required, but makes the compiler happy.
+
+                                        const timeoutMs = cancellationOptions.waitForProcessCloseTimeout || 60 * 1000; // 1 minute default timeout for any process to shutdown.
+                                        const processClosePromise = new Promise<void>((resolve) => {
+                                            processCloseListener = () => resolve();
+                                            process.once('close', processCloseListener)
+                                        });
+
+                                        try {
+                                            await awaitWithTimeout(timeoutMs, processClosePromise);
+                                        }
+                                        catch {
+                                            process.removeListener('close', processCloseListener);
+                                        }
+                                    }
+                                }
+                                catch
+                                {
+                                    // Best effort, if any errors occur, force kill the process.
+                                }
+                            }
 
                             if (os.platform() === 'win32') {
                                 // NOTE: Windows does not support SIGTERM/SIGINT/SIGBREAK, so there can be no graceful process shutdown.

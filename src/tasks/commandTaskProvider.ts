@@ -5,7 +5,7 @@ import * as cp from 'child_process';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import CustomExecutionTaskProvider from './customExecutionTaskProvider';
-import { Process } from '../util/process';
+import { Process, ProcessCancellationOptions } from '../util/process';
 import { TaskDefinition } from './taskDefinition';
 import { getLocalizationPathForFile } from '../util/localization';
 
@@ -14,6 +14,7 @@ const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 interface CommandTaskSpawnOptions extends cp.SpawnOptions {
     onStdOut?: (data: string) => void;
     onStdErr?: (data: string) => void;
+    onCancellation?: () => Promise<ProcessCancellationOptions>;
 }
 
 export type CommandTaskSpawnCallback = (command: string, options?: CommandTaskSpawnOptions) => Promise<void>;

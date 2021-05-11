@@ -7,6 +7,10 @@ export class MockTyeClient implements TyeClient {
     constructor(private readonly data: TyeService[]) {
     }
 
+    public shutDown(): Promise<void> {
+        return Promise.resolve();
+    }
+
     public getLog(): Promise<string> {
         return Promise.resolve('');
     }
