@@ -61,7 +61,7 @@ export default class AxiosHttpClient implements HttpClient {
         const tokenListener = token ? token.onCancellationRequested(() => cancelTokenSource.cancel()) : undefined;
 
         try {
-            return callback(cancelTokenSource.token);
+            return await callback(cancelTokenSource.token);
         }
         finally {
             if (tokenListener) {
