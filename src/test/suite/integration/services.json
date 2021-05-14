@@ -27,7 +27,7 @@
       "configuration": [
         {
           "name": "POSTGRES_PASSWORD",
-          "value": "pass@word1"
+          "value": "<redacted>"
         }
       ]
     },
@@ -41,7 +41,7 @@
     },
     "replicas": {
       "postgres_fb52c648-5": {
-        "dockerCommand": "run -d   -e \u0022PORT=5432\u0022 -e \u0022PROXY_PORT=5432:5432\u0022 -e \u0022POSTGRES_PASSWORD=pass@word1\u0022 -e \u0022CONNECTIONSTRINGS__POSTGRES=Server=host.docker.internal;Port=5432;User Id=postgres;Password=pass@word1;\u0022 -e \u0022SERVICE__VOTE__PROTOCOL=http\u0022 -e \u0022VOTE_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__VOTE__PORT=57617\u0022 -e \u0022VOTE_SERVICE_PORT=57617\u0022 -e \u0022SERVICE__VOTE__HOST=host.docker.internal\u0022 -e \u0022VOTE_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__VOTE__HTTPS__PROTOCOL=https\u0022 -e \u0022VOTE_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__VOTE__HTTPS__PORT=57620\u0022 -e \u0022VOTE_HTTPS_SERVICE_PORT=57620\u0022 -e \u0022SERVICE__VOTE__HTTPS__HOST=host.docker.internal\u0022 -e \u0022VOTE_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022CONNECTIONSTRINGS__REDIS=host.docker.internal:6379\u0022 -e \u0022SERVICE__WORKER__PROTOCOL=http\u0022 -e \u0022WORKER_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__WORKER__PORT=57623\u0022 -e \u0022WORKER_SERVICE_PORT=57623\u0022 -e \u0022SERVICE__WORKER__HOST=host.docker.internal\u0022 -e \u0022WORKER_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__WORKER__HTTPS__PROTOCOL=https\u0022 -e \u0022WORKER_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__WORKER__HTTPS__PORT=57624\u0022 -e \u0022WORKER_HTTPS_SERVICE_PORT=57624\u0022 -e \u0022SERVICE__WORKER__HTTPS__HOST=host.docker.internal\u0022 -e \u0022WORKER_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__RESULTS__PROTOCOL=http\u0022 -e \u0022RESULTS_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__RESULTS__PORT=57625\u0022 -e \u0022RESULTS_SERVICE_PORT=57625\u0022 -e \u0022SERVICE__RESULTS__HOST=host.docker.internal\u0022 -e \u0022RESULTS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__RESULTS__HTTPS__PROTOCOL=https\u0022 -e \u0022RESULTS_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__RESULTS__HTTPS__PORT=57626\u0022 -e \u0022RESULTS_HTTPS_SERVICE_PORT=57626\u0022 -e \u0022SERVICE__RESULTS__HTTPS__HOST=host.docker.internal\u0022 -e \u0022RESULTS_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022APP_INSTANCE=postgres_fb52c648-5\u0022 -e \u0022CONTAINER_HOST=host.docker.internal\u0022  -p 5432:5432 --name postgres_fb52c648-5 --restart=unless-stopped postgres ",
+        "dockerCommand": "run -d   -e \u0022PORT=5432\u0022 -e \u0022PROXY_PORT=5432:5432\u0022 -e \u0022POSTGRES_PASSWORD=<redacted>\u0022 -e \u0022CONNECTIONSTRINGS__POSTGRES=Server=host.docker.internal;Port=5432;User Id=postgres;Password=<redacted>;\u0022 -e \u0022SERVICE__VOTE__PROTOCOL=http\u0022 -e \u0022VOTE_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__VOTE__PORT=57617\u0022 -e \u0022VOTE_SERVICE_PORT=57617\u0022 -e \u0022SERVICE__VOTE__HOST=host.docker.internal\u0022 -e \u0022VOTE_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__VOTE__HTTPS__PROTOCOL=https\u0022 -e \u0022VOTE_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__VOTE__HTTPS__PORT=57620\u0022 -e \u0022VOTE_HTTPS_SERVICE_PORT=57620\u0022 -e \u0022SERVICE__VOTE__HTTPS__HOST=host.docker.internal\u0022 -e \u0022VOTE_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022CONNECTIONSTRINGS__REDIS=host.docker.internal:6379\u0022 -e \u0022SERVICE__WORKER__PROTOCOL=http\u0022 -e \u0022WORKER_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__WORKER__PORT=57623\u0022 -e \u0022WORKER_SERVICE_PORT=57623\u0022 -e \u0022SERVICE__WORKER__HOST=host.docker.internal\u0022 -e \u0022WORKER_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__WORKER__HTTPS__PROTOCOL=https\u0022 -e \u0022WORKER_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__WORKER__HTTPS__PORT=57624\u0022 -e \u0022WORKER_HTTPS_SERVICE_PORT=57624\u0022 -e \u0022SERVICE__WORKER__HTTPS__HOST=host.docker.internal\u0022 -e \u0022WORKER_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__RESULTS__PROTOCOL=http\u0022 -e \u0022RESULTS_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__RESULTS__PORT=57625\u0022 -e \u0022RESULTS_SERVICE_PORT=57625\u0022 -e \u0022SERVICE__RESULTS__HOST=host.docker.internal\u0022 -e \u0022RESULTS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__RESULTS__HTTPS__PROTOCOL=https\u0022 -e \u0022RESULTS_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__RESULTS__HTTPS__PORT=57626\u0022 -e \u0022RESULTS_HTTPS_SERVICE_PORT=57626\u0022 -e \u0022SERVICE__RESULTS__HTTPS__HOST=host.docker.internal\u0022 -e \u0022RESULTS_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022APP_INSTANCE=postgres_fb52c648-5\u0022 -e \u0022CONTAINER_HOST=host.docker.internal\u0022  -p 5432:5432 --name postgres_fb52c648-5 --restart=unless-stopped postgres ",
         "containerId": "03c75aa60f8a",
         "dockerNetwork": "tye_network_c7daaed0-c",
         "dockerNetworkAlias": "postgres",
@@ -54,8 +54,8 @@
         "environment": {
           "PORT": "5432",
           "PROXY_PORT": "5432:5432",
-          "POSTGRES_PASSWORD": "pass@word1",
-          "CONNECTIONSTRINGS__POSTGRES": "Server=host.docker.internal;Port=5432;User Id=postgres;Password=pass@word1;",
+          "POSTGRES_PASSWORD": "<redacted>",
+          "CONNECTIONSTRINGS__POSTGRES": "Server=host.docker.internal;Port=5432;User Id=postgres;Password=<redacted>;",
           "SERVICE__VOTE__PROTOCOL": "http",
           "VOTE_SERVICE_PROTOCOL": "http",
           "SERVICE__VOTE__PORT": "57617",
@@ -137,7 +137,7 @@
     },
     "replicas": {
       "redis_e00fd8d7-5": {
-        "dockerCommand": "run -d   -e \u0022PORT=6379\u0022 -e \u0022PROXY_PORT=6379:6379\u0022 -e \u0022CONNECTIONSTRINGS__REDIS=host.docker.internal:6379\u0022 -e \u0022SERVICE__VOTE__PROTOCOL=http\u0022 -e \u0022VOTE_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__VOTE__PORT=57617\u0022 -e \u0022VOTE_SERVICE_PORT=57617\u0022 -e \u0022SERVICE__VOTE__HOST=host.docker.internal\u0022 -e \u0022VOTE_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__VOTE__HTTPS__PROTOCOL=https\u0022 -e \u0022VOTE_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__VOTE__HTTPS__PORT=57620\u0022 -e \u0022VOTE_HTTPS_SERVICE_PORT=57620\u0022 -e \u0022SERVICE__VOTE__HTTPS__HOST=host.docker.internal\u0022 -e \u0022VOTE_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__WORKER__PROTOCOL=http\u0022 -e \u0022WORKER_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__WORKER__PORT=57623\u0022 -e \u0022WORKER_SERVICE_PORT=57623\u0022 -e \u0022SERVICE__WORKER__HOST=host.docker.internal\u0022 -e \u0022WORKER_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__WORKER__HTTPS__PROTOCOL=https\u0022 -e \u0022WORKER_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__WORKER__HTTPS__PORT=57624\u0022 -e \u0022WORKER_HTTPS_SERVICE_PORT=57624\u0022 -e \u0022SERVICE__WORKER__HTTPS__HOST=host.docker.internal\u0022 -e \u0022WORKER_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022CONNECTIONSTRINGS__POSTGRES=Server=host.docker.internal;Port=5432;User Id=postgres;Password=pass@word1;\u0022 -e \u0022SERVICE__RESULTS__PROTOCOL=http\u0022 -e \u0022RESULTS_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__RESULTS__PORT=57625\u0022 -e \u0022RESULTS_SERVICE_PORT=57625\u0022 -e \u0022SERVICE__RESULTS__HOST=host.docker.internal\u0022 -e \u0022RESULTS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__RESULTS__HTTPS__PROTOCOL=https\u0022 -e \u0022RESULTS_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__RESULTS__HTTPS__PORT=57626\u0022 -e \u0022RESULTS_HTTPS_SERVICE_PORT=57626\u0022 -e \u0022SERVICE__RESULTS__HTTPS__HOST=host.docker.internal\u0022 -e \u0022RESULTS_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022APP_INSTANCE=redis_e00fd8d7-5\u0022 -e \u0022CONTAINER_HOST=host.docker.internal\u0022  -p 6379:6379 --name redis_e00fd8d7-5 --restart=unless-stopped redis ",
+        "dockerCommand": "run -d   -e \u0022PORT=6379\u0022 -e \u0022PROXY_PORT=6379:6379\u0022 -e \u0022CONNECTIONSTRINGS__REDIS=host.docker.internal:6379\u0022 -e \u0022SERVICE__VOTE__PROTOCOL=http\u0022 -e \u0022VOTE_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__VOTE__PORT=57617\u0022 -e \u0022VOTE_SERVICE_PORT=57617\u0022 -e \u0022SERVICE__VOTE__HOST=host.docker.internal\u0022 -e \u0022VOTE_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__VOTE__HTTPS__PROTOCOL=https\u0022 -e \u0022VOTE_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__VOTE__HTTPS__PORT=57620\u0022 -e \u0022VOTE_HTTPS_SERVICE_PORT=57620\u0022 -e \u0022SERVICE__VOTE__HTTPS__HOST=host.docker.internal\u0022 -e \u0022VOTE_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__WORKER__PROTOCOL=http\u0022 -e \u0022WORKER_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__WORKER__PORT=57623\u0022 -e \u0022WORKER_SERVICE_PORT=57623\u0022 -e \u0022SERVICE__WORKER__HOST=host.docker.internal\u0022 -e \u0022WORKER_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__WORKER__HTTPS__PROTOCOL=https\u0022 -e \u0022WORKER_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__WORKER__HTTPS__PORT=57624\u0022 -e \u0022WORKER_HTTPS_SERVICE_PORT=57624\u0022 -e \u0022SERVICE__WORKER__HTTPS__HOST=host.docker.internal\u0022 -e \u0022WORKER_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022CONNECTIONSTRINGS__POSTGRES=Server=host.docker.internal;Port=5432;User Id=postgres;Password=<redacted>;\u0022 -e \u0022SERVICE__RESULTS__PROTOCOL=http\u0022 -e \u0022RESULTS_SERVICE_PROTOCOL=http\u0022 -e \u0022SERVICE__RESULTS__PORT=57625\u0022 -e \u0022RESULTS_SERVICE_PORT=57625\u0022 -e \u0022SERVICE__RESULTS__HOST=host.docker.internal\u0022 -e \u0022RESULTS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022SERVICE__RESULTS__HTTPS__PROTOCOL=https\u0022 -e \u0022RESULTS_HTTPS_SERVICE_PROTOCOL=https\u0022 -e \u0022SERVICE__RESULTS__HTTPS__PORT=57626\u0022 -e \u0022RESULTS_HTTPS_SERVICE_PORT=57626\u0022 -e \u0022SERVICE__RESULTS__HTTPS__HOST=host.docker.internal\u0022 -e \u0022RESULTS_HTTPS_SERVICE_HOST=host.docker.internal\u0022 -e \u0022APP_INSTANCE=redis_e00fd8d7-5\u0022 -e \u0022CONTAINER_HOST=host.docker.internal\u0022  -p 6379:6379 --name redis_e00fd8d7-5 --restart=unless-stopped redis ",
         "containerId": "c4df94db91ab",
         "dockerNetwork": "tye_network_c7daaed0-c",
         "dockerNetworkAlias": "redis",
@@ -175,7 +175,7 @@
           "WORKER_HTTPS_SERVICE_PORT": "57624",
           "SERVICE__WORKER__HTTPS__HOST": "host.docker.internal",
           "WORKER_HTTPS_SERVICE_HOST": "host.docker.internal",
-          "CONNECTIONSTRINGS__POSTGRES": "Server=host.docker.internal;Port=5432;User Id=postgres;Password=pass@word1;",
+          "CONNECTIONSTRINGS__POSTGRES": "Server=host.docker.internal;Port=5432;User Id=postgres;Password=<redacted>;",
           "SERVICE__RESULTS__PROTOCOL": "http",
           "RESULTS_SERVICE_PROTOCOL": "http",
           "SERVICE__RESULTS__PORT": "57625",
@@ -294,7 +294,7 @@
           "WORKER_HTTPS_SERVICE_PORT": "57624",
           "SERVICE__WORKER__HTTPS__HOST": "localhost",
           "WORKER_HTTPS_SERVICE_HOST": "localhost",
-          "CONNECTIONSTRINGS__POSTGRES": "Server=localhost;Port=5432;User Id=postgres;Password=pass@word1;",
+          "CONNECTIONSTRINGS__POSTGRES": "Server=localhost;Port=5432;User Id=postgres;Password=<redacted>;",
           "ASPNETCORE_URLS": "http://localhost:57625;https://localhost:57626",
           "HTTPS_PORT": "57626",
           "PORT": "57625;57626",
@@ -391,7 +391,7 @@
           "WORKER_HTTPS_SERVICE_PORT": "57624",
           "SERVICE__WORKER__HTTPS__HOST": "localhost",
           "WORKER_HTTPS_SERVICE_HOST": "localhost",
-          "CONNECTIONSTRINGS__POSTGRES": "Server=localhost;Port=5432;User Id=postgres;Password=pass@word1;",
+          "CONNECTIONSTRINGS__POSTGRES": "Server=localhost;Port=5432;User Id=postgres;Password=<redacted>;",
           "SERVICE__RESULTS__PROTOCOL": "http",
           "RESULTS_SERVICE_PROTOCOL": "http",
           "SERVICE__RESULTS__PORT": "57625",
@@ -453,7 +453,7 @@
           "WORKER_HTTPS_SERVICE_PORT": "57624",
           "SERVICE__WORKER__HTTPS__HOST": "localhost",
           "WORKER_HTTPS_SERVICE_HOST": "localhost",
-          "CONNECTIONSTRINGS__POSTGRES": "Server=localhost;Port=5432;User Id=postgres;Password=pass@word1;",
+          "CONNECTIONSTRINGS__POSTGRES": "Server=localhost;Port=5432;User Id=postgres;Password=<redacted>;",
           "SERVICE__RESULTS__PROTOCOL": "http",
           "RESULTS_SERVICE_PROTOCOL": "http",
           "SERVICE__RESULTS__PORT": "57625",
@@ -562,7 +562,7 @@
           "SERVICE__VOTE__HTTPS__HOST": "localhost",
           "VOTE_HTTPS_SERVICE_HOST": "localhost",
           "CONNECTIONSTRINGS__REDIS": "localhost:6379",
-          "CONNECTIONSTRINGS__POSTGRES": "Server=localhost;Port=5432;User Id=postgres;Password=pass@word1;",
+          "CONNECTIONSTRINGS__POSTGRES": "Server=localhost;Port=5432;User Id=postgres;Password=<redacted>;",
           "SERVICE__RESULTS__PROTOCOL": "http",
           "RESULTS_SERVICE_PROTOCOL": "http",
           "SERVICE__RESULTS__PORT": "57625",
