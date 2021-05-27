@@ -32,6 +32,7 @@ import { TyeReplicaNode } from './views/services/tyeReplicaNode';
 import { TyeServiceNode } from './views/services/tyeServiceNode';
 import VsCodeSettingsProvider from './services/settingsProvider';
 import LocalTyePathProvider from './services/tyePathProvider';
+import createBrowseServiceCommand from './commands/browseService';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -82,12 +83,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.browseService',
-				async (contextx, serviceNode: TyeReplicaNode) => {
-					const uri = serviceNode.BrowserUri;
-					if(uri) {
-						await vscode.env.openExternal(uri);
-					}
-				});
+				createBrowseServiceCommand());
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.launchTyeDashboard',
