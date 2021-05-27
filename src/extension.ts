@@ -109,8 +109,8 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 						replicas.push(node.replica);
 					}
 
-					for (const replica of replicas) {
-						await attachToReplica(undefined, replica.name, replica.pid);
+					for (const replica of replicas.filter(r => r.pid !== undefined)) {
+						await attachToReplica(undefined, replica.name, replica.pid!);
 					}
 				});
 
