@@ -12,8 +12,8 @@ interface TyeDescription {
 }
 
 interface TyeReplica {
-    name:string
-    pid:number
+    name: string
+    pid: number | undefined;
     environment: {[key:string]: string}
     ports: number[]
 }

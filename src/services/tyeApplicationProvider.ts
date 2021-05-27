@@ -74,7 +74,7 @@ export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
                             serviceMap[service.description.name] = {
                                 replicas:
                                     Object.keys(service.replicas)
-                                        .reduce<{ [key: string]: number }>(
+                                        .reduce<{ [key: string]: number | undefined }>(
                                             (replicaMap, replicaName) => {
                                                 replicaMap[replicaName] = service.replicas[replicaName].pid;
                                                 return replicaMap;

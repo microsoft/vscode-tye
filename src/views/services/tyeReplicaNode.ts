@@ -4,6 +4,10 @@
 import * as vscode from 'vscode';
 import TyeNode from '../treeNode';
 
+export function isAttachable(service: TyeService): boolean {
+    return service.serviceType === 'project';
+}
+
 export class TyeReplicaNode implements TyeNode {
     constructor(public readonly service: TyeService, public readonly replica: TyeReplica) {
     }
@@ -14,7 +18,7 @@ export class TyeReplicaNode implements TyeNode {
         treeItem.contextValue = this.service.serviceType;
         treeItem.iconPath = new vscode.ThemeIcon('server-process');
 
-        if (this.service.serviceType === 'project') {
+        if (isAttachable(this.service)) {
             // TODO: Disable debugging when no workspace is open.  (Does it matter?  What if the *wrong* workspace is currently open?)
             treeItem.contextValue += ' attachable'
         }
