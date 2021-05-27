@@ -4,7 +4,7 @@ import TreeNode from '../views/treeNode';
 import TyeReplicaNode from '../views/services/tyeReplicaNode';
 import TyeServiceNode from '../views/services/tyeServiceNode';
 
-export async function browseService(ui: UserInput, context: IActionContext, node: TreeNode) {
+export async function browseService(ui: UserInput, context: IActionContext, node: TreeNode): Promise<void> {
     let uri;
 
     if (node instanceof TyeReplicaNode) {
@@ -18,6 +18,6 @@ export async function browseService(ui: UserInput, context: IActionContext, node
     }
 }
 
-const createBrowseServiceCommand = (ui: UserInput) => (context: IActionContext, replicaNode: TyeReplicaNode) => browseService(ui, context, replicaNode);
+const createBrowseServiceCommand = (ui: UserInput) => (context: IActionContext, replicaNode: TyeReplicaNode): Promise<void> => browseService(ui, context, replicaNode);
 
 export default createBrowseServiceCommand;
