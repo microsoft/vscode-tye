@@ -98,6 +98,8 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 					}
 				});
 
+			const debugSessionMonitor = registerDisposable(new CoreClrDebugSessionMonitor());
+
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.attachService',
 				async (context, node: TreeNode) => {
@@ -109,7 +111,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 						replicas.push(node.replica);
 					}
 
-					for (const replica of replicas.filter(r => r.pid !== undefined)) {
+					for (const replica of replicas.filter(r => r.pid !== undefined && !debugSessionMonitor.isAttached(r.pid))) {
 						await attachToReplica(undefined, replica.name, replica.pid!);
 					}
 				});
@@ -162,7 +164,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 								for (const replicaName of Object.keys(service.replicas)) {
 									const pid = service.replicas[replicaName];
 
-									if (pid !== undefined) {
+									if (pid !== undefined && !debugSessionMonitor.isAttached(pid)) {
 										await attachToReplica(undefined, replicaName, pid);
 									}
 								}
@@ -175,10 +177,9 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerCommandWithTelemetry('vscode-tye.help.reportIssue', createReportIssueCommand(ui));
 			telemetryProvider.registerCommandWithTelemetry('vscode-tye.help.reviewIssues', createReviewIssuesCommand(ui));
 	
-			const debugSessionMonitor = registerDisposable(new CoreClrDebugSessionMonitor());
 			const applicationWatcher = registerDisposable(new TyeApplicationDebugSessionWatcher(debugSessionMonitor, tyeApplicationProvider));
 		
-			registerDisposable(vscode.debug.registerDebugConfigurationProvider('tye', new TyeDebugConfigurationProvider(tyeApplicationProvider, applicationWatcher)));
+			registerDisposable(vscode.debug.registerDebugConfigurationProvider('tye', new TyeDebugConfigurationProvider(debugSessionMonitor, tyeApplicationProvider, applicationWatcher)));
 		
 			registerDisposable(vscode.tasks.registerTaskProvider('tye-run', new TyeRunCommandTaskProvider(taskMonitor, telemetryProvider, tyePathProvider, tyeClientProvider, tyeApplicationProvider)));
 
