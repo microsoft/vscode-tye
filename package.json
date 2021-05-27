@@ -4,6 +4,7 @@
 	"description": "Makes it easy to debug and interact with applications using Tye.",
 	"version": "0.1.0",
 	"preview": true,
+	"icon": "resources/brand-tye_128x.png",
 	"publisher": "ms-azuretools",
 	"license": "SEE LICENSE IN LICENSE.txt",
 	"aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
