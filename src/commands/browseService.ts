@@ -1,15 +1,15 @@
-import * as vscode from 'vscode';
+import { UserInput } from '../services/userInput';
 import { IActionContext } from 'vscode-azureextensionui';
 import { TyeReplicaNode } from '../views/services/tyeReplicaNode';
 
-export async function browseService(context: IActionContext, replicaNode: TyeReplicaNode) {
+export async function browseService(ui: UserInput, context: IActionContext, replicaNode: TyeReplicaNode) {
     const uri = replicaNode.BrowserUri;
     
     if (uri) {
-        await vscode.env.openExternal(uri);
+        await ui.openExternal(uri.toString());
     }
 }
 
-const createBrowseServiceCommand = () => browseService;
+const createBrowseServiceCommand = (ui: UserInput) => (context: IActionContext, replicaNode: TyeReplicaNode) => browseService(ui, context, replicaNode);
 
 export default createBrowseServiceCommand;

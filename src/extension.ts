@@ -81,9 +81,11 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 					treeProvider.refresh();
 				});
 
+			const ui = new AggregateUserInput(ext.ui);
+
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.browseService',
-				createBrowseServiceCommand());
+				createBrowseServiceCommand(ui));
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.launchTyeDashboard',
@@ -101,7 +103,6 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 				});
 
 			const scaffolder = new LocalScaffolder();
-			const ui = new AggregateUserInput(ext.ui);
 			const settingsProvider = new VsCodeSettingsProvider();
 			const tyePathProvider = new LocalTyePathProvider(settingsProvider);
 			const tyeApplicationConfigurationProvider = new WorkspaceTyeApplicationConfigurationProvider(new YamlTyeApplicationConfigurationReader());
