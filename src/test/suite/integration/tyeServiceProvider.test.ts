@@ -4,8 +4,8 @@
 import * as assert from 'assert';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import { TyeReplicaNode } from '../../../views/services/tyeReplicaNode';
-import { TyeServiceNode } from '../../../views/services/tyeServiceNode';
+import TyeReplicaNode from '../../../views/services/tyeReplicaNode';
+import TyeServiceNode from '../../../views/services/tyeServiceNode';
 import { TyeServicesTreeDataProvider } from '../../../views/services/tyeServicesTreeDataProvider';
 import { TyeClient } from '../../../services/tyeClient';
 import { MockTyeApplicationProvider } from './mockTyeApplicationProvider';
