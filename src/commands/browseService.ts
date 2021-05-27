@@ -5,16 +5,12 @@ import TyeReplicaNode from '../views/services/tyeReplicaNode';
 import TyeServiceNode from '../views/services/tyeServiceNode';
 
 export async function browseService(ui: UserInput, context: IActionContext, node: TreeNode): Promise<void> {
-    let uri;
+    if (node instanceof TyeReplicaNode || node instanceof TyeServiceNode) {
+        const uri = node.browserUrl;
 
-    if (node instanceof TyeReplicaNode) {
-        uri = node.browserUrl;
-    } else if (node instanceof TyeServiceNode) {
-        uri = node.browserUrl;
-    }
-
-    if (uri) {
-        await ui.openExternal(uri);
+        if (uri) {
+            await ui.openExternal(uri);
+        }
     }
 }
 
