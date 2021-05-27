@@ -7,6 +7,7 @@ import { TyeApplicationProvider } from '../services/tyeApplicationProvider';
 import { getLocalizationPathForFile } from '../util/localization';
 import { TyeApplicationWatcher } from './tyeApplicationWatcher';
 import { attachToReplica } from './attachToReplica';
+import { DebugSessionMonitor } from './debugSessionMonitor';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -17,7 +18,10 @@ export interface TyeDebugConfiguration extends vscode.DebugConfiguration {
 }
 
 export class TyeDebugConfigurationProvider implements vscode.DebugConfigurationProvider {
-    constructor(private readonly tyeApplicationProvider: TyeApplicationProvider, private readonly tyeApplicationWatcher: TyeApplicationWatcher) {
+    constructor(
+        private readonly debugSessionMonitor: DebugSessionMonitor,
+        private readonly tyeApplicationProvider: TyeApplicationProvider,
+        private readonly tyeApplicationWatcher: TyeApplicationWatcher) {
     }
 
     async resolveDebugConfigurationWithSubstitutedVariables(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration): Promise<vscode.DebugConfiguration | null | undefined> {
@@ -52,7 +56,7 @@ export class TyeDebugConfigurationProvider implements vscode.DebugConfigurationP
             for (const replicaName of Object.keys(service.replicas)) {
                 const pid = service.replicas[replicaName];
 
-                if (pid !== undefined) {
+                if (pid !== undefined && !this.debugSessionMonitor.isAttached(pid)) {
                     await attachToReplica(folder, replicaName, pid);
                 }
             }
