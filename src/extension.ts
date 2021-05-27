@@ -112,6 +112,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 					}
 
 					for (const replica of replicas.filter(r => r.pid !== undefined && !debugSessionMonitor.isAttached(r.pid))) {
+						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
 						await attachToReplica(undefined, replica.name, replica.pid!);
 					}
 				});
