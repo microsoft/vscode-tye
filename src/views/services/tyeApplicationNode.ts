@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import TreeNode from '../treeNode';
 import { TyeApplication } from '../../services/tyeApplicationProvider';
 import { TyeDashboardNode } from './tyeDashboardNode';
-import { TyeServiceNode } from './tyeServiceNode';
+import TyeServiceNode from './tyeServiceNode';
 import { TyeClientProvider } from '../../services/tyeClient';
 
 export class TyeApplicationNode implements TreeNode {

@@ -28,10 +28,11 @@ import createGetStartedCommand from './commands/help/getStarted';
 import createReportIssueCommand from './commands/help/reportIssue';
 import createReviewIssuesCommand from './commands/help/reviewIssues';
 import { TyeServicesTreeDataProvider } from './views/services/tyeServicesTreeDataProvider';
-import { isAttachable, TyeReplicaNode } from './views/services/tyeReplicaNode';
-import { TyeServiceNode } from './views/services/tyeServiceNode';
+import TyeReplicaNode, { isAttachable } from './views/services/tyeReplicaNode';
+import TyeServiceNode from './views/services/tyeServiceNode';
 import VsCodeSettingsProvider from './services/settingsProvider';
 import LocalTyePathProvider from './services/tyePathProvider';
+import createBrowseServiceCommand from './commands/browseService';
 import TreeNode from './views/treeNode';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
@@ -81,14 +82,11 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 					treeProvider.refresh();
 				});
 
+			const ui = new AggregateUserInput(ext.ui);
+
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.browseService',
-				async (contextx, serviceNode: TyeReplicaNode) => {
-					const uri = serviceNode.BrowserUri;
-					if(uri) {
-						await vscode.env.openExternal(uri);
-					}
-				});
+				createBrowseServiceCommand(ui));
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.launchTyeDashboard',
@@ -118,7 +116,6 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 				});
 
 			const scaffolder = new LocalScaffolder();
-			const ui = new AggregateUserInput(ext.ui);
 			const settingsProvider = new VsCodeSettingsProvider();
 			const tyePathProvider = new LocalTyePathProvider(settingsProvider);
 			const tyeApplicationConfigurationProvider = new WorkspaceTyeApplicationConfigurationProvider(new YamlTyeApplicationConfigurationReader());

@@ -4,11 +4,43 @@
 import * as vscode from 'vscode';
 import TyeNode from '../treeNode';
 
+export function isReplicaBrowsable(service: TyeService, replica: TyeReplica): boolean {
+    if (replica.environment) {
+        return replica.environment[`service__${service.description.name}__host`.toUpperCase()] !== undefined;
+    }
+
+    if (service.serviceType === 'ingress') {
+        return true;
+    }
+
+    return false;
+}
+
+export function getReplicaBrowseUrl(service: TyeService, replica: TyeReplica): string | undefined {
+    if (!isReplicaBrowsable(service, replica)) {
+        return undefined;
+    }
+
+    let host = 'localhost';
+    let port = replica.ports[0];
+    let protocol = 'http';
+
+    //We want to prefer the environment variable so that it matches as closely as possible to GetServiceUri.
+    //Which is what code would get if accessing this service.
+    if (replica.environment) {
+        host = replica.environment[`service__${service.description.name}__host`.toUpperCase()];
+        port = Number.parseInt(replica.environment[`service__${service.description.name}__port`.toUpperCase()]);
+        protocol = replica.environment[`service__${service.description.name}__protocol`.toUpperCase()] ?? 'http';
+    }
+
+    return `${protocol}://${host}:${port}`;
+}
+
 export function isAttachable(service: TyeService): boolean {
     return service.serviceType === 'project';
 }
 
-export class TyeReplicaNode implements TyeNode {
+export default class TyeReplicaNode implements TyeNode {
     constructor(public readonly service: TyeService, public readonly replica: TyeReplica) {
     }
 
@@ -31,34 +63,10 @@ export class TyeReplicaNode implements TyeNode {
     }
 
     get isBrowsable(): boolean {
-        if (this.replica.environment) {
-            return this.replica.environment[`service__${this.service.description.name}__host`.toUpperCase()] !== undefined;
-        }
-
-        if (this.service.serviceType === 'ingress') {
-            return true;
-        }
-
-        return false;
+        return isReplicaBrowsable(this.service, this.replica);
     }
 
-    get BrowserUri() : vscode.Uri | undefined {
-        if (!this.isBrowsable){
-            return undefined;
-        }
-
-        let host = 'localhost';
-        let port = this.replica.ports[0];
-        let protocol = 'http';
-    
-        //We want to prefer the environment variable so that it matches as closely as possible to GetServiceUri.
-        //Which is what code would get if accessing this service.
-        if (this.replica.environment) {
-            host = this.replica.environment[`service__${this.service.description.name}__host`.toUpperCase()];
-            port = Number.parseInt(this.replica.environment[`service__${this.service.description.name}__port`.toUpperCase()]);
-            protocol = this.replica.environment[`service__${this.service.description.name}__protocol`.toUpperCase()] ?? 'http';
-        }
-
-        return vscode.Uri.parse(`${protocol}://${host}:${port}`);
+    get browserUrl() : string | undefined {
+        return getReplicaBrowseUrl(this.service, this.replica);
     }
 }
