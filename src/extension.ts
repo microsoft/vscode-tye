@@ -34,7 +34,6 @@ import VsCodeSettingsProvider from './services/settingsProvider';
 import LocalTyePathProvider from './services/tyePathProvider';
 import createBrowseServiceCommand from './commands/browseService';
 import TreeNode from './views/treeNode';
-import { names } from './util/generators';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -111,8 +110,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 					}
 
 					for (const replica of replicas) {
-						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-						await attachToReplica(debugSessionMonitor, undefined, replica.serviceType, replica.replica.name, replica.replica.pid!);
+						await attachToReplica(debugSessionMonitor, undefined, replica.serviceType, replica.replica.name, replica.replica.pid);
 					}
 				});
 
