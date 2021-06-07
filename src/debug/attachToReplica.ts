@@ -30,7 +30,7 @@ async function getFunctionProcess(pid: number): Promise<string | undefined> {
 
     const functionProcess = processes.slice().reverse().find(c => /(dotnet|func)(\.exe|)$/i.test(c.COMMAND || ''));
 
-    return functionProcess ? functionProcess.PID : undefined;
+    return functionProcess ? functionProcess.PID : pid.toString();
 }
 
 export async function attachToReplica(debugSessionMonitor: DebugSessionMonitor, folder: vscode.WorkspaceFolder | undefined, serviceType: KnownServiceType, replicaName: string, replicaPid: number | undefined): Promise<void> {
