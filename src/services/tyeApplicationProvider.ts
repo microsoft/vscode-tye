@@ -7,8 +7,11 @@ import { first, switchMap } from 'rxjs/operators';
 import { MonitoredTask, TaskMonitor } from '../tasks/taskMonitor';
 import { TyeClientProvider } from './tyeClient';
 
+type KnownServiceType = 'project' | 'function';
+
 export type TyeProjectService = {
     replicas: { [key: string]: number | undefined };
+    serviceType: KnownServiceType;
 };
 
 export type TyeApplication = {
@@ -68,7 +71,7 @@ export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
             const services = await tyeClient.getServices();
             const projectServices =
                 (services ?? [])
-                    .filter(service => service.serviceType === 'project')
+                    .filter(service => (service.serviceType === 'project') || (service.serviceType === 'function'))
                     .reduce<{ [key: string]: TyeProjectService }>(
                         (serviceMap, service) => {
                             serviceMap[service.description.name] = {
@@ -79,7 +82,8 @@ export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
                                                 replicaMap[replicaName] = service.replicas[replicaName].pid;
                                                 return replicaMap;
                                             },
-                                            {})
+                                            {}),
+                                serviceType: <KnownServiceType>service.serviceType
                             };
                             return serviceMap;
                         },

@@ -50,9 +50,7 @@ export class TyeApplicationDebugSessionWatcher extends vscode.Disposable impleme
                                         for (const replicaName of Object.keys(service.replicas)) {
                                             const currentPid = service.replicas[replicaName];
 
-                                            if (currentPid !== undefined && !debugSessionMonitor.isAttached(currentPid)) {
-                                                void attachToReplica(watchedApplication.folder, replicaName, currentPid);
-                                            }
+                                            void attachToReplica(debugSessionMonitor, watchedApplication.folder, replicaName, currentPid);
                                         }
                                     }
                                 }
