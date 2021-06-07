@@ -25,11 +25,13 @@ function getProcessTree(pid: number): Promise<readonly psTree.PS[]> {
         });
 }
 
-async function getFunctionProcess(pid: number): Promise<string | undefined> {
+async function getFunctionProcess(pid: number): Promise<string> {
     const processes = await getProcessTree(pid);
 
+    // Borrowed from vscode-azurefunctions, look for the most child process that matches `dotnet.exe` or `func.exe`.
     const functionProcess = processes.slice().reverse().find(c => /(dotnet|func)(\.exe|)$/i.test(c.COMMAND || ''));
 
+    // Return the child process, if found, otherwise assume the root process is the one.
     return functionProcess ? functionProcess.PID : pid.toString();
 }
 
@@ -38,6 +40,10 @@ export async function attachToReplica(debugSessionMonitor: DebugSessionMonitor, 
         let actualPid: string | undefined = replicaPid.toString();
 
         if (serviceType === 'function') {
+            // NOTE: The PID returned by Tye is for the Azure Functions host,
+            //       which may not be the actual .NET process for the replica
+            //       (e.g. it's an isolated function). In that case we need to
+            //       find the corresponding child process.
             actualPid = await getFunctionProcess(replicaPid);
         }
 
