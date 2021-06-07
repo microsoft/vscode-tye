@@ -9,7 +9,7 @@ import { TyeLogsContentProvider } from './views/tyeLogsContentProvider';
 import TyeRunCommandTaskProvider from './tasks/tyeRunTaskProvider';
 import { TyeTaskMonitor } from './tasks/taskMonitor';
 import { TyeDebugConfigurationProvider } from './debug/tyeDebugConfigurationProvider';
-import { TaskBasedTyeApplicationProvider } from './services/tyeApplicationProvider';
+import { KnownServiceType, TaskBasedTyeApplicationProvider } from './services/tyeApplicationProvider';
 import { TyeApplicationDebugSessionWatcher } from './debug/tyeApplicationWatcher';
 import { CoreClrDebugSessionMonitor } from './debug/debugSessionMonitor';
 import { attachToReplica } from './debug/attachToReplica';
@@ -34,6 +34,7 @@ import VsCodeSettingsProvider from './services/settingsProvider';
 import LocalTyePathProvider from './services/tyePathProvider';
 import createBrowseServiceCommand from './commands/browseService';
 import TreeNode from './views/treeNode';
+import { names } from './util/generators';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -101,17 +102,17 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.attachService',
 				async (context, node: TreeNode) => {
-					const replicas: TyeReplica[] = [];
+					const replicas: { replica: TyeReplica, serviceType: KnownServiceType }[] = [];
 
 					if (node instanceof TyeServiceNode && isAttachable(node.service)) {
-						replicas.push(...Object.values(node.service.replicas));
+						replicas.push(...Object.values(node.service.replicas).map(replica => ({ replica: replica, serviceType: <KnownServiceType>node.service.serviceType })));
 					} else if (node instanceof TyeReplicaNode && isAttachable(node.service)) {
-						replicas.push(node.replica);
+						replicas.push({ replica: node.replica, serviceType: <KnownServiceType>node.service.serviceType });
 					}
 
 					for (const replica of replicas) {
 						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-						await attachToReplica(debugSessionMonitor, undefined, replica.name, replica.pid!);
+						await attachToReplica(debugSessionMonitor, undefined, replica.serviceType, replica.replica.name, replica.replica.pid!);
 					}
 				});
 
@@ -162,7 +163,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 								for (const replicaName of Object.keys(service.replicas)) {
 									const pid = service.replicas[replicaName];
 
-									await attachToReplica(debugSessionMonitor, undefined, replicaName, pid);
+									await attachToReplica(debugSessionMonitor, undefined, service.serviceType, replicaName, pid);
 								}
 						}
 					}

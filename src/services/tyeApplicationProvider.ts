@@ -7,7 +7,7 @@ import { first, switchMap } from 'rxjs/operators';
 import { MonitoredTask, TaskMonitor } from '../tasks/taskMonitor';
 import { TyeClientProvider } from './tyeClient';
 
-type KnownServiceType = 'project' | 'function';
+export type KnownServiceType = 'project' | 'function';
 
 export type TyeProjectService = {
     replicas: { [key: string]: number | undefined };
