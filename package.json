@@ -321,7 +321,10 @@
 		},
 		"yamlValidation": [
 			{
-				"fileMatch": "tye.yaml",
+				"fileMatch": [
+					"tye.yml",
+					"tye.yaml"
+				],
 				"url": "./resources/schemas/tye.json"
 			}
 		]
