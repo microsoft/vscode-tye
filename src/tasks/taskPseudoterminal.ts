@@ -40,6 +40,13 @@ export default class TaskPseudoterminal extends vscode.Disposable implements vsc
         this.closeWithValue();
     }
 
+    handleInput?(data: string): void {
+        // If the user presses Ctrl + C in the terminal window, close it.
+        if (data === '\u0003') {
+            this.close();
+        }
+    }
+
     private closeWithValue(value: number | void): void {
         this.cts.cancel();
         this.closeEmitter.fire(value);
