@@ -318,7 +318,16 @@
 					"group": "inline"
 				}
 			]
-		}
+		},
+		"yamlValidation": [
+			{
+				"fileMatch": [
+					"tye.yml",
+					"tye.yaml"
+				],
+				"url": "./resources/schemas/tye.json"
+			}
+		]
 	},
 	"scripts": {
 		"build": "gulp build",
