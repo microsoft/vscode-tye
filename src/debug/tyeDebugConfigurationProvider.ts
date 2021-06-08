@@ -56,9 +56,7 @@ export class TyeDebugConfigurationProvider implements vscode.DebugConfigurationP
             for (const replicaName of Object.keys(service.replicas)) {
                 const pid = service.replicas[replicaName];
 
-                if (pid !== undefined && !this.debugSessionMonitor.isAttached(pid)) {
-                    await attachToReplica(folder, replicaName, pid);
-                }
+                await attachToReplica(this.debugSessionMonitor, folder, service.serviceType, replicaName, pid);
             }
         }
 

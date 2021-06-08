@@ -37,7 +37,7 @@ export function getReplicaBrowseUrl(service: TyeService, replica: TyeReplica): s
 }
 
 export function isAttachable(service: TyeService): boolean {
-    return service.serviceType === 'project';
+    return (service.serviceType === 'project') || (service.serviceType === 'function');
 }
 
 export default class TyeReplicaNode implements TyeNode {

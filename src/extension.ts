@@ -9,7 +9,7 @@ import { TyeLogsContentProvider } from './views/tyeLogsContentProvider';
 import TyeRunCommandTaskProvider from './tasks/tyeRunTaskProvider';
 import { TyeTaskMonitor } from './tasks/taskMonitor';
 import { TyeDebugConfigurationProvider } from './debug/tyeDebugConfigurationProvider';
-import { TaskBasedTyeApplicationProvider } from './services/tyeApplicationProvider';
+import { KnownServiceType, TaskBasedTyeApplicationProvider } from './services/tyeApplicationProvider';
 import { TyeApplicationDebugSessionWatcher } from './debug/tyeApplicationWatcher';
 import { CoreClrDebugSessionMonitor } from './debug/debugSessionMonitor';
 import { attachToReplica } from './debug/attachToReplica';
@@ -101,17 +101,16 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.attachService',
 				async (context, node: TreeNode) => {
-					const replicas: TyeReplica[] = [];
+					const replicas: { replica: TyeReplica, serviceType: KnownServiceType }[] = [];
 
 					if (node instanceof TyeServiceNode && isAttachable(node.service)) {
-						replicas.push(...Object.values(node.service.replicas));
+						replicas.push(...Object.values(node.service.replicas).map(replica => ({ replica: replica, serviceType: <KnownServiceType>node.service.serviceType })));
 					} else if (node instanceof TyeReplicaNode && isAttachable(node.service)) {
-						replicas.push(node.replica);
+						replicas.push({ replica: node.replica, serviceType: <KnownServiceType>node.service.serviceType });
 					}
 
-					for (const replica of replicas.filter(r => r.pid !== undefined && !debugSessionMonitor.isAttached(r.pid))) {
-						// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-						await attachToReplica(undefined, replica.name, replica.pid!);
+					for (const replica of replicas) {
+						await attachToReplica(debugSessionMonitor, undefined, replica.serviceType, replica.replica.name, replica.replica.pid);
 					}
 				});
 
@@ -162,9 +161,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 								for (const replicaName of Object.keys(service.replicas)) {
 									const pid = service.replicas[replicaName];
 
-									if (pid !== undefined && !debugSessionMonitor.isAttached(pid)) {
-										await attachToReplica(undefined, replicaName, pid);
-									}
+									await attachToReplica(debugSessionMonitor, undefined, service.serviceType, replicaName, pid);
 								}
 						}
 					}
