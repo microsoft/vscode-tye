@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { KnownServiceType } from 'src/services/tyeApplicationProvider';
+import { KnownServiceType } from '../services/tyeApplicationProvider';
 import * as psTree from 'ps-tree';
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
