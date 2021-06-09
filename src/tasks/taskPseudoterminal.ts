@@ -6,6 +6,10 @@ import TaskPseudoterminalWriter, { PseudoterminalWriter } from './taskPseudoterm
 
 export type TaskPseudoterminalCallback = (writer: PseudoterminalWriter, cts: vscode.CancellationToken) => Promise<number | void>;
 
+const ControlCodes = {
+    CtrlC: '\u0003'
+};
+
 export default class TaskPseudoterminal extends vscode.Disposable implements vscode.Pseudoterminal {
     private readonly closeEmitter: vscode.EventEmitter<number | void> = new vscode.EventEmitter<number | void>();
     private readonly writeEmitter: vscode.EventEmitter<string> = new vscode.EventEmitter<string>();
@@ -38,6 +42,13 @@ export default class TaskPseudoterminal extends vscode.Disposable implements vsc
 
     close(): void {
         this.closeWithValue();
+    }
+
+    handleInput?(data: string): void {
+        // If the user presses Ctrl + C in the terminal window, close it...
+        if (data.includes(ControlCodes.CtrlC)) {
+            this.close();
+        }
     }
 
     private closeWithValue(value: number | void): void {
