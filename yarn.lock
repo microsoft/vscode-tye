@@ -330,6 +330,13 @@
     "@types/node" "*"
     form-data "^3.0.0"
 
+"@types/node-netstat@^1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@types/node-netstat/-/node-netstat-1.8.0.tgz#b445198159159656f958e4a27abd96819e886cbb"
+  integrity sha512-5juSaTEwt13SnMwTyE5oUQmfuLvTBgCTsjRVz66Uby8uCTVnVogDsxQBclWWH6sN6qYIfGCijnv1XWvPnSYF0g==
+  dependencies:
+    "@types/node" "*"
+
 "@types/node@*":
   version "14.6.0"
   resolved "https://registry.npmjs.org/@types/node/-/node-14.6.0.tgz"
@@ -3270,6 +3277,11 @@ is-windows@^1.0.1, is-windows@^1.0.2:
   resolved "https://registry.npmjs.org/is-windows/-/is-windows-1.0.2.tgz"
   integrity sha512-eXK1UInq2bPmjyX6e3VHIzMLobc4J94i4AWn+Hpq3OU5KkrRC96OAcR3PRJ/pGu6m8TRnBHP9dkXQVsT/COVIA==
 
+is-wsl@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/is-wsl/-/is-wsl-1.1.0.tgz#1f16e4aa22b04d1336b66188a66af3c600c3a66d"
+  integrity sha1-HxbkqiKwTRM2tmGIpmrzxgDDpm0=
+
 is-wsl@^2.2.0:
   version "2.2.0"
   resolved "https://registry.npmjs.org/is-wsl/-/is-wsl-2.2.0.tgz"
@@ -3852,6 +3864,13 @@ node-fetch@^2.6.0:
   resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.1.tgz"
   integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
 
+node-netstat@^1.8.0:
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/node-netstat/-/node-netstat-1.8.0.tgz#3f897fd12b631c14f3f0568854056575ee307d71"
+  integrity sha512-P1a5Sh9FfjTXxI6hC9q/Nqre8kT63FQxBCr1qz5ffk76EkQBH62+XEhIhlzfz6Bz+FRwOFqidW2FDGXnOXvyJQ==
+  dependencies:
+    is-wsl "^1.1.0"
+
 node-releases@^1.1.71:
   version "1.1.72"
   resolved "https://registry.yarnpkg.com/node-releases/-/node-releases-1.1.72.tgz#14802ab6b1039a79a0c7d662b610a5bbd76eacbe"
@@ -4315,6 +4334,11 @@ progress@^2.0.0:
   version "2.0.3"
   resolved "https://registry.npmjs.org/progress/-/progress-2.0.3.tgz"
   integrity sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA==
+
+ps-list@^7.2.0:
+  version "7.2.0"
+  resolved "https://registry.yarnpkg.com/ps-list/-/ps-list-7.2.0.tgz#3d110e1de8249a4b178c9b1cf2a215d1e4e42fc0"
+  integrity sha512-v4Bl6I3f2kJfr5o80ShABNHAokIgY+wFDTQfE+X3zWYgSGQOCBeYptLZUpoOALBqO5EawmDN/tjTldJesd0ujQ==
 
 ps-tree@^1.2.0:
   version "1.2.0"

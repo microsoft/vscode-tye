@@ -4,8 +4,8 @@
 import * as vscode from 'vscode';
 import { Observable } from 'rxjs'
 import { first, switchMap } from 'rxjs/operators';
-import { MonitoredTask, TaskMonitor } from '../tasks/taskMonitor';
 import { TyeClientProvider } from './tyeClient';
+import { TyeProcess, TyeProcessProvider } from './tyeProcessProvider';
 
 export type KnownServiceType = 'project' | 'function';
 
@@ -34,11 +34,11 @@ type TyeRunTaskOptions = {
 export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
     private readonly _applications: Observable<TyeApplication[]>;
 
-    constructor(private readonly taskMonitor: TaskMonitor, private readonly tyeClientProvider: TyeClientProvider) {
+    constructor(private readonly tyeProcessProvider: TyeProcessProvider, private readonly tyeClientProvider: TyeClientProvider) {
         this._applications =
-            taskMonitor
-                .tasks
-                .pipe(switchMap(tasks => this.toApplications(tasks)));
+            tyeProcessProvider
+                .processes
+                .pipe(switchMap(processes => this.toApplications(processes)));
     }
 
     get applications(): Observable<TyeApplication[]> {
@@ -49,17 +49,8 @@ export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
         return this.applications.pipe(first()).toPromise();
     }
 
-    private async toApplications(tasks: MonitoredTask[]): Promise<TyeApplication[]> {
-        let applications =
-            tasks
-                .filter(task => task.type === 'tye-run')
-                .map(task => TaskBasedTyeApplicationProvider.toApplication(task));
-
-        if (applications.length === 0) {
-            applications = [
-                { dashboard: vscode.Uri.parse('http://localhost:8000') }
-            ];
-        }
+    private async toApplications(processes: TyeProcess[]): Promise<TyeApplication[]> {
+        const applications = processes.map(process => TaskBasedTyeApplicationProvider.toApplication(process));
 
         return await Promise.all(applications.map(application => this.withPids(application)));
     }
@@ -95,12 +86,11 @@ export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
         return application;
     }
 
-    private static toApplication(task: MonitoredTask): TyeApplication {
-        const options = task.options as TyeRunTaskOptions;
-
+    private static toApplication(process: TyeProcess): TyeApplication {
         return {
-            dashboard: options?.dashboard,
-            name: options?.applicationName
+            dashboard: vscode.Uri.parse(`http://localhost:${process.dashboardPort}`),
+            // TODO: What is this name used for?
+            name: `PID:${process.pid.toString()}`
         };
     }
 }
