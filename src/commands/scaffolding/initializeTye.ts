@@ -39,7 +39,7 @@ export async function initializeTye(
     // TODO: Support multiple folders.
     const folder = folders[0];
 
-    await tyeInstallationManager.ensureInstalledVersion('>=0.9', context.errorHandling);
+    await tyeInstallationManager.ensureInstalled(context.errorHandling);
 
     // TODO: Add conflict resolution.
     await tyeCliClient.init({ force: true, path: folder.uri.fsPath });

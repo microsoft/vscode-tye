@@ -36,6 +36,10 @@ import createBrowseServiceCommand from './commands/browseService';
 import TreeNode from './views/treeNode';
 import LocalTyeInstallationManager from './services/tyeInstallationManager';
 
+interface ExtensionPackage {
+	engines: { [key: string]: string };
+}
+
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
 		context.subscriptions.push(disposable);
@@ -120,8 +124,9 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const tyePathProvider = new LocalTyePathProvider(settingsProvider);
 			const tyeApplicationConfigurationProvider = new WorkspaceTyeApplicationConfigurationProvider(new YamlTyeApplicationConfigurationReader());
 
+			const extensionPackage = <ExtensionPackage>context.extension.packageJSON;
 			const tyeCliClient = new LocalTyeCliClient(() => tyePathProvider.getTyePath());
-			const tyeInstallationManager = new LocalTyeInstallationManager(tyeCliClient, ui);
+			const tyeInstallationManager = new LocalTyeInstallationManager(extensionPackage.engines['tye'], tyeCliClient, ui);
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.scaffolding.initTye',

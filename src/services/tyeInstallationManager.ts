@@ -8,12 +8,17 @@ import { UserInput } from './userInput';
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export interface TyeInstallationManager {
+    ensureInstalled(context?: IErrorHandlingContext): Promise<void>;
     ensureInstalledVersion(version: string, context?: IErrorHandlingContext): Promise<void>;
     isVersionInstalled(version: string): Promise<boolean>;
 }
 
 export default class LocalTyeInstallationManager implements TyeInstallationManager {
-    constructor(private readonly tyeCliClient: TyeCliClient, private readonly ui: UserInput) {
+    constructor(private readonly expectedVersion: string, private readonly tyeCliClient: TyeCliClient, private readonly ui: UserInput) {
+    }
+
+    ensureInstalled(context?: IErrorHandlingContext): Promise<void> {
+        return this.ensureInstalledVersion(this.expectedVersion, context);
     }
 
     async ensureInstalledVersion(version: string, context?: IErrorHandlingContext): Promise<void> {
@@ -26,15 +31,14 @@ export default class LocalTyeInstallationManager implements TyeInstallationManag
                         callback: async () => {
                             await this.ui.openExternal('https://aka.ms/vscode-tye-help-install-tye')
                         },
-                        title: 'Install Tye'
+                        title: localize('services.tyeInstallationManager.installLatestTitle', 'Install Latest')
                     }
                 ];
 
                 context.suppressReportIssue = true;
             }
 
-            // TODO: Use UI to show rich error.
-            throw new Error(localize('services.tyeInstallationManager.versionNotInstalled', 'A required version of Tye has not been installed. Install a more recent version.'));
+            throw new Error(localize('services.tyeInstallationManager.versionNotInstalled', 'A compatible version of Tye has not been found. You may need to install a more recent version.'));
         }
     }
 
