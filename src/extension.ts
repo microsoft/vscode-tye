@@ -34,6 +34,7 @@ import VsCodeSettingsProvider from './services/settingsProvider';
 import LocalTyePathProvider from './services/tyePathProvider';
 import createBrowseServiceCommand from './commands/browseService';
 import TreeNode from './views/treeNode';
+import LocalTyeInstallationManager from './services/tyeInstallationManager';
 
 export function activate(context: vscode.ExtensionContext): Promise<void> {
 	function registerDisposable<T extends vscode.Disposable>(disposable: T): T {
@@ -119,9 +120,12 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const tyePathProvider = new LocalTyePathProvider(settingsProvider);
 			const tyeApplicationConfigurationProvider = new WorkspaceTyeApplicationConfigurationProvider(new YamlTyeApplicationConfigurationReader());
 
+			const tyeCliClient = new LocalTyeCliClient(() => tyePathProvider.getTyePath());
+			const tyeInstallationManager = new LocalTyeInstallationManager(tyeCliClient);
+
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.scaffolding.initTye',
-				createInitializeTyeCommand(tyeApplicationConfigurationProvider, new LocalTyeCliClient(tyePathProvider)));
+				createInitializeTyeCommand(tyeApplicationConfigurationProvider, tyeCliClient, tyeInstallationManager));
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.scaffolding.scaffoldTyeTasks',

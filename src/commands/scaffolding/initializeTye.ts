@@ -7,6 +7,7 @@ import { IActionContext } from 'vscode-azureextensionui';
 import { getLocalizationPathForFile } from '../../util/localization';
 import { TyeCliClient } from '../../services/tyeCliClient';
 import { TyeApplicationConfigurationProvider } from '../../services/tyeApplicationConfiguration';
+import { TyeInstallationManager } from 'src/services/tyeInstallationManager';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -25,7 +26,8 @@ export async function initializeTye(
     folderProvider: () => (readonly vscode.WorkspaceFolder[] | undefined),
     openProvider: (uri: vscode.Uri) => Promise<void>,
     tyeApplicationConfigurationProvider: TyeApplicationConfigurationProvider,
-    tyeCliClient: TyeCliClient): Promise<void> {
+    tyeCliClient: TyeCliClient,
+    tyeInstallationManager: TyeInstallationManager): Promise<void> {
     const folders = folderProvider();
 
     if (!folders || folders.length === 0) {
@@ -36,6 +38,8 @@ export async function initializeTye(
 
     // TODO: Support multiple folders.
     const folder = folders[0];
+
+    await tyeInstallationManager.ensureInstalledVersion('>=0.9');
 
     // TODO: Add conflict resolution.
     await tyeCliClient.init({ force: true, path: folder.uri.fsPath });
@@ -48,6 +52,6 @@ export async function initializeTye(
     }
 }
 
-const createInitializeTyeCommand = (tyeApplicationConfigurationProvider: TyeApplicationConfigurationProvider, tyeCliClient: TyeCliClient) => (context: IActionContext): Promise<void> => initializeTye(context, folderProvider, openProvider, tyeApplicationConfigurationProvider, tyeCliClient);
+const createInitializeTyeCommand = (tyeApplicationConfigurationProvider: TyeApplicationConfigurationProvider, tyeCliClient: TyeCliClient, tyeInstallationManager: TyeInstallationManager) => (context: IActionContext): Promise<void> => initializeTye(context, folderProvider, openProvider, tyeApplicationConfigurationProvider, tyeCliClient, tyeInstallationManager);
 
 export default createInitializeTyeCommand;

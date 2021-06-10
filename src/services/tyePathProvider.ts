@@ -3,9 +3,8 @@
 
 import * as os from 'os';
 import * as path from 'path';
-import CommandLineBuilder from '../util/commandLineBuilder';
 import { SettingsProvider } from './settingsProvider';
-import { Process } from '../util/process';
+import LocalTyeCliClient from './tyeCliClient';
 
 export interface TyePathProvider {
     getTyePath() : Promise<string>;
@@ -35,13 +34,12 @@ export default class LocalTyePathProvider implements TyePathProvider {
     {
         try
         {
-            const commandLineBuilder = CommandLineBuilder.create('tye', '--version');
-            const result = await Process.exec(commandLineBuilder.build());
+            const tyePath = 'tye';
+            const tyeCliClient = new LocalTyeCliClient(() => Promise.resolve(tyePath));
 
-            if (result.code === 0)
-            {
-                return 'tye';
-            }
+            await tyeCliClient.version();
+                
+            return tyePath;
         }
         catch
         {

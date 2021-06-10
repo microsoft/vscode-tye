@@ -348,6 +348,7 @@
 		"@types/mocha": "^8.2.2",
 		"@types/node": "^14.16.0",
 		"@types/ps-tree": "^1.1.0",
+		"@types/semver": "^7.3.6",
 		"@types/terser-webpack-plugin": "^5.0.3",
 		"@types/vscode": "^1.56.0",
 		"@typescript-eslint/eslint-plugin": "^4.26.0",
@@ -375,6 +376,7 @@
 		"fs-extra": "^10.0.0",
 		"js-yaml": "^4.1.0",
 		"ps-tree": "^1.2.0",
+		"semver": "^7.3.5",
 		"vscode-azureextensionui": "^0.43.7",
 		"vscode-nls": "^5.0.0"
 	}
