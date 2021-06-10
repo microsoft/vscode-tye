@@ -46,7 +46,7 @@ export default class LocalTyeInstallationManager implements TyeInstallationManag
         try {
             const cliVersion = await this.tyeCliClient.version();
             
-            return semver.satisfies(cliVersion, version);
+            return semver.satisfies(cliVersion, version, { includePrerelease: true });
         }
         catch {
             return false;
