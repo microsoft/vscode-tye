@@ -121,7 +121,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const tyeApplicationConfigurationProvider = new WorkspaceTyeApplicationConfigurationProvider(new YamlTyeApplicationConfigurationReader());
 
 			const tyeCliClient = new LocalTyeCliClient(() => tyePathProvider.getTyePath());
-			const tyeInstallationManager = new LocalTyeInstallationManager(tyeCliClient);
+			const tyeInstallationManager = new LocalTyeInstallationManager(tyeCliClient, ui);
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.scaffolding.initTye',
