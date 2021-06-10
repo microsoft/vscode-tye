@@ -185,7 +185,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 		
 			registerDisposable(vscode.debug.registerDebugConfigurationProvider('tye', new TyeDebugConfigurationProvider(debugSessionMonitor, tyeApplicationProvider, applicationWatcher)));
 		
-			registerDisposable(vscode.tasks.registerTaskProvider('tye-run', new TyeRunCommandTaskProvider(taskMonitor, telemetryProvider, tyePathProvider, tyeClientProvider, tyeApplicationProvider)));
+			registerDisposable(vscode.tasks.registerTaskProvider('tye-run', new TyeRunCommandTaskProvider(taskMonitor, telemetryProvider, tyeApplicationProvider, tyeClientProvider, tyeInstallationManager, tyePathProvider)));
 
 			return Promise.resolve();
 		});
