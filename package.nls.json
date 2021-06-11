@@ -8,10 +8,11 @@
     "vscode-tye.commands.scaffolding.initTye.title": "Initialize Tye",
     "vscode-tye.commands.scaffolding.scaffoldTyeTasks.title": "Scaffold Tye Tasks",
     "vscode-tye.commands.showLogs.title": "Logs",
-    "vscode-tye.help.readDocumentation.title": "Read Documentation",
-    "vscode-tye.help.getStarted.title": "Get Started",
-    "vscode-tye.help.reportIssue.title": "Report Issue",
-    "vscode-tye.help.reviewIssues.title": "Review Issues",
+    "vscode-tye.commands.help.getStarted.title": "Get Started",
+    "vscode-tye.commands.help.installTye.title": "Install Tye",
+    "vscode-tye.commands.help.readDocumentation.title": "Read Documentation",
+    "vscode-tye.commands.help.reportIssue.title": "Report Issue",
+    "vscode-tye.commands.help.reviewIssues.title": "Review Issues",
 
     "vscode-tye.configuration.paths.tyePath.description": "The full path to the Tye binary.",
 
@@ -35,7 +36,7 @@
     "vscode-tye.tasks.tye-run.properties.watch.description": "Watches for code changes for all projects.",
 
     "vscode-tye.views.help.name": "Help and Feedback",
-    "vscode-tye.views.services.contents.notInstalled": "The extension requires you to install Tye.",
+    "vscode-tye.views.services.contents.notInstalled": "The extension requires you to install Tye.\n[Install Tye](command:vscode-tye.commands.help.installTye)",
     "vscode-tye.views.services.contents.notRunning": "The extension requires you to run Tye in a command window. This extension will attempt to access `http://localhost:8000/api/v1/services` by default.",
     "vscode-tye.views.services.name": "Tye Services"
 }

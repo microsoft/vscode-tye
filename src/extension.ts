@@ -35,6 +35,7 @@ import LocalTyePathProvider from './services/tyePathProvider';
 import createBrowseServiceCommand from './commands/browseService';
 import TreeNode from './views/treeNode';
 import LocalTyeInstallationManager from './services/tyeInstallationManager';
+import createInstallTyeCommand from './commands/help/installTye';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -175,10 +176,11 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 					}
 				});
 		
-			telemetryProvider.registerCommandWithTelemetry('vscode-tye.help.readDocumentation', createReadDocumentationCommand(ui));
-			telemetryProvider.registerCommandWithTelemetry('vscode-tye.help.getStarted', createGetStartedCommand(ui));
-			telemetryProvider.registerCommandWithTelemetry('vscode-tye.help.reportIssue', createReportIssueCommand(ui));
-			telemetryProvider.registerCommandWithTelemetry('vscode-tye.help.reviewIssues', createReviewIssuesCommand(ui));
+			telemetryProvider.registerCommandWithTelemetry('vscode-tye.commands.help.getStarted', createGetStartedCommand(ui));
+			telemetryProvider.registerCommandWithTelemetry('vscode-tye.commands.help.installTye', createInstallTyeCommand(ui));
+			telemetryProvider.registerCommandWithTelemetry('vscode-tye.commands.help.readDocumentation', createReadDocumentationCommand(ui));
+			telemetryProvider.registerCommandWithTelemetry('vscode-tye.commands.help.reportIssue', createReportIssueCommand(ui));
+			telemetryProvider.registerCommandWithTelemetry('vscode-tye.commands.help.reviewIssues', createReviewIssuesCommand(ui));
 	
 			const applicationWatcher = registerDisposable(new TyeApplicationDebugSessionWatcher(debugSessionMonitor, tyeApplicationProvider));
 		
