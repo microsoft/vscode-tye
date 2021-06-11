@@ -19,6 +19,8 @@ export interface TyeInstallationManager {
 }
 
 export default class LocalTyeInstallationManager implements TyeInstallationManager {
+    private readonly satisfiedVersions = new Set<string>();
+
     constructor(private readonly expectedVersion: string, private readonly tyeCliClient: TyeCliClient, private readonly ui: UserInput) {
     }
 
@@ -52,13 +54,23 @@ export default class LocalTyeInstallationManager implements TyeInstallationManag
     }
 
     async isVersionInstalled(version: string): Promise<boolean> {      
+        if (this.satisfiedVersions.has(version)) {
+            return true;
+        }
+
         try {
             const cliVersion = await this.tyeCliClient.version();
             
-            return semver.satisfies(cliVersion, version, { includePrerelease: true });
+            if (semver.satisfies(cliVersion, version, { includePrerelease: true })) {
+                this.satisfiedVersions.add(version);
+
+                return true;
+            }
         }
         catch {
-            return false;
+            // No-op.
         }
+        
+        return false;
     }
 }
