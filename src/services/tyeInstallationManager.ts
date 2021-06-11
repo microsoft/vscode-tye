@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import * as semver from 'semver';
 import { TyeCliClient } from './tyeCliClient';
 import * as nls from 'vscode-nls';
