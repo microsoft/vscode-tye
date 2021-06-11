@@ -8,6 +8,7 @@ import TreeNode from '../treeNode';
 import { TyeApplicationNode } from './tyeApplicationNode';
 import { TyeClientProvider } from '../../services/tyeClient';
 import { TyeInstallationManager } from '../../services/tyeInstallationManager';
+import { UserInput } from '../../services/userInput';
 
 export class TyeServicesTreeDataProvider extends vscode.Disposable implements vscode.TreeDataProvider<TreeNode> {
     private readonly onDidChangeTreeDataEmitter = new vscode.EventEmitter<void | TreeNode | null | undefined>();
@@ -17,7 +18,8 @@ export class TyeServicesTreeDataProvider extends vscode.Disposable implements vs
     constructor(
         tyeApplicationProvider: TyeApplicationProvider,
         private readonly tyeClientProvider: TyeClientProvider,
-        private readonly tyeInstallationManager: TyeInstallationManager) {
+        private readonly tyeInstallationManager: TyeInstallationManager,
+        private readonly ui: UserInput) {
         super(
             () => {
                 this.listener.unsubscribe();
@@ -54,7 +56,7 @@ export class TyeServicesTreeDataProvider extends vscode.Disposable implements vs
         if (children.length === 0) {
             const isInstalled = await this.tyeInstallationManager.isInstalled();
 
-            await vscode.commands.executeCommand('setContext', 'vscode-tye.views.services.state', isInstalled ? 'notRunning' : 'notInstalled');
+            await this.ui.executeCommand('setContext', 'vscode-tye.views.services.state', isInstalled ? 'notRunning' : 'notInstalled');
         }
 
         return children;

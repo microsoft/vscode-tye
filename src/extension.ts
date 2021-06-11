@@ -75,7 +75,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const ui = new AggregateUserInput(ext.ui);
 			const tyeInstallationManager = new LocalTyeInstallationManager(extensionPackage.engines['tye'], tyeCliClient, ui);
 
-			const treeProvider = new TyeServicesTreeDataProvider(tyeApplicationProvider, tyeClientProvider, tyeInstallationManager);
+			const treeProvider = new TyeServicesTreeDataProvider(tyeApplicationProvider, tyeClientProvider, tyeInstallationManager, ui);
 
 			registerDisposable(vscode.window.registerTreeDataProvider(
 				'vscode-tye.views.services',

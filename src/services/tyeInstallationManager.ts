@@ -31,9 +31,9 @@ export default class LocalTyeInstallationManager implements TyeInstallationManag
                 context.buttons = [
                     {
                         callback: async () => {
-                            await this.ui.openExternal('https://aka.ms/vscode-tye-help-install-tye')
+                            await this.ui.executeCommand('vscode-tye.commands.help.installTye')
                         },
-                        title: localize('services.tyeInstallationManager.installLatestTitle', 'Install Latest')
+                        title: localize('services.tyeInstallationManager.installLatestTitle', 'Install Latest Tye')
                     }
                 ];
 
