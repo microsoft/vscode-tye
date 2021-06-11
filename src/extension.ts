@@ -69,7 +69,12 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 
 			registerDisposable(vscode.workspace.registerTextDocumentContentProvider('tye-log', new TyeLogsContentProvider(tyeClientProvider)));
 		
-			const treeProvider = new TyeServicesTreeDataProvider(tyeApplicationProvider, tyeClientProvider);
+			const extensionPackage = <ExtensionPackage>context.extension.packageJSON;
+			const tyeCliClient = new LocalTyeCliClient(() => tyePathProvider.getTyePath());
+			const ui = new AggregateUserInput(ext.ui);
+			const tyeInstallationManager = new LocalTyeInstallationManager(extensionPackage.engines['tye'], tyeCliClient, ui);
+
+			const treeProvider = new TyeServicesTreeDataProvider(tyeApplicationProvider, tyeClientProvider, tyeInstallationManager);
 
 			registerDisposable(vscode.window.registerTreeDataProvider(
 				'vscode-tye.views.services',
@@ -86,8 +91,6 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 				() => {
 					treeProvider.refresh();
 				});
-
-			const ui = new AggregateUserInput(ext.ui);
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.browseService',
@@ -123,10 +126,6 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const settingsProvider = new VsCodeSettingsProvider();
 			const tyePathProvider = new LocalTyePathProvider(settingsProvider);
 			const tyeApplicationConfigurationProvider = new WorkspaceTyeApplicationConfigurationProvider(new YamlTyeApplicationConfigurationReader());
-
-			const extensionPackage = <ExtensionPackage>context.extension.packageJSON;
-			const tyeCliClient = new LocalTyeCliClient(() => tyePathProvider.getTyePath());
-			const tyeInstallationManager = new LocalTyeInstallationManager(extensionPackage.engines['tye'], tyeCliClient, ui);
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.scaffolding.initTye',

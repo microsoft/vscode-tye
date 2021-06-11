@@ -172,7 +172,13 @@
 		"viewsWelcome": [
 			{
 				"view": "vscode-tye.views.services",
-				"contents": "%vscode-tye.views.services.contents%"
+				"contents": "%vscode-tye.views.services.contents.notInstalled%",
+				"when": "vscode-tye.views.services.state == 'notInstalled'"
+			},
+			{
+				"view": "vscode-tye.views.services",
+				"contents": "%vscode-tye.views.services.contents.notRunning%",
+				"when": "vscode-tye.views.services.state == 'notRunning'"
 			}
 		],
 		"viewsContainers": {

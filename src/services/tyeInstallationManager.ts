@@ -10,6 +10,8 @@ const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 export interface TyeInstallationManager {
     ensureInstalled(context?: IErrorHandlingContext): Promise<void>;
     ensureInstalledVersion(version: string, context?: IErrorHandlingContext): Promise<void>;
+    
+    isInstalled(): Promise<boolean>;
     isVersionInstalled(version: string): Promise<boolean>;
 }
 
@@ -40,6 +42,10 @@ export default class LocalTyeInstallationManager implements TyeInstallationManag
 
             throw new Error(localize('services.tyeInstallationManager.versionNotInstalled', 'A compatible version of Tye has not been found. You may need to install a more recent version.'));
         }
+    }
+
+    isInstalled(): Promise<boolean> {
+        return this.isVersionInstalled(this.expectedVersion);
     }
 
     async isVersionInstalled(version: string): Promise<boolean> {      

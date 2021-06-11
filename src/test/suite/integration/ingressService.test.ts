@@ -10,6 +10,7 @@ import { TyeServicesTreeDataProvider } from '../../../views/services/tyeServices
 import { TyeClient } from '../../../services/tyeClient';
 import { MockTyeApplicationProvider } from './mockTyeApplicationProvider';
 import { MockTyeClient } from './mockTyeClient';
+import { TyeInstallationManager } from '../../../services/tyeInstallationManager';
 
 suite('integration/ingressServiceTests', () => {
 
@@ -22,7 +23,7 @@ suite('integration/ingressServiceTests', () => {
 
     async function buildTestProvider(): Promise<TyeServicesTreeDataProvider> {
         const testClient = await buildTestClient();
-        return new TyeServicesTreeDataProvider(new MockTyeApplicationProvider(), () => testClient);
+        return new TyeServicesTreeDataProvider(new MockTyeApplicationProvider(), () => testClient, <TyeInstallationManager>{});
     }
 
     test('TestMockClient', async () => {

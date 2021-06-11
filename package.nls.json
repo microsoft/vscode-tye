@@ -35,6 +35,7 @@
     "vscode-tye.tasks.tye-run.properties.watch.description": "Watches for code changes for all projects.",
 
     "vscode-tye.views.help.name": "Help and Feedback",
-    "vscode-tye.views.services.contents": "The extension requires you to run Tye in a command window. This extension will attempt to access `http://localhost:8000/api/v1/services` by default.",
+    "vscode-tye.views.services.contents.notInstalled": "The extension requires you to install Tye.",
+    "vscode-tye.views.services.contents.notRunning": "The extension requires you to run Tye in a command window. This extension will attempt to access `http://localhost:8000/api/v1/services` by default.",
     "vscode-tye.views.services.name": "Tye Services"
 }
