@@ -7,13 +7,19 @@ import { Subscription } from 'rxjs';
 import TreeNode from '../treeNode';
 import { TyeApplicationNode } from './tyeApplicationNode';
 import { TyeClientProvider } from '../../services/tyeClient';
+import { TyeInstallationManager } from '../../services/tyeInstallationManager';
+import { UserInput } from '../../services/userInput';
 
 export class TyeServicesTreeDataProvider extends vscode.Disposable implements vscode.TreeDataProvider<TreeNode> {
     private readonly onDidChangeTreeDataEmitter = new vscode.EventEmitter<void | TreeNode | null | undefined>();
     private readonly listener: Subscription;
     private cachedApplications: TyeApplication[] = [];
 
-    constructor(tyeApplicationProvider: TyeApplicationProvider, private readonly tyeClientProvider: TyeClientProvider) {
+    constructor(
+        tyeApplicationProvider: TyeApplicationProvider,
+        private readonly tyeClientProvider: TyeClientProvider,
+        private readonly tyeInstallationManager: TyeInstallationManager,
+        private readonly ui: UserInput) {
         super(
             () => {
                 this.listener.unsubscribe();
@@ -32,18 +38,28 @@ export class TyeServicesTreeDataProvider extends vscode.Disposable implements vs
         return element.getTreeItem();
     }
 
-    getChildren(element?: TreeNode): vscode.ProviderResult<TreeNode[]> {
+    async getChildren(element?: TreeNode): Promise<TreeNode[]> {
+        let children: TreeNode[] = [];
+
         if (element) {
-            return element.getChildren?.() ?? [];
+            children = await element.getChildren?.() ?? [];
         } else {
             const applications = this.cachedApplications.map(application => new TyeApplicationNode(application, this.tyeClientProvider));
 
             if (applications.length === 1) {
-                return applications[0].getChildren();
+                children = await applications[0].getChildren() ?? [];
             } else {
-                return applications;
+                children = applications;
             }
         }
+
+        if (children.length === 0) {
+            const isInstalled = await this.tyeInstallationManager.isInstalled();
+
+            await this.ui.executeCommand('setContext', 'vscode-tye.views.services.state', isInstalled ? 'notRunning' : 'notInstalled');
+        }
+
+        return children;
     }
 
     refresh(): void {

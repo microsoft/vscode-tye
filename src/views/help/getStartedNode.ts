@@ -14,7 +14,7 @@ export default class GetStartedNode implements TreeNode {
 
         treeItem.command = {
             arguments: [ this ],
-            command: 'vscode-tye.help.getStarted',
+            command: 'vscode-tye.commands.help.getStarted',
             title: '' // NOTE: Title is required but unused here.
         };
 

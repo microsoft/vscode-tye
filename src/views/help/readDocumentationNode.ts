@@ -14,7 +14,7 @@ export default class ReadDocumentationNode implements TreeNode {
 
         treeItem.command = {
             arguments: [ this ],
-            command: 'vscode-tye.help.readDocumentation',
+            command: 'vscode-tye.commands.help.readDocumentation',
             title: '' // NOTE: Title is required but unused here.
         };
 
