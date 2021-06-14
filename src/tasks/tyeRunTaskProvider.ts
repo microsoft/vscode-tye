@@ -11,6 +11,8 @@ import { TyePathProvider } from '../services/tyePathProvider';
 import { TyeClientProvider } from '../services/tyeClient';
 import { TyeApplicationProvider } from '../services/tyeApplicationProvider';
 import { ProcessCancellationOptions } from '../util/process';
+import { TyeInstallationManager } from '../services/tyeInstallationManager';
+import { IActionContext } from 'vscode-azureextensionui';
 
 export type TyeLogProvider = 'console' | 'elastic' | 'ai' | 'seq';
 export type TyeDistributedTraceProvider = 'zipkin';
@@ -37,15 +39,23 @@ const dashboardRunningOn = /Dashboard running on (?<location>.*)$/gm;
 const listeningForPipeEvents = /Listening for event pipe events/;
 
 export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
-    constructor(taskMonitorReporter: TaskMonitorReporter, telemetryProvider: TelemetryProvider, tyePathProvider: TyePathProvider, tyeClientProvider: TyeClientProvider, tyeApplicationProvider: TyeApplicationProvider) {
+    constructor(
+        taskMonitorReporter: TaskMonitorReporter,
+        telemetryProvider: TelemetryProvider,
+        tyeApplicationProvider: TyeApplicationProvider,
+        tyeClientProvider: TyeClientProvider,
+        tyeInstallationManager: TyeInstallationManager,
+        tyePathProvider: TyePathProvider) {
         super(
             (name, definition, callback) => {
                 let dashboard: vscode.Uri | undefined = undefined;
 
                 return telemetryProvider.callWithTelemetry(
                     'vscode-tye.tasks.tye-run',
-                    () => {
-                        return taskMonitorReporter.reportTask(
+                    async (context: IActionContext) => {
+                        await tyeInstallationManager.ensureInstalled(context.errorHandling);
+
+                        await taskMonitorReporter.reportTask(
                             name,
                             definition.type,
                             async reportTaskRunning => {

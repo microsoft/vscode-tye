@@ -3,7 +3,10 @@
 
 import CommandLineBuilder from '../util/commandLineBuilder';
 import { Process } from '../util/process';
-import { TyePathProvider } from './tyePathProvider';
+import * as nls from 'vscode-nls';
+import { getLocalizationPathForFile } from '../util/localization';
+
+const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export interface InitOptions {
     readonly force?: boolean;
@@ -13,14 +16,15 @@ export interface InitOptions {
 
 export interface TyeCliClient {
     init(options?: InitOptions): Promise<void>;
+    version(): Promise<string>;
 }
 
 export default class LocalTyeCliClient implements TyeCliClient {
-    constructor(private readonly tyePathProvider : TyePathProvider) {
+    constructor(private readonly tyePathProvider: () => Promise<string>) {
     }
 
     async init(options?: InitOptions): Promise<void> {
-        const tyePath = await this.tyePathProvider.getTyePath();
+        const tyePath = await this.tyePathProvider();
         const command =
             CommandLineBuilder
                 .create(tyePath, 'init')
@@ -29,6 +33,26 @@ export default class LocalTyeCliClient implements TyeCliClient {
                 .withQuotedArg(options?.path)
                 .build();
 
-        await Process.exec(command);
+        const result = await Process.exec(command);
+
+        if (result.code !== 0) {
+            throw new Error(localize('services.tyeCliClient.initFailed', 'Initializing Tye failed: {0}', result.stderr));
+        }
+    }
+
+    async version(): Promise<string> {
+        const tyePath = await this.tyePathProvider();
+        const command =
+            CommandLineBuilder
+                .create(tyePath, '--version')
+                .build();
+
+        const result = await Process.exec(command);
+
+        if (result.code !== 0) {
+            throw new Error(localize('services.tyeCliClient.versionFailed', 'Retrieving the tye CLI version failed: {0}', result.stderr));
+        }
+
+        return result.stdout;
     }
 }

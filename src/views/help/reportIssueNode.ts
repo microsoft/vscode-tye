@@ -14,7 +14,7 @@ export default class ReportIssueNode implements TreeNode {
 
         treeItem.command = {
             arguments: [ this ],
-            command: 'vscode-tye.help.reportIssue',
+            command: 'vscode-tye.commands.help.reportIssue',
             title: '' // NOTE: Title is required but unused here.
         };
 
