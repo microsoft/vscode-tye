@@ -25,6 +25,7 @@ export interface ProcessCancellationOptions
 }
 
 export class Process extends vscode.Disposable {
+    private readonly onStartedEmitter = new vscode.EventEmitter<number>();
     private readonly onStdErrEmitter = new vscode.EventEmitter<string>();
     private readonly onStdOutEmitter = new vscode.EventEmitter<string>();
 
@@ -36,6 +37,7 @@ export class Process extends vscode.Disposable {
             });
     }
 
+    onStarted = this.onStartedEmitter.event;
     onStdErr = this.onStdErrEmitter.event;
     onStdOut = this.onStdOutEmitter.event;
 
@@ -80,6 +82,8 @@ export class Process extends vscode.Disposable {
                 options.shell = true;
 
                 const process = cp.spawn(command, options);
+
+                this.onStartedEmitter.fire(process.pid);
 
                 process.on(
                     'error',

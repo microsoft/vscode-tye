@@ -1,6 +1,12 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+interface TyeApplication {
+    id: string;
+    name: string;
+    source: string;
+}
+
 interface TyeService {
     description: TyeDescription,
     replicas: {[key:string]: TyeReplica},

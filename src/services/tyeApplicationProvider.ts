@@ -4,7 +4,7 @@
 import * as vscode from 'vscode';
 import { Observable } from 'rxjs'
 import { first, switchMap } from 'rxjs/operators';
-import { TyeClientProvider } from './tyeClient';
+import { TyeClient, TyeClientProvider } from './tyeClient';
 import { TyeProcess, TyeProcessProvider } from './tyeProcessProvider';
 
 export type KnownServiceType = 'project' | 'function';
@@ -15,9 +15,10 @@ export type TyeProjectService = {
 };
 
 export type TyeApplication = {
-    readonly dashboard?: vscode.Uri;
-    readonly name?: string;
-    readonly projectServices?: { [key: string]: TyeProjectService };
+    readonly dashboard: vscode.Uri;
+    readonly name: string;
+    readonly pid?: number;
+    readonly projectServices: { [key: string]: TyeProjectService };
 };
 
 export interface TyeApplicationProvider {
@@ -25,11 +26,6 @@ export interface TyeApplicationProvider {
 
     getApplications(): Promise<TyeApplication[]>;
 }
-
-type TyeRunTaskOptions = {
-    readonly applicationName: string;
-    readonly dashboard?: vscode.Uri;
-};
 
 export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
     private readonly _applications: Observable<TyeApplication[]>;
@@ -50,47 +46,59 @@ export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
     }
 
     private async toApplications(processes: TyeProcess[]): Promise<TyeApplication[]> {
-        const applications = processes.map(process => TaskBasedTyeApplicationProvider.toApplication(process));
+        const applications =
+            processes
+                .map(process => ({
+                    dashboard: vscode.Uri.parse(`http://localhost:${process.dashboardPort}`),
+                    pid: process.pid
+                }))
+                .map(process => ({
+                    ...process, tyeClient: this.tyeClientProvider(process.dashboard)
+                }))
+                .filter(process => process.tyeClient !== undefined)
+                .map(async process => {
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    const application = await process.tyeClient!.getApplication();
 
-        return await Promise.all(applications.map(application => this.withPids(application)));
-    }
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    const services = await process.tyeClient!.getServices();
 
-    private async withPids(application: TyeApplication): Promise<TyeApplication> {
-        const tyeClient = this.tyeClientProvider(application.dashboard);
+                    const projectServices =
+                        (services ?? [])
+                            .filter(service => (service.serviceType === 'project') || (service.serviceType === 'function'))
+                            .reduce<{ [key: string]: TyeProjectService }>(
+                                (serviceMap, service) => {
+                                    serviceMap[service.description.name] = {
+                                        replicas:
+                                            Object.keys(service.replicas)
+                                                .reduce<{ [key: string]: number | undefined }>(
+                                                    (replicaMap, replicaName) => {
+                                                        replicaMap[replicaName] = service.replicas[replicaName].pid;
+                                                        return replicaMap;
+                                                    },
+                                                    {}),
+                                        serviceType: <KnownServiceType>service.serviceType
+                                    };
+                                    return serviceMap;
+                                },
+                                {});
+    
+                    return {
+                        dashboard: process.dashboard,
+                        name: application.name,
+                        pid: process.pid,
+                        projectServices
+                    };
+                });                
 
-        if (tyeClient) {
-            const services = await tyeClient.getServices();
-            const projectServices =
-                (services ?? [])
-                    .filter(service => (service.serviceType === 'project') || (service.serviceType === 'function'))
-                    .reduce<{ [key: string]: TyeProjectService }>(
-                        (serviceMap, service) => {
-                            serviceMap[service.description.name] = {
-                                replicas:
-                                    Object.keys(service.replicas)
-                                        .reduce<{ [key: string]: number | undefined }>(
-                                            (replicaMap, replicaName) => {
-                                                replicaMap[replicaName] = service.replicas[replicaName].pid;
-                                                return replicaMap;
-                                            },
-                                            {}),
-                                serviceType: <KnownServiceType>service.serviceType
-                            };
-                            return serviceMap;
-                        },
-                        {});
+        // Ignore processes for which we were unable to obtain application metadata.
+        // TODO: Log failures (or retry?).
+        const result = await Promise.allSettled(applications);
 
-            return { ...application, projectServices };
+        function isFulfilled<T>(r: PromiseSettledResult<T>): r is PromiseFulfilledResult<T> {
+            return r.status === 'fulfilled';
         }
 
-        return application;
-    }
-
-    private static toApplication(process: TyeProcess): TyeApplication {
-        return {
-            dashboard: vscode.Uri.parse(`http://localhost:${process.dashboardPort}`),
-            // TODO: What is this name used for?
-            name: `PID:${process.pid.toString()}`
-        };
+        return result.filter(isFulfilled).map(r => r.value);
     }
 }

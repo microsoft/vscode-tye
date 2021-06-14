@@ -1,5 +1,5 @@
-import { BehaviorSubject, Observable, timer } from 'rxjs'
-import { distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { Observable, timer } from 'rxjs'
+import { distinctUntilChanged, first, switchMap } from 'rxjs/operators';
 import { ProcessProvider } from './processProvider';
 import * as netstat from 'node-netstat';
 
@@ -12,7 +12,8 @@ type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 type ProspectiveTyeProcess = WithOptional<TyeProcess, 'dashboardPort'>;
 
 export interface TyeProcessProvider {
-    readonly processes: Observable<TyeProcess[]>;    
+    readonly processes: Observable<TyeProcess[]>;
+    getProcesses(): Promise<TyeProcess[]>;
 }
 
 function netstatAsync(options: Omit<netstat.Options, 'done'>): Promise<netstat.ParsedItem[]> {
@@ -49,7 +50,7 @@ export default class LocalTyeProcessProvider implements TyeProcessProvider {
                     // NOTE: switchMap() will cancel previous invocations.
                     //       What we really want is an interval after each
                     //       successful attempt.
-                    switchMap(_ => this.getProcesses()),
+                    switchMap(() => this.getProcessList()),
                     // NOTE: There is a small (minute?) chance that a tye
                     //       process could be recycled such that it ends
                     //       up with the same PID and dynamically chosen
@@ -80,7 +81,11 @@ export default class LocalTyeProcessProvider implements TyeProcessProvider {
         return this._processes;
     }
 
-    private async getProcesses(): Promise<TyeProcess[]> {
+    getProcesses(): Promise<TyeProcess[]> {
+        return this.processes.pipe(first()).toPromise();
+    }
+
+    private async getProcessList(): Promise<TyeProcess[]> {
         const tyeProcesses = await this.processProvider.listProcesses('tye');
         const tyeProcessesWithPorts = await Promise.all(tyeProcesses.map(process => this.getPortForProcess(process.pid)));
 
@@ -102,3 +107,4 @@ export default class LocalTyeProcessProvider implements TyeProcessProvider {
         return { pid, dashboardPort: items[0]?.local?.port ?? undefined }
     }
 }
+
