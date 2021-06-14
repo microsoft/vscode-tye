@@ -2,9 +2,9 @@
 // Licensed under the MIT license.
 
 import * as vscode from 'vscode';
-import { Observable } from 'rxjs'
+import { Observable, timer } from 'rxjs'
 import { first, switchMap } from 'rxjs/operators';
-import { TyeClient, TyeClientProvider } from './tyeClient';
+import { TyeClientProvider } from './tyeClient';
 import { TyeProcess, TyeProcessProvider } from './tyeProcessProvider';
 
 export type KnownServiceType = 'project' | 'function';
@@ -34,7 +34,8 @@ export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
         this._applications =
             tyeProcessProvider
                 .processes
-                .pipe(switchMap(processes => this.toApplications(processes)));
+                // TODO: Ignore changes to applications.
+                .pipe(switchMap(processes => timer(0, 2000).pipe(switchMap(() => this.toApplications(processes)))));
     }
 
     get applications(): Observable<TyeApplication[]> {
