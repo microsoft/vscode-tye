@@ -16,6 +16,36 @@ export interface TyeProcessProvider {
     getProcesses(): Promise<TyeProcess[]>;
 }
 
+netstat.commands.darwin = {
+    cmd: 'lsof',
+    args: ['-Pn', '-i4', '-sTCP:LISTEN']
+};
+
+// NOTE: The TS definition incorrectly asserts that `darwin` is const.
+// TODO: Update the TS definitions.
+(netstat.parsers.darwin as unknown) = (line: string, callback: (item: netstat.ParsedItem) => void) => {
+    const parts = line.split(/\s/).filter(String);
+    if (!parts.length || (parts.length != 9 && parts.length != 10 )) {
+        return;
+    }
+
+    let state = parts[9] || '';
+
+    if (state.length >= 2 && state[0] === '(' && state[state.length - 1] === ')') {
+        state = state.slice(1, state.length - 1);
+    }
+
+    const item = {
+        protocol: parts[7],
+        local: parts[8],
+        remote: '',
+        state,
+        pid: parts[1]
+    };
+
+    return callback(netstat.utils.normalizeValues(item));
+};
+
 function netstatAsync(options: Omit<netstat.Options, 'done'>): Promise<netstat.ParsedItem[]> {
     return new Promise(
         (resolve, reject) => {
@@ -102,7 +132,7 @@ export default class LocalTyeProcessProvider implements TyeProcessProvider {
     }
 
     private async getPortForProcess(pid: number): Promise<ProspectiveTyeProcess> {
-        const items = await netstatAsync({ filter: { pid } });
+        const items = await netstatAsync({ filter: { pid, protocol: 'tcp' } });
 
         return { pid, dashboardPort: items[0]?.local?.port ?? undefined }
     }
