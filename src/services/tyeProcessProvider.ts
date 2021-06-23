@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { Observable, timer } from 'rxjs'
 import { distinctUntilChanged, first, switchMap } from 'rxjs/operators';
 import { ProcessProvider } from './processProvider';
@@ -7,9 +10,6 @@ export interface TyeProcess {
     pid: number;
     dashboardPort: number;
 }
-
-type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-type ProspectiveTyeProcess = WithOptional<TyeProcess, 'dashboardPort'>;
 
 export interface TyeProcessProvider {
     readonly processes: Observable<TyeProcess[]>;
@@ -69,6 +69,32 @@ function netstatAsync(options: Omit<netstat.Options, 'done'>): Promise<netstat.P
         });
 }
 
+function tyeProcessComparer(x: TyeProcess, y: TyeProcess): boolean {
+    return x.pid !== y.pid || x.dashboardPort !== y.dashboardPort;
+}
+
+function tyeProcessesComparer(x: TyeProcess[], y: TyeProcess[]): boolean {
+    if (x.length !== y.length) {
+        return false;
+    }
+
+    const byPid = (a: TyeProcess, b: TyeProcess) => a.pid - b.pid;
+
+    x = x.slice().sort(byPid);
+    y = y.slice().sort(byPid);
+
+    for (let i = 0; i < x.length; i++) {
+        if (!tyeProcessComparer(x[i], y[i])) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+type ProspectiveTyeProcess = WithOptional<TyeProcess, 'dashboardPort'>;
+
 export default class LocalTyeProcessProvider implements TyeProcessProvider {
     private readonly _processes: Observable<TyeProcess[]>;
 
@@ -86,25 +112,7 @@ export default class LocalTyeProcessProvider implements TyeProcessProvider {
                     //       up with the same PID and dynamically chosen
                     //       port. If possible, perhaps incorporate a
                     //       timestamp into the comparison.
-                    //
-                    //       This comparison relies on the processes being sorted.
-                    distinctUntilChanged(
-                        (x, y) => {
-                            if (x.length !== y.length) {
-                                return false;
-                            }
-
-                            for (let i = 0; i < x.length; i++) {
-                                const xi = x[i];
-                                const yi = y[i];
-
-                                if (xi.pid !== yi.pid || xi.dashboardPort !== yi.dashboardPort) {
-                                    return false;
-                                }
-                            }
-
-                            return true;
-                        }));
+                    distinctUntilChanged(tyeProcessesComparer));
     }
 
     get processes(): Observable<TyeProcess[]> {
@@ -125,8 +133,7 @@ export default class LocalTyeProcessProvider implements TyeProcessProvider {
 
         const tyeProcessesWithValidPorts =
             tyeProcessesWithPorts
-                .filter(hasValidPort)
-                .sort((a, b) => a.pid - b.pid);
+                .filter(hasValidPort);
 
         return tyeProcessesWithValidPorts;
     }
