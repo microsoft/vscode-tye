@@ -37,6 +37,6 @@
 
     "vscode-tye.views.help.name": "Help and Feedback",
     "vscode-tye.views.services.contents.notInstalled": "A compatible version of Tye has not been found. You may need to install a more recent version.\n[Install Latest Tye](command:vscode-tye.commands.help.installTye)",
-    "vscode-tye.views.services.contents.notRunning": "The extension requires you to run Tye in a command window. This extension will attempt to access `http://localhost:8000/api/v1/services` by default.",
+    "vscode-tye.views.services.contents.notRunning": "No Tye applications are running.",
     "vscode-tye.views.services.name": "Tye Services"
 }
