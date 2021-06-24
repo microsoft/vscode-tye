@@ -37,6 +37,7 @@ import LocalTyeInstallationManager from './services/tyeInstallationManager';
 import createInstallTyeCommand from './commands/help/installTye';
 import LocalTyeProcessProvider from './services/tyeProcessProvider';
 import createPlatformProcessProvider from './services/processProvider';
+import LocalPortProvider from './services/portProvider';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -66,7 +67,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const httpClient = new AxiosHttpClient();
 
 			const tyeClientProvider = httpTyeClientProvider(httpClient);
-			const tyeProcessProvider = new LocalTyeProcessProvider(createPlatformProcessProvider());
+			const tyeProcessProvider = new LocalTyeProcessProvider(new LocalPortProvider(), createPlatformProcessProvider());
 			const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(tyeProcessProvider, tyeClientProvider);
 
 			registerDisposable(vscode.workspace.registerTextDocumentContentProvider('tye-log', new TyeLogsContentProvider(tyeClientProvider)));
