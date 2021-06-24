@@ -44,13 +44,7 @@ export class TyeServicesTreeDataProvider extends vscode.Disposable implements vs
         if (element) {
             children = await element.getChildren?.() ?? [];
         } else {
-            const applications = this.cachedApplications.map(application => new TyeApplicationNode(application, this.tyeClientProvider));
-
-            if (applications.length === 1) {
-                children = await applications[0].getChildren() ?? [];
-            } else {
-                children = applications;
-            }
+            children = this.cachedApplications.map(application => new TyeApplicationNode(application, this.tyeClientProvider));
         }
 
         if (children.length === 0) {
