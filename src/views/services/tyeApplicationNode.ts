@@ -39,6 +39,8 @@ export class TyeApplicationNode implements TreeNode {
     getTreeItem(): vscode.TreeItem {
         const treeItem = new vscode.TreeItem(this.application.name, vscode.TreeItemCollapsibleState.Expanded);
 
+        treeItem.contextValue = 'application';
+
         const resourcesPath = ext.context.asAbsolutePath('resources');
 
         treeItem.iconPath = {

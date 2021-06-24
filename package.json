@@ -307,14 +307,14 @@
 					"command": "vscode-tye.commands.refreshEntry",
 					"when": "view == vscode-tye.views.services",
 					"group": "navigation"
-				},
-				{
-					"command": "vscode-tye.commands.debugAll",
-					"when": "view == vscode-tye.views.services",
-					"group": "navigation"
 				}
 			],
 			"view/item/context": [
+				{
+					"command": "vscode-tye.commands.debugAll",
+					"when": "view == vscode-tye.views.services && viewItem =~ /application/",
+					"group": "inline"
+				},
 				{
 					"command": "vscode-tye.commands.browseService",
 					"when": "view == vscode-tye.views.services && viewItem =~ /browsable/",
