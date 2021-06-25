@@ -27,7 +27,11 @@ export class TyeServicesTreeDataProvider extends vscode.Disposable implements vs
 
             this.listener = tyeApplicationProvider.applications.subscribe(
                 applications => {
-                    this.cachedApplications = applications;
+                    this.cachedApplications =
+                        applications
+                            .slice()
+                            .sort((a, b) => a.name.localeCompare(b.name));
+                    
                     this.refresh();
                 });
             }
