@@ -37,24 +37,36 @@ suite('integration/tyeServiceProvider', () => {
 	test('TestServicesCollection', async () => {
         const provider = await buildTestProvider();
 
-        const treeItems = await provider.getChildren();
+        const applicationItems = await provider.getChildren();
+
+        assert.equal(applicationItems?.length, 1);
+
+        const applicationItem = applicationItems[0];
+
+        const serviceItems = await provider.getChildren(applicationItem);
+
         //Nodes in services + 1 Dashboard node.
-        assert.equal(treeItems?.length, testDataServiceCount + 1);
+        assert.equal(serviceItems?.length, testDataServiceCount + 1);
     });
 
     test('browsableTaggedBrowsable', async () => {
         const provider = await buildTestProvider();
 
-        const treeItems = await provider.getChildren();
+        const applicationItems = await provider.getChildren();
 
-        for(const node of treeItems?? []) {
-            const children = await provider.getChildren(node as TyeServiceNode);
-            for(const replica of children ?? []) {
-                const treeItem = await replica.getTreeItem();
-                if(replica instanceof TyeReplicaNode && replica.isBrowsable) {
-                    assert.equal(true, treeItem?.contextValue?.includes('browsable'));
-                } else {
-                    assert.equal(true, !treeItem?.contextValue?.includes('browsable'));
+        for(const applicationItem of applicationItems?? []) {
+            const serviceItems = await provider.getChildren(applicationItem);
+            
+            for(const serviceItem of serviceItems ?? []) {
+                const children = await provider.getChildren(serviceItem);
+
+                for(const replica of children ?? []) {
+                    const treeItem = await replica.getTreeItem();
+                    if(replica instanceof TyeReplicaNode && replica.isBrowsable) {
+                        assert.equal(true, treeItem?.contextValue?.includes('browsable'));
+                    } else {
+                        assert.equal(true, !treeItem?.contextValue?.includes('browsable'));
+                    }
                 }
             }
         }

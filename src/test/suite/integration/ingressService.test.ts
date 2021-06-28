@@ -37,22 +37,35 @@ suite('integration/ingressServiceTests', () => {
         const provider = await buildTestProvider();
 
         const treeItems = await provider.getChildren();
+
+        assert.equal(treeItems?.length, 1);
+
+        const applicationTreeItem = treeItems[0];
+
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        const serviceTreeItems = await applicationTreeItem.getChildren!();
+
         //Nodes in services + 1 Dashboard node.
-        assert.equal(treeItems?.length, testDataServiceCount + 1);
+        assert.equal(serviceTreeItems?.length, testDataServiceCount + 1);
     });
 
     test('ingressIsBrowsable', async () => {
         const provider = await buildTestProvider();
 
-        const treeItems = await provider.getChildren();
+        const applicationItems = await provider.getChildren();
 
-        for(const node of treeItems ?? []) {
-            const children = await provider.getChildren(node as TyeServiceNode);
-            for(const replica of children ?? []) {
-                if(replica instanceof TyeReplicaNode && replica.service.serviceType == 'ingress') {
-                    const treeItem = replica.getTreeItem();
-                    assert.equal(true, treeItem.contextValue?.includes('browsable'));
-                    assert.equal(false, treeItem.contextValue?.includes('attachable'));
+        for(const applicationItem of applicationItems ?? []) {
+            const serviceItems = await provider.getChildren(applicationItem);
+
+            for(const serviceItem of serviceItems ?? []) {
+                const children = await provider.getChildren(serviceItem);
+
+                for(const replica of children ?? []) {
+                    if(replica instanceof TyeReplicaNode && replica.service.serviceType == 'ingress') {
+                        const treeItem = replica.getTreeItem();
+                        assert.equal(true, treeItem.contextValue?.includes('browsable'));
+                        assert.equal(false, treeItem.contextValue?.includes('attachable'));
+                    }
                 }
             }
         }
