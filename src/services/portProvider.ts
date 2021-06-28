@@ -12,7 +12,8 @@ netstat.commands.darwin = {
 // TODO: Update the TS definitions.
 (netstat.parsers.darwin as unknown) = (line: string, callback: (item: netstat.ParsedItem) => void) => {
     const parts = line.split(/\s/).filter(String);
-    if (!parts.length || (parts.length != 9 && parts.length != 10 )) {
+    if (!parts.length || (parts.length !== 9 && parts.length !== 10 )) {
+        // We expect 9 or 10 columns of data; bail when not found...
         return;
     }
 
