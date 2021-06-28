@@ -5,20 +5,22 @@ import * as vscode from 'vscode';
 import { HttpClient } from './httpClient';
 
 export interface TyeClient {
-    shutDown(token?: vscode.CancellationToken): Promise<void>;
+    getApplication(token?: vscode.CancellationToken): Promise<TyeApplication>;
     getLog(serviceName: string, token?: vscode.CancellationToken): Promise<string>;
     getServices(token?: vscode.CancellationToken): Promise<TyeService[] | undefined>;
+
+    shutDown(token?: vscode.CancellationToken): Promise<void>;
 }
 
 export type TyeClientProvider = (dashboard: vscode.Uri | undefined) => (TyeClient | undefined);
 
 export class HttpTyeClient implements TyeClient {
-
     constructor(private readonly httpClient: HttpClient, private readonly apiEndpoint = 'http://localhost:8000/api/v1') {
     }
 
-    public async shutDown(token?: vscode.CancellationToken): Promise<void> {
-        await this.httpClient.delete(`${this.apiEndpoint}/control`, token);
+    public async getApplication(token?: vscode.CancellationToken) : Promise<TyeApplication> {
+        const resp = await this.httpClient.get(`${this.apiEndpoint}/application`, token);
+        return resp.data as TyeApplication;
     }
 
     public async getLog(serviceName: string, token?: vscode.CancellationToken): Promise<string> {
@@ -30,6 +32,10 @@ export class HttpTyeClient implements TyeClient {
     public async getServices(token?: vscode.CancellationToken) : Promise<TyeService[]> {
         const resp = await this.httpClient.get(`${this.apiEndpoint}/services`, token);
         return resp.data as TyeService[];
+    }
+
+    public async shutDown(token?: vscode.CancellationToken): Promise<void> {
+        await this.httpClient.delete(`${this.apiEndpoint}/control`, token);
     }
 
     public static fromBaseEndpoint(httpClient: HttpClient, fromBaseEndpoint: vscode.Uri): HttpTyeClient {

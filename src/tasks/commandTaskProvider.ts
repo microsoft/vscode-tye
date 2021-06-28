@@ -12,6 +12,7 @@ import { getLocalizationPathForFile } from '../util/localization';
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 interface CommandTaskSpawnOptions extends cp.SpawnOptions {
+    onStarted?: (pid: number) => void;
     onStdOut?: (data: string) => void;
     onStdErr?: (data: string) => void;
     onCancellation?: () => Promise<ProcessCancellationOptions>;
@@ -36,6 +37,10 @@ export default class CommandTaskProvider extends CustomExecutionTaskProvider {
                         const process = new Process();
 
                         try {
+                            if (spawnOptions.onStarted) {
+                                process.onStarted(spawnOptions.onStarted);
+                            }
+                        
                             process.onStdErr(
                                 data => {
                                     writer.write(data);

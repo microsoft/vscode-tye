@@ -27,7 +27,11 @@ export class TyeServicesTreeDataProvider extends vscode.Disposable implements vs
 
             this.listener = tyeApplicationProvider.applications.subscribe(
                 applications => {
-                    this.cachedApplications = applications;
+                    this.cachedApplications =
+                        applications
+                            .slice()
+                            .sort((a, b) => a.name.localeCompare(b.name));
+                    
                     this.refresh();
                 });
             }
@@ -44,13 +48,7 @@ export class TyeServicesTreeDataProvider extends vscode.Disposable implements vs
         if (element) {
             children = await element.getChildren?.() ?? [];
         } else {
-            const applications = this.cachedApplications.map(application => new TyeApplicationNode(application, this.tyeClientProvider));
-
-            if (applications.length === 1) {
-                children = await applications[0].getChildren() ?? [];
-            } else {
-                children = applications;
-            }
+            children = this.cachedApplications.map(application => new TyeApplicationNode(application, this.tyeClientProvider));
         }
 
         if (children.length === 0) {

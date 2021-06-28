@@ -1,12 +1,14 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import * as path from 'path';
 import * as vscode from 'vscode';
 import TreeNode from '../treeNode';
 import { TyeApplication } from '../../services/tyeApplicationProvider';
 import { TyeDashboardNode } from './tyeDashboardNode';
 import TyeServiceNode from './tyeServiceNode';
 import { TyeClientProvider } from '../../services/tyeClient';
+import ext from '../../ext';
 
 export class TyeApplicationNode implements TreeNode {
     constructor(private readonly application: TyeApplication, private readonly tyeClientProvider: TyeClientProvider) {
@@ -35,6 +37,17 @@ export class TyeApplicationNode implements TreeNode {
     }
 
     getTreeItem(): vscode.TreeItem {
-        return new vscode.TreeItem(this.application.name ?? '<unknown>', vscode.TreeItemCollapsibleState.Expanded);
+        const treeItem = new vscode.TreeItem(this.application.name, vscode.TreeItemCollapsibleState.Expanded);
+
+        treeItem.contextValue = 'application';
+
+        const resourcesPath = ext.context.asAbsolutePath('resources');
+
+        treeItem.iconPath = {
+            light: path.join(resourcesPath, 'brand-tye-darkgray.svg'),
+            dark: path.join(resourcesPath, 'brand-tye-white.svg')
+        };
+
+        return treeItem;
     }
 }

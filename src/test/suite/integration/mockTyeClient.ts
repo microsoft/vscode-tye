@@ -7,8 +7,12 @@ export class MockTyeClient implements TyeClient {
     constructor(private readonly data: TyeService[]) {
     }
 
-    public shutDown(): Promise<void> {
-        return Promise.resolve();
+    public getApplication(): Promise<TyeApplication> {
+        return Promise.resolve({
+            id: '123',
+            name: 'app',
+            source: 'app.csproj'
+        });
     }
 
     public getLog(): Promise<string> {
@@ -17,5 +21,9 @@ export class MockTyeClient implements TyeClient {
 
     public async getServices(): Promise<TyeService[]> {
         return await Promise.resolve(this.data);
+    }
+
+    public shutDown(): Promise<void> {
+        return Promise.resolve();
     }
 }

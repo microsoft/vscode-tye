@@ -98,7 +98,7 @@ export const config: webpack.Configuration = {
             })
     ],
     resolve: {
-        extensions: ['.ts', '.js']
+        extensions: ['.ts', '.js', '.json']
     },
     target: 'node'
 }
