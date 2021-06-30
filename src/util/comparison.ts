@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 export function arrayComparer<T>(x: T[], y: T[], sorter: (a: T, b: T) => number, comparer: (x: T, y: T) => boolean): boolean {
     if (x.length !== y.length) {
         return false;
