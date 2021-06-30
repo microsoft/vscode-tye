@@ -17,7 +17,7 @@ export interface TyeProcessProvider {
 }
 
 function tyeProcessComparer(x: TyeProcess, y: TyeProcess): boolean {
-    return x.pid !== y.pid || x.dashboardPort !== y.dashboardPort;
+    return x.pid === y.pid && x.dashboardPort === y.dashboardPort;
 }
 
 function tyeProcessesComparer(x: TyeProcess[], y: TyeProcess[]): boolean {
