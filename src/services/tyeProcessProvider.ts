@@ -3,6 +3,7 @@
 
 import { Observable, timer } from 'rxjs'
 import { distinctUntilChanged, first, switchMap } from 'rxjs/operators';
+import { arrayComparer } from '../util/comparison';
 import { PortProvider } from './portProvider';
 import { ProcessProvider } from './processProvider';
 
@@ -21,22 +22,7 @@ function tyeProcessComparer(x: TyeProcess, y: TyeProcess): boolean {
 }
 
 function tyeProcessesComparer(x: TyeProcess[], y: TyeProcess[]): boolean {
-    if (x.length !== y.length) {
-        return false;
-    }
-
-    const byPid = (a: TyeProcess, b: TyeProcess) => a.pid - b.pid;
-
-    x = x.slice().sort(byPid);
-    y = y.slice().sort(byPid);
-
-    for (let i = 0; i < x.length; i++) {
-        if (!tyeProcessComparer(x[i], y[i])) {
-            return false;
-        }
-    }
-
-    return true;
+    return arrayComparer(x, y, (a: TyeProcess, b: TyeProcess) => a.pid - b.pid, tyeProcessComparer);
 }
 
 type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;

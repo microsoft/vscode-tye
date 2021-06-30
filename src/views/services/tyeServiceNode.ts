@@ -7,12 +7,15 @@ import TyeNode from '../treeNode';
 import TyeReplicaNode, { getReplicaBrowseUrl, isAttachable, isReplicaBrowsable } from './tyeReplicaNode';
 
 export default class TyeServiceNode implements TyeNode {
-    constructor(public readonly application: TyeApplication, public readonly service: TyeService) {
+    private readonly id: string;
+
+    constructor(public readonly application: TyeApplication, public readonly service: TyeService, private parentId: string) {
+        this.id = `${parentId}.${service.description.name}`;
     }
 
     getChildren(): TyeNode[] {
         return this.service.replicas
-            ? Object.values(this.service.replicas).map(replica => new TyeReplicaNode(this.service, replica))
+            ? Object.values(this.service.replicas).map(replica => new TyeReplicaNode(this.service, replica, this.id))
             : [];
     }
 
@@ -20,8 +23,9 @@ export default class TyeServiceNode implements TyeNode {
         const treeItem = new vscode.TreeItem(this.service.description.name, vscode.TreeItemCollapsibleState.Collapsed);
 
         treeItem.contextValue = this.service.serviceType;
-
         treeItem.contextValue += ' hasLogs'
+
+        treeItem.id = this.id;
 
         if (isAttachable(this.service)) {
             // TODO: Disable debugging when no workspace is open.  (Does it matter?  What if the *wrong* workspace is currently open?)
@@ -33,8 +37,6 @@ export default class TyeServiceNode implements TyeNode {
         } else {
             treeItem.iconPath = new vscode.ThemeIcon('project');
         }
-
-        treeItem.id = `vscode-tye.views.services.${this.application.name}.${this.service.description.name}`;
 
         if (this.isBrowsable) {
             treeItem.contextValue += ' browsable';

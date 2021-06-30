@@ -11,7 +11,10 @@ import { TyeClientProvider } from '../../services/tyeClient';
 import ext from '../../ext';
 
 export class TyeApplicationNode implements TreeNode {
+    private readonly id: string;
+
     constructor(private readonly application: TyeApplication, private readonly tyeClientProvider: TyeClientProvider) {
+        this.id = `vscode-tye.views.services.${this.application.id}`;  
     }
 
     async getChildren(): Promise<TreeNode[]> {
@@ -31,9 +34,9 @@ export class TyeApplicationNode implements TreeNode {
             return [];
         }
 
-        const nodes: TreeNode[] = [ new TyeDashboardNode(this.application.dashboard)];
+        const nodes: TreeNode[] = [ new TyeDashboardNode(this.application.dashboard, this.id)];
         
-        return nodes.concat(services.map(service => new TyeServiceNode(this.application, service)));
+        return nodes.concat(services.map(service => new TyeServiceNode(this.application, service, this.id)));
     }
 
     getTreeItem(): vscode.TreeItem {
@@ -48,8 +51,7 @@ export class TyeApplicationNode implements TreeNode {
             dark: path.join(resourcesPath, 'brand-tye-white.svg')
         };
 
-        // TODO: Add application ID.
-        treeItem.id = `vscode-tye.views.services.${this.application.name}`;
+        treeItem.id = this.id;
 
         return treeItem;
     }
