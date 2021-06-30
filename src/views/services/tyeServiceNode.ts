@@ -34,6 +34,8 @@ export default class TyeServiceNode implements TyeNode {
             treeItem.iconPath = new vscode.ThemeIcon('project');
         }
 
+        treeItem.id = `vscode-tye.views.services.${this.application.name}.${this.service.description.name}`;
+
         if (this.isBrowsable) {
             treeItem.contextValue += ' browsable';
         }

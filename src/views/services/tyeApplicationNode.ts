@@ -37,7 +37,7 @@ export class TyeApplicationNode implements TreeNode {
     }
 
     getTreeItem(): vscode.TreeItem {
-        const treeItem = new vscode.TreeItem(this.application.name, vscode.TreeItemCollapsibleState.Expanded);
+        const treeItem = new vscode.TreeItem(this.application.name, vscode.TreeItemCollapsibleState.Collapsed);
 
         treeItem.contextValue = 'application';
 
@@ -47,6 +47,9 @@ export class TyeApplicationNode implements TreeNode {
             light: path.join(resourcesPath, 'brand-tye-darkgray.svg'),
             dark: path.join(resourcesPath, 'brand-tye-white.svg')
         };
+
+        // TODO: Add application ID.
+        treeItem.id = `vscode-tye.views.services.${this.application.name}`;
 
         return treeItem;
     }
