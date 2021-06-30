@@ -37,7 +37,7 @@ export class TyeApplicationNode implements TreeNode {
     }
 
     getTreeItem(): vscode.TreeItem {
-        const treeItem = new vscode.TreeItem(this.application.name, vscode.TreeItemCollapsibleState.Collapsed);
+        const treeItem = new vscode.TreeItem(this.application.name, vscode.TreeItemCollapsibleState.Expanded);
 
         treeItem.contextValue = 'application';
 
