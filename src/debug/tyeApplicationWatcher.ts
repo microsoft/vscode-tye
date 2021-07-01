@@ -8,7 +8,7 @@ import { TyeApplicationProvider } from '../services/tyeApplicationProvider';
 import { attachToReplica } from './attachToReplica';
 
 export interface TyeApplicationWatcher {
-    watchApplication(applicationName: string, options?: { folder?: vscode.WorkspaceFolder, services?: string[] }): void;
+    watchApplication(applicationId: string, options?: { folder?: vscode.WorkspaceFolder, services?: string[] }): void;
 }
 
 type WatchedApplication = {
@@ -31,8 +31,8 @@ export class TyeApplicationDebugSessionWatcher extends vscode.Disposable impleme
                 .applications
                 .subscribe(
                     applications => {
-                        for (const watchedApplicationName of Object.keys(this.watchedApplications)) {
-                            const application = applications.find(a => a.name === watchedApplicationName);
+                        for (const watchedApplicationId of Object.keys(this.watchedApplications)) {
+                            const application = applications.find(a => a.id === watchedApplicationId);
 
                             if (application) {
                                 // Application is still running, see if new replicas need attaching to...
@@ -41,7 +41,7 @@ export class TyeApplicationDebugSessionWatcher extends vscode.Disposable impleme
                                     continue;
                                 }
 
-                                const watchedApplication = this.watchedApplications[watchedApplicationName];
+                                const watchedApplication = this.watchedApplications[watchedApplicationId];
 
                                 for (const serviceName of Object.keys(application.projectServices)) {
                                     if (watchedApplication.services === undefined || watchedApplication.services.includes(serviceName)) {
@@ -56,15 +56,15 @@ export class TyeApplicationDebugSessionWatcher extends vscode.Disposable impleme
                                 }
                             } else {
                                 // Application is no longer running, stop watching...
-                                delete this.watchedApplications[watchedApplicationName];
+                                delete this.watchedApplications[watchedApplicationId];
                             }
                         }
                     });
     }
 
-    watchApplication(applicationName: string, options?: { folder?: vscode.WorkspaceFolder, services?: string[] }): void {
+    watchApplication(applicationId: string, options?: { folder?: vscode.WorkspaceFolder, services?: string[] }): void {
         const { folder, services } = options ?? {};
 
-        this.watchedApplications[applicationName] = { folder, services };
+        this.watchedApplications[applicationId] = { folder, services };
     }
 }
