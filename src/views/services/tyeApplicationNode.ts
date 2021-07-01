@@ -11,7 +11,7 @@ import { TyeClientProvider } from '../../services/tyeClient';
 import ext from '../../ext';
 
 export class TyeApplicationNode implements TreeNode {
-    constructor(private readonly application: TyeApplication, private readonly tyeClientProvider: TyeClientProvider) {
+    constructor(public readonly application: TyeApplication, private readonly tyeClientProvider: TyeClientProvider) {
     }
 
     async getChildren(): Promise<TreeNode[]> {

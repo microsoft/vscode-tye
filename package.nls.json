@@ -8,6 +8,7 @@
     "vscode-tye.commands.scaffolding.initTye.title": "Initialize Tye",
     "vscode-tye.commands.scaffolding.scaffoldTyeTasks.title": "Scaffold Tye Tasks",
     "vscode-tye.commands.showLogs.title": "Logs",
+    "vscode-tye.commands.shutdownApplication.title": "Shutdown",
     "vscode-tye.commands.help.getStarted.title": "Get Started",
     "vscode-tye.commands.help.installTye.title": "Install Tye",
     "vscode-tye.commands.help.readDocumentation.title": "Read Documentation",
