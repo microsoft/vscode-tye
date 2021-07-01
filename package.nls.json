@@ -2,7 +2,7 @@
     "vscode-tye.activityBar.microsoft-tye.title": "Tye",
 
     "vscode-tye.commands.refreshEntry.title": "Refresh",
-    "vscode-tye.commands.debugAll.title": "Debug",
+    "vscode-tye.commands.debugAll.title": "Attach",
     "vscode-tye.commands.browseService.title": "Browse",
     "vscode-tye.commands.attachService.title": "Attach",
     "vscode-tye.commands.scaffolding.initTye.title": "Initialize Tye",
