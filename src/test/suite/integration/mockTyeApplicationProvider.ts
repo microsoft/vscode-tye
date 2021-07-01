@@ -9,6 +9,7 @@ export class MockTyeApplicationProvider implements TyeApplicationProvider{
     private static Applications: TyeApplication[] = [
         {
             dashboard: vscode.Uri.parse('http://localhost:8000'),
+            id: '1234',
             name: 'app',
             projectServices: {}
         }

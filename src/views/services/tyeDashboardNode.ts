@@ -9,7 +9,10 @@ import TyeNode from '../treeNode';
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
 export class TyeDashboardNode implements TyeNode {
-    constructor(private readonly dashboard: vscode.Uri) {
+    private readonly id: string;
+
+    constructor(private readonly dashboard: vscode.Uri, parentId: string) {
+        this.id = `${parentId}.dashboard`;
     }
 
     getTreeItem(): vscode.TreeItem {
@@ -22,8 +25,8 @@ export class TyeDashboardNode implements TyeNode {
         };
 
         treeItem.contextValue = 'information';
-
-        treeItem.iconPath = new vscode.ThemeIcon('dashboard');
+        treeItem.iconPath = new vscode.ThemeIcon('dashboard');       
+        treeItem.id = this.id;
 
         return treeItem;
     }

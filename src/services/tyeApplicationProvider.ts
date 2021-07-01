@@ -6,6 +6,7 @@ import { Observable, timer } from 'rxjs'
 import { distinctUntilChanged, first, switchMap } from 'rxjs/operators';
 import { TyeClientProvider } from './tyeClient';
 import { TyeProcess, TyeProcessProvider } from './tyeProcessProvider';
+import { arrayComparer } from '../util/comparison';
 
 export type KnownServiceType = 'project' | 'function';
 
@@ -16,6 +17,7 @@ export type TyeProjectService = {
 
 export type TyeApplication = {
     readonly dashboard: vscode.Uri;
+    readonly id: string;
     readonly name: string;
     readonly pid?: number;
     readonly projectServices: { [key: string]: TyeProjectService };
@@ -55,43 +57,36 @@ function serviceComparer(x: TyeProjectService, y: TyeProjectService): boolean {
     return true;
 }
 
-function applicationComparer(x: TyeApplication[], y: TyeApplication[]): boolean {
-    if (x.length !== y.length) {
+function applicationComparer(x: TyeApplication, y: TyeApplication): boolean {
+    if (x.id !== y.id
+        || x.name !== y.name
+        || x.dashboard.toString() !== y.dashboard.toString()
+        || x.pid !== y.pid) {
         return false;
     }
 
-    x = x.slice().sort(nameSorter);
-    y = y.slice().sort(nameSorter);
+    const xServices = Object.keys(x.projectServices).map(name => ({ name, service: x.projectServices[name] })).sort(nameSorter);
+    const yServices = Object.keys(y.projectServices).map(name => ({ name, service: y.projectServices[name] })).sort(nameSorter);
 
-    for (let i = 0; i < x.length; i++) {
-        const xi = x[i];
-        const yi = y[i];
+    if (xServices.length !== yServices.length) {
+        return false;
+    }
 
-        if (xi.name !== yi.name
-            || xi.dashboard.toString() !== yi.dashboard.toString()
-            || xi.pid !== yi.pid) {
+    for (let j = 0; j < xServices.length; j++) {
+        const xijService = xServices[j];
+        const yijService = yServices[j];
+
+        if (xijService.name !== yijService.name
+            || !serviceComparer(xijService.service, yijService.service)) {
             return false;
-        }
-
-        const xiServices = Object.keys(xi.projectServices).map(name => ({ name, service: xi.projectServices[name] })).sort(nameSorter);
-        const yiServices = Object.keys(yi.projectServices).map(name => ({ name, service: yi.projectServices[name] })).sort(nameSorter);
-
-        if (xiServices.length !== yiServices.length) {
-            return false;
-        }
-
-        for (let j = 0; j < xiServices.length; j++) {
-            const xijService = xiServices[j];
-            const yijService = yiServices[j];
-
-            if (xijService.name !== yijService.name
-                || !serviceComparer(xijService.service, yijService.service)) {
-                return false;
-            }
         }
     }
 
     return true;
+}
+
+function applicationsComparer(x: TyeApplication[], y: TyeApplication[]): boolean {
+    return arrayComparer(x, y, nameSorter, applicationComparer);
 }
 
 export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
@@ -117,7 +112,7 @@ export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
         return timer(0, 2000)
         .pipe(
             switchMap(() => this.toApplications(processes)),
-            distinctUntilChanged(applicationComparer));
+            distinctUntilChanged(applicationsComparer));
     }
 
     private async toApplications(processes: TyeProcess[]): Promise<TyeApplication[]> {
@@ -160,6 +155,7 @@ export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
     
                     return {
                         dashboard: process.dashboard,
+                        id: application.id,
                         name: application.name,
                         pid: process.pid,
                         projectServices

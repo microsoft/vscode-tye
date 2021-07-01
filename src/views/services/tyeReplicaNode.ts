@@ -41,7 +41,10 @@ export function isAttachable(service: TyeService): boolean {
 }
 
 export default class TyeReplicaNode implements TyeNode {
-    constructor(public readonly service: TyeService, public readonly replica: TyeReplica) {
+    private readonly id: string;
+
+    constructor(public readonly service: TyeService, public readonly replica: TyeReplica, parentId: string) {
+        this.id = `${parentId}.${replica.name}`;
     }
 
     getTreeItem(): vscode.TreeItem {
@@ -49,6 +52,7 @@ export default class TyeReplicaNode implements TyeNode {
 
         treeItem.contextValue = this.service.serviceType;
         treeItem.iconPath = new vscode.ThemeIcon('server-process');
+        treeItem.id = this.id;
 
         if (isAttachable(this.service)) {
             // TODO: Disable debugging when no workspace is open.  (Does it matter?  What if the *wrong* workspace is currently open?)
