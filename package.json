@@ -27,6 +27,7 @@
 		"onCommand:vscode-tye.commands.scaffolding.initTye",
 		"onCommand:vscode-tye.commands.scaffolding.scaffoldTyeTasks",
 		"onCommand:vscode-tye.commands.showLogs",
+		"onCommand:vscode-tye.commands.shutdownApplication",
 		"onCommand:vscode-tye.commands.help.getStarted",
 		"onCommand:vscode-tye.commands.help.installTye",
 		"onCommand:vscode-tye.commands.help.readDocumentation",
@@ -245,6 +246,12 @@
 				"icon": "$(output)"
 			},
 			{
+				"category": "Tye",
+				"command": "vscode-tye.commands.shutdownApplication",
+				"title": "%vscode-tye.commands.shutdownApplication.title%",
+				"icon": "$(debug-stop)"
+			},
+			{
 				"command": "vscode-tye.commands.help.getStarted",
 				"title": "%vscode-tye.commands.help.getStarted.title%",
 				"category": "Tye"
@@ -300,6 +307,10 @@
 				{
 					"command": "vscode-tye.commands.showLogs",
 					"when": "never"
+				},
+				{
+					"command": "vscode-tye.commands.shutdownApplication",
+					"when": "never"
 				}
 			],
 			"view/title": [
@@ -312,6 +323,11 @@
 			"view/item/context": [
 				{
 					"command": "vscode-tye.commands.debugAll",
+					"when": "view == vscode-tye.views.services && viewItem =~ /application/",
+					"group": "inline"
+				},
+				{
+					"command": "vscode-tye.commands.shutdownApplication",
 					"when": "view == vscode-tye.views.services && viewItem =~ /application/",
 					"group": "inline"
 				},

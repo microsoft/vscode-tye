@@ -13,7 +13,7 @@ import ext from '../../ext';
 export class TyeApplicationNode implements TreeNode {
     private readonly id: string;
 
-    constructor(private readonly application: TyeApplication, private readonly tyeClientProvider: TyeClientProvider) {
+    constructor(public readonly application: TyeApplication, private readonly tyeClientProvider: TyeClientProvider) {
         this.id = `vscode-tye.views.services.${this.application.id}`;  
     }
 

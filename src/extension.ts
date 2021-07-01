@@ -38,6 +38,7 @@ import createInstallTyeCommand from './commands/help/installTye';
 import LocalTyeProcessProvider from './services/tyeProcessProvider';
 import createPlatformProcessProvider from './services/processProvider';
 import LocalPortProvider from './services/portProvider';
+import createShutdownApplicationCommand from './commands/shutdownApplication';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -107,6 +108,10 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 					}
 				});
 
+			telemetryProvider.registerCommandWithTelemetry(
+				'vscode-tye.commands.shutdownApplication',
+				createShutdownApplicationCommand(tyeClientProvider, ui));
+	
 			const debugSessionMonitor = registerDisposable(new CoreClrDebugSessionMonitor());
 
 			telemetryProvider.registerCommandWithTelemetry(

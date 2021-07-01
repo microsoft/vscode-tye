@@ -1,3 +1,6 @@
+// Copyright (c) Microsoft Corporation.
+// Licensed under the MIT license.
+
 import { UserInput } from '../services/userInput';
 import { IActionContext } from 'vscode-azureextensionui';
 import TreeNode from '../views/treeNode';
