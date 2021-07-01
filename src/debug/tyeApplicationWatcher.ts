@@ -12,23 +12,24 @@ export interface TyeApplicationWatcher {
     watchApplication(applicationId: string, options?: { folder?: vscode.WorkspaceFolder, services?: string[] }): void;
 }
 
-class WatchedApplication extends vscode.Disposable {
-    private readonly subscription: Subscription;
+export class TyeApplicationDebugSessionWatcher extends vscode.Disposable implements TyeApplicationWatcher {
+    private readonly watchedApplications: { [key: string]: Subscription } = {};
 
-    constructor(
-        debugSessionMonitor: DebugSessionMonitor,
-        tyeApplicationProvider: TyeApplicationProvider,
-        applicationId: string,
-        folder: vscode.WorkspaceFolder | undefined,
-        services: string[] | undefined,
-        onStopped: (watchedApplication: WatchedApplication) => void) {
+    constructor(private readonly debugSessionMonitor: DebugSessionMonitor, private readonly tyeApplicationProvider: TyeApplicationProvider) {
         super(
             () => {
-                this.subscription?.unsubscribe();
-            });
+                for (const watchedApplicationId of Object.keys(this.watchedApplications)) {
+                    this.stopWatching(watchedApplicationId);
+                }
+            }
+        );
+    }
 
-        this.subscription =
-            tyeApplicationProvider
+    watchApplication(applicationId: string, options?: { folder?: vscode.WorkspaceFolder, services?: string[] }): void {
+        const { folder, services } = options ?? {};
+
+        this.watchedApplications[applicationId] =
+            this.tyeApplicationProvider
                 .applications
                 .pipe(
                     map(applications => applications.find(application => application.id === applicationId)),
@@ -44,50 +45,23 @@ class WatchedApplication extends vscode.Disposable {
                                     for (const replicaName of Object.keys(service.replicas)) {
                                         const currentPid = service.replicas[replicaName];
 
-                                        void attachToReplica(debugSessionMonitor, folder, service.serviceType, replicaName, currentPid);
+                                        void attachToReplica(this.debugSessionMonitor, folder, service.serviceType, replicaName, currentPid);
                                     }
                                 }
                             }
                         } else {
-                            onStopped(this);
+                            this.stopWatching(applicationId);
                         }
                     });
     }
-}
 
-export class TyeApplicationDebugSessionWatcher extends vscode.Disposable implements TyeApplicationWatcher {
-    private readonly watchedApplications: { [key: string]: WatchedApplication } = {};
+    private stopWatching(applicationId: string): void {
+        const watchedApplication = this.watchedApplications[applicationId];
 
-    constructor(private readonly debugSessionMonitor: DebugSessionMonitor, private readonly tyeApplicationProvider: TyeApplicationProvider) {
-        super(
-            () => {
-                for (const watchedApplicationId of Object.keys(this.watchedApplications)) {
-                    const watchedApplication = this.watchedApplications[watchedApplicationId];
+        if (watchedApplication) {                                  
+            delete this.watchedApplications[applicationId];
 
-                    if (watchedApplication) {                                  
-                        delete this.watchedApplications[watchedApplicationId];
-
-                        watchedApplication.dispose();
-                    }
-                }
-            }
-        );
-    }
-
-    watchApplication(applicationId: string, options?: { folder?: vscode.WorkspaceFolder, services?: string[] }): void {
-        const { folder, services } = options ?? {};
-
-        this.watchedApplications[applicationId] =
-            new WatchedApplication(
-                this.debugSessionMonitor,
-                this.tyeApplicationProvider,
-                applicationId,
-                folder,
-                services,
-                watchedApplication => {
-                    delete this.watchedApplications[applicationId];
-
-                    watchedApplication.dispose();
-                });
+            watchedApplication.unsubscribe();
+        }
     }
 }
