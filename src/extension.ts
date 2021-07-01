@@ -110,7 +110,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.shutdownApplication',
-				createShutdownApplicationCommand(ui));
+				createShutdownApplicationCommand(tyeClientProvider, ui));
 	
 			const debugSessionMonitor = registerDisposable(new CoreClrDebugSessionMonitor());
 
