@@ -4,23 +4,24 @@
 import * as vscode from 'vscode';
 import { Subscription } from 'rxjs';
 import { DebugSessionMonitor } from './debugSessionMonitor';
-import { TyeApplicationProvider } from '../services/tyeApplicationProvider';
+import { applicationComparer, TyeApplicationProvider } from '../services/tyeApplicationProvider';
 import { attachToReplica } from './attachToReplica';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
 export interface TyeApplicationWatcher {
     watchApplication(applicationId: string, options?: { folder?: vscode.WorkspaceFolder, services?: string[] }): void;
 }
 
-type WatchedApplication = {
-    readonly folder?: vscode.WorkspaceFolder;
-    readonly services?: string[];
-};
-
-export class TyeApplicationDebugSessionWatcher extends vscode.Disposable implements TyeApplicationWatcher {
-    private readonly watchedApplications: { [key: string]: WatchedApplication } = {};
+class WatchedApplication extends vscode.Disposable {
     private readonly subscription: Subscription;
 
-    constructor(debugSessionMonitor: DebugSessionMonitor, tyeApplicationProvider: TyeApplicationProvider) {
+    constructor(
+        debugSessionMonitor: DebugSessionMonitor,
+        tyeApplicationProvider: TyeApplicationProvider,
+        applicationId: string,
+        folder: vscode.WorkspaceFolder | undefined,
+        services: string[] | undefined,
+        onStopped: (watchedApplication: WatchedApplication) => void) {
         super(
             () => {
                 this.subscription?.unsubscribe();
@@ -29,42 +30,64 @@ export class TyeApplicationDebugSessionWatcher extends vscode.Disposable impleme
         this.subscription =
             tyeApplicationProvider
                 .applications
+                .pipe(
+                    map(applications => applications.find(application => application.id === applicationId)),
+                    distinctUntilChanged(applicationComparer)
+                )
                 .subscribe(
-                    applications => {
-                        for (const watchedApplicationId of Object.keys(this.watchedApplications)) {
-                            const application = applications.find(a => a.id === watchedApplicationId);
+                    application => {
+                        if (application) {
+                            for (const serviceName of Object.keys(application.projectServices ?? [])) {
+                                if (services === undefined || services.includes(serviceName)) {
+                                    const service = application.projectServices[serviceName];
 
-                            if (application) {
-                                // Application is still running, see if new replicas need attaching to...
+                                    for (const replicaName of Object.keys(service.replicas)) {
+                                        const currentPid = service.replicas[replicaName];
 
-                                if (application.projectServices === undefined) {
-                                    continue;
-                                }
-
-                                const watchedApplication = this.watchedApplications[watchedApplicationId];
-
-                                for (const serviceName of Object.keys(application.projectServices)) {
-                                    if (watchedApplication.services === undefined || watchedApplication.services.includes(serviceName)) {
-                                        const service = application.projectServices[serviceName];
-
-                                        for (const replicaName of Object.keys(service.replicas)) {
-                                            const currentPid = service.replicas[replicaName];
-
-                                            void attachToReplica(debugSessionMonitor, watchedApplication.folder, service.serviceType, replicaName, currentPid);
-                                        }
+                                        void attachToReplica(debugSessionMonitor, folder, service.serviceType, replicaName, currentPid);
                                     }
                                 }
-                            } else {
-                                // Application is no longer running, stop watching...
-                                delete this.watchedApplications[watchedApplicationId];
                             }
+                        } else {
+                            onStopped(this);
                         }
                     });
+    }
+}
+
+export class TyeApplicationDebugSessionWatcher extends vscode.Disposable implements TyeApplicationWatcher {
+    private readonly watchedApplications: { [key: string]: WatchedApplication } = {};
+
+    constructor(private readonly debugSessionMonitor: DebugSessionMonitor, private readonly tyeApplicationProvider: TyeApplicationProvider) {
+        super(
+            () => {
+                for (const watchedApplicationId of Object.keys(this.watchedApplications)) {
+                    const watchedApplication = this.watchedApplications[watchedApplicationId];
+
+                    if (watchedApplication) {                                  
+                        delete this.watchedApplications[watchedApplicationId];
+
+                        watchedApplication.dispose();
+                    }
+                }
+            }
+        );
     }
 
     watchApplication(applicationId: string, options?: { folder?: vscode.WorkspaceFolder, services?: string[] }): void {
         const { folder, services } = options ?? {};
 
-        this.watchedApplications[applicationId] = { folder, services };
+        this.watchedApplications[applicationId] =
+            new WatchedApplication(
+                this.debugSessionMonitor,
+                this.tyeApplicationProvider,
+                applicationId,
+                folder,
+                services,
+                watchedApplication => {
+                    delete this.watchedApplications[applicationId];
+
+                    watchedApplication.dispose();
+                });
     }
 }
