@@ -13,7 +13,7 @@
 		"url": "https://github.com/Microsoft/vscode-tye/"
 	},
 	"engines": {
-		"tye": ">=0.7.0-alpha.21279.2",
+		"tye": ">=0.8.0-alpha.21352.1",
 		"vscode": "^1.57.1"
 	},
 	"categories": [
