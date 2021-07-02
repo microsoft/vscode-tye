@@ -4,67 +4,64 @@
 import * as vscode from 'vscode';
 import { Subscription } from 'rxjs';
 import { DebugSessionMonitor } from './debugSessionMonitor';
-import { TyeApplicationProvider } from '../services/tyeApplicationProvider';
+import { applicationComparer, TyeApplicationProvider } from '../services/tyeApplicationProvider';
 import { attachToReplica } from './attachToReplica';
+import { distinctUntilChanged, map } from 'rxjs/operators';
 
 export interface TyeApplicationWatcher {
-    watchApplication(applicationName: string, options?: { folder?: vscode.WorkspaceFolder, services?: string[] }): void;
+    watchApplication(applicationId: string, options?: { folder?: vscode.WorkspaceFolder, services?: string[] }): void;
 }
 
-type WatchedApplication = {
-    readonly folder?: vscode.WorkspaceFolder;
-    readonly services?: string[];
-};
-
 export class TyeApplicationDebugSessionWatcher extends vscode.Disposable implements TyeApplicationWatcher {
-    private readonly watchedApplications: { [key: string]: WatchedApplication } = {};
-    private readonly subscription: Subscription;
+    private readonly watchedApplications: { [key: string]: Subscription } = {};
 
-    constructor(debugSessionMonitor: DebugSessionMonitor, tyeApplicationProvider: TyeApplicationProvider) {
+    constructor(private readonly debugSessionMonitor: DebugSessionMonitor, private readonly tyeApplicationProvider: TyeApplicationProvider) {
         super(
             () => {
-                this.subscription?.unsubscribe();
-            });
+                for (const watchedApplicationId of Object.keys(this.watchedApplications)) {
+                    this.stopWatching(watchedApplicationId);
+                }
+            }
+        );
+    }
 
-        this.subscription =
-            tyeApplicationProvider
+    watchApplication(applicationId: string, options?: { folder?: vscode.WorkspaceFolder, services?: string[] }): void {
+        const { folder, services } = options ?? {};
+
+        this.watchedApplications[applicationId] =
+            this.tyeApplicationProvider
                 .applications
+                .pipe(
+                    map(applications => applications.find(application => application.id === applicationId)),
+                    distinctUntilChanged(applicationComparer)
+                )
                 .subscribe(
-                    applications => {
-                        for (const watchedApplicationName of Object.keys(this.watchedApplications)) {
-                            const application = applications.find(a => a.name === watchedApplicationName);
+                    application => {
+                        if (application) {
+                            for (const serviceName of Object.keys(application.projectServices ?? [])) {
+                                if (services === undefined || services.includes(serviceName)) {
+                                    const service = application.projectServices[serviceName];
 
-                            if (application) {
-                                // Application is still running, see if new replicas need attaching to...
+                                    for (const replicaName of Object.keys(service.replicas)) {
+                                        const currentPid = service.replicas[replicaName];
 
-                                if (application.projectServices === undefined) {
-                                    continue;
-                                }
-
-                                const watchedApplication = this.watchedApplications[watchedApplicationName];
-
-                                for (const serviceName of Object.keys(application.projectServices)) {
-                                    if (watchedApplication.services === undefined || watchedApplication.services.includes(serviceName)) {
-                                        const service = application.projectServices[serviceName];
-
-                                        for (const replicaName of Object.keys(service.replicas)) {
-                                            const currentPid = service.replicas[replicaName];
-
-                                            void attachToReplica(debugSessionMonitor, watchedApplication.folder, service.serviceType, replicaName, currentPid);
-                                        }
+                                        void attachToReplica(this.debugSessionMonitor, folder, service.serviceType, replicaName, currentPid);
                                     }
                                 }
-                            } else {
-                                // Application is no longer running, stop watching...
-                                delete this.watchedApplications[watchedApplicationName];
                             }
+                        } else {
+                            this.stopWatching(applicationId);
                         }
                     });
     }
 
-    watchApplication(applicationName: string, options?: { folder?: vscode.WorkspaceFolder, services?: string[] }): void {
-        const { folder, services } = options ?? {};
+    private stopWatching(applicationId: string): void {
+        const watchedApplication = this.watchedApplications[applicationId];
 
-        this.watchedApplications[applicationName] = { folder, services };
+        if (watchedApplication) {                                  
+            delete this.watchedApplications[applicationId];
+
+            watchedApplication.unsubscribe();
+        }
     }
 }

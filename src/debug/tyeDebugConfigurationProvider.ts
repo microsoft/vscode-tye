@@ -28,6 +28,9 @@ export class TyeDebugConfigurationProvider implements vscode.DebugConfigurationP
         const tyeDebugConfiguration = <TyeDebugConfiguration>debugConfiguration;
 
         const applications = await this.tyeApplicationProvider.getApplications();
+
+        // NOTE: In the unlikely event of multiple same-named applications running, we arbitrarily use the first match.
+        // TODO: Cache applications started via our `tye-run` tasks, and give preference to those.
         const application = applications.find(a => a.name === tyeDebugConfiguration.applicationName);
 
         if (!application) {
@@ -61,7 +64,7 @@ export class TyeDebugConfigurationProvider implements vscode.DebugConfigurationP
         }
 
         if (tyeDebugConfiguration.watch) {
-            this.tyeApplicationWatcher.watchApplication(tyeDebugConfiguration.applicationName, { folder, services: tyeDebugConfiguration.services });
+            this.tyeApplicationWatcher.watchApplication(application.id, { folder, services: tyeDebugConfiguration.services });
         }
 
         return undefined;

@@ -57,7 +57,15 @@ function serviceComparer(x: TyeProjectService, y: TyeProjectService): boolean {
     return true;
 }
 
-function applicationComparer(x: TyeApplication, y: TyeApplication): boolean {
+export function applicationComparer(x: TyeApplication | undefined, y: TyeApplication | undefined): boolean {
+    if (x === undefined && y === undefined) {
+        return true;
+    }
+
+    if (x === undefined || y === undefined) {
+        return false;
+    }
+
     if (x.id !== y.id
         || x.name !== y.name
         || x.dashboard.toString() !== y.dashboard.toString()
