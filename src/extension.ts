@@ -167,7 +167,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 				async (context, node: TyeApplicationNode) => {
 					const application = node.application;
 
-					if (node.application?.projectServices) {
+					if (application?.projectServices) {
 						for (const service of Object.values(application.projectServices)) {
 								for (const replicaName of Object.keys(service.replicas)) {
 									const pid = service.replicas[replicaName];
