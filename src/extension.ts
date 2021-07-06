@@ -39,6 +39,7 @@ import LocalTyeProcessProvider from './services/tyeProcessProvider';
 import createPlatformProcessProvider from './services/processProvider';
 import LocalPortProvider from './services/portProvider';
 import createShutdownApplicationCommand from './commands/shutdownApplication';
+import TyeApplicationNode from './views/services/tyeApplicationNode';
 
 interface ExtensionPackage {
 	engines: { [key: string]: string };
@@ -163,16 +164,10 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.debugAll',
-				async () => {
-					const applications = await tyeApplicationProvider.getApplications();
+				async (context, node: TyeApplicationNode) => {
+					const application = node.application;
 
-					// NOTE: We arbitrarily only attach to processes associated with the first application.
-					//       This matches the tree view, which also shows only that first application.
-					//       Future work will refactor the tree view and debugging for multiple applications
-					//       once Tye has better discovery support.
-					const application = applications[0];
-
-					if (application?.projectServices) {
+					if (node.application?.projectServices) {
 						for (const service of Object.values(application.projectServices)) {
 								for (const replicaName of Object.keys(service.replicas)) {
 									const pid = service.replicas[replicaName];
