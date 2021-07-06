@@ -1,11 +1,12 @@
 # Change Log
 
-## v0.2.0 - 2 July 2021
+## v0.2.0 - 6 July 2021
 
 A number of usability enhancements and fixes.
 
 ### Fixed
 
+ * The microservice application's debugger is attached when clicking "Attach" button of Dapr application [#118](https://github.com/microsoft/vscode-tye/issues/118)
  * It always auto-debugs again after clicking "Disconnect/Stop" button [#103](https://github.com/microsoft/vscode-tye/issues/103)
  * The microservice node is collapsed and then re-expanded after single click the collapse icon [#106](https://github.com/microsoft/vscode-tye/issues/106)
  * Debug icon should be hidden when no application is running [#69](https://github.com/microsoft/vscode-tye/issues/69)

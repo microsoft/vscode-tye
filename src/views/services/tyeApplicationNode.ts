@@ -10,7 +10,7 @@ import TyeServiceNode from './tyeServiceNode';
 import { TyeClientProvider } from '../../services/tyeClient';
 import ext from '../../ext';
 
-export class TyeApplicationNode implements TreeNode {
+export default class TyeApplicationNode implements TreeNode {
     private readonly id: string;
 
     constructor(public readonly application: TyeApplication, private readonly tyeClientProvider: TyeClientProvider) {

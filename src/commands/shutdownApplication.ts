@@ -6,7 +6,7 @@ import * as nls from 'vscode-nls';
 import { UserInput } from '../services/userInput';
 import { IActionContext } from 'vscode-azureextensionui';
 import TreeNode from '../views/treeNode';
-import { TyeApplicationNode } from '../views/services/tyeApplicationNode';
+import TyeApplicationNode from '../views/services/tyeApplicationNode';
 import { getLocalizationPathForFile } from '../util/localization';
 import { TyeClientProvider } from '../services/tyeClient';
 

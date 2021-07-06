@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import { TyeApplication, TyeApplicationProvider } from '../../services/tyeApplicationProvider';
 import { Subscription } from 'rxjs';
 import TreeNode from '../treeNode';
-import { TyeApplicationNode } from './tyeApplicationNode';
+import TyeApplicationNode from './tyeApplicationNode';
 import { TyeClientProvider } from '../../services/tyeClient';
 import { TyeInstallationManager } from '../../services/tyeInstallationManager';
 import { UserInput } from '../../services/userInput';
