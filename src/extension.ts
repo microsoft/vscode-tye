@@ -69,7 +69,9 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const httpClient = new AxiosHttpClient();
 
 			const tyeClientProvider = httpTyeClientProvider(httpClient);
-			const tyeProcessProvider = new LocalTyeProcessProvider(new LocalPortProvider(), createPlatformProcessProvider());
+			const settingsProvider = new VsCodeSettingsProvider();
+			const tyePathProvider = new LocalTyePathProvider(settingsProvider);
+			const tyeProcessProvider = new LocalTyeProcessProvider(new LocalPortProvider(), createPlatformProcessProvider(), tyePathProvider);
 			const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(tyeProcessProvider, tyeClientProvider);
 
 			registerDisposable(vscode.workspace.registerTextDocumentContentProvider('tye-log', new TyeLogsContentProvider(tyeClientProvider)));
@@ -132,8 +134,6 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 				});
 
 			const scaffolder = new LocalScaffolder();
-			const settingsProvider = new VsCodeSettingsProvider();
-			const tyePathProvider = new LocalTyePathProvider(settingsProvider);
 			const tyeApplicationConfigurationProvider = new WorkspaceTyeApplicationConfigurationProvider(new YamlTyeApplicationConfigurationReader());
 
 			telemetryProvider.registerCommandWithTelemetry(

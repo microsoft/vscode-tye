@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import * as fs from 'fs';
+import * as path from 'path';
 import * as psList from 'ps-list';
 import * as os from 'os';
 import { Process } from '../util/process';
@@ -15,12 +17,45 @@ export interface ProcessProvider {
     listProcesses(name: string): Promise<ProcessInfo[]>;
 }
 
+// TODO: Consider making async.
+function isFile(path: string): boolean {
+    try {
+        const stats = fs.statSync(path);
+
+        return stats.isFile();
+    } catch (e) {
+        return false;
+    }
+}
+
 export class UnixProcessProvider implements ProcessProvider {
-    async listProcesses(name: string): Promise<ProcessInfo[]> {
+    async listProcesses(filePath: string): Promise<ProcessInfo[]> {
         const processes = await psList();
+        
+        const fileName = path.basename(filePath);
+        const regex = new RegExp(`^(?<path>.*/${fileName}) `);
 
         return processes
-            .filter(process => process.name === name)
+            .filter(
+                process => {
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    const cmd = process.cmd!;
+
+                    if (process.name === fileName
+                        || cmd.startsWith(`${fileName} `)
+                        || cmd.startsWith(`${filePath} `)) {
+                        return true;
+                    }
+
+                    const match = regex.exec(cmd);
+
+                    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                    if (match && isFile(match.groups!['path'])) {
+                        return true;
+                    }
+
+                    return false;
+                })
             .map(process => ({ name: process.name, cmd: process.cmd ?? '', pid: process.pid }));
     }
 }

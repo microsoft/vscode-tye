@@ -6,6 +6,7 @@ import { distinctUntilChanged, first, switchMap } from 'rxjs/operators';
 import { arrayComparer } from '../util/comparison';
 import { PortProvider } from './portProvider';
 import { ProcessProvider } from './processProvider';
+import { TyePathProvider } from './tyePathProvider';
 
 export interface TyeProcess {
     pid: number;
@@ -33,7 +34,8 @@ export default class LocalTyeProcessProvider implements TyeProcessProvider {
 
     constructor(
         private readonly portProvider: PortProvider,
-        private readonly processProvider: ProcessProvider) {
+        private readonly processProvider: ProcessProvider,
+        private readonly tyePathProvider: TyePathProvider) {
         this._processes =
             // TODO: Make interval configurable.
             timer(0, 2000)
@@ -59,7 +61,8 @@ export default class LocalTyeProcessProvider implements TyeProcessProvider {
     }
 
     private async getProcessList(): Promise<TyeProcess[]> {
-        const tyeProcesses = await this.processProvider.listProcesses('tye');
+        const tyePath = await this.tyePathProvider.getTyePath();
+        const tyeProcesses = await this.processProvider.listProcesses(tyePath);
         const tyeProcessesWithPorts = await Promise.all(tyeProcesses.map(process => this.getPortForProcess(process.pid)));
 
         function hasValidPort(process: ProspectiveTyeProcess): process is TyeProcess {
