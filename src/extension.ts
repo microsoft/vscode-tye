@@ -1,7 +1,6 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import * as querystring from 'querystring';
 import * as vscode from 'vscode';
 import AxiosHttpClient from './services/httpClient';
 import { httpTyeClientProvider } from './services/tyeClient';
