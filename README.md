@@ -27,17 +27,15 @@ The Tye extension lets you view and debug Tye services.
 ### View running Tye application
 You can view the running Tye application, view all services and it's replicas, view logs and open the services in the browser.
 
-![View running Tye application](resources/readme/tye-view.gif)
+[![View running Tye application](https://img.youtube.com/vi/-UQau95Fz6U/0.jpg)](https://www.youtube.com/watch?v=-UQau95Fz6U)
 
 ### Generating Tye assets
 You can add `tye.yaml` file to your workspace by opening the Command Palette (<kbd>F1</kbd>) and using **Tye: Initialize Tye** command. The command will generate `tye.yaml` based on .NET projects in the solution currently open in the workspace.
 
-![Initialize Tye](resources/readme/tye-init.gif)
-
 ### Generating task and launch configuration
 You can add the task **tye-run** to run the Tye application and a debug launch configuration **Debug with Tye** to debug the Tye application by opening the Command Palette (<kbd>F1</kbd>) and using the **Tye: Scaffold Tye Tasks** command.
 
-![Generating tasks and launch configuration](resources/readme/tye-scaffold.gif)
+[![Generating tasks and launch configuration](https://img.youtube.com/vi/GgX5aehndkU/0.jpg)](https://www.youtube.com/watch?v=GgX5aehndkU)
 
 ### Running and debugging the Tye application
 The extension offers command to run the Tye application, attach the debugger to already running service or start the Tye application with debugger attached to all debuggable services.
@@ -50,23 +48,23 @@ You can run the Tye application by running the task **tye-run**.
 #### Debug an already running service
 You can attach the debugger to an already running service by clicking on the **Attach** icon on any replica of the service you want to debug.
 
-![Debug an already running service](resources/readme/tye-debug-attach.gif)
+[![Debug an already running service](https://img.youtube.com/vi/cupggY6qJ0w/0.jpg)](https://www.youtube.com/watch?v=cupggY6qJ0w)
 
 #### Debug with Tye
 The **Debug with Tye** launch configuration helps you debug multiple services at a time.
 The default scaffolded configuration attaches the debugger to all debuggable services, but it can be configured to attach to only a subset of services.
 
-![Debugging all services](resources/readme/tye-debug-all.gif)
+[![Debug all services](https://img.youtube.com/vi/t1Lz_rvT8Kg/0.jpg)](https://www.youtube.com/watch?v=t1Lz_rvT8Kg)
 
 ##### Configuring a subset of services to debug
 Services to debug can be configured by adding `services` property in the **Debug with Tye** launch configuration.
 
-![Configuring subset of services for debugging](resources/readme/tye-debug-subset.gif)
+![Configuring subset of services for debugging](resources/readme/debug-subset.png)
 
 ##### Enabling the `watch` mode for debugging
 The Tye extension lets you start the Tye application in the `watch` mode and subsequently attach the debugger in the `watch` mode. With the `watch` mode on, the debugger watches for any code changes and re-attaches to the re-spawned services.
 
-![Watch mode](resources/readme/tye-debug-watch.gif)
+[![Debug services in watch mode](https://img.youtube.com/vi/MkqB3G4dHdM/0.jpg)](https://www.youtube.com/watch?v=MkqB3G4dHdM)
 
 ## Contributing
 
