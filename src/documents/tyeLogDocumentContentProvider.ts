@@ -22,6 +22,10 @@ export class TyeLogDocumentContentProvider extends vscode.Disposable implements 
         // NOTE: Using 'logs' as the authority is for the benefit of VS Code, which only displays the URI path in editor title.
         //
 
+        // NOTE: VS Code doesn't close documents immediately after the editor is closed, but at some lazy future time.
+        //       But, it also won't ask to provide content while the document is open, unless we notify it of change.
+        //       So, if you immediately re-open the document in the editor, VS Code may show the same content.
+
         // NOTE: We expect '/<applicationId>/<service>[/...]'
         const splitPath = uri.path.split('/');
 
