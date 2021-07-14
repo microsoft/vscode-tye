@@ -74,7 +74,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const tyeProcessProvider = new LocalTyeProcessProvider(new LocalPortProvider(), createPlatformProcessProvider(), tyePathProvider);
 			const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(tyeProcessProvider, tyeClientProvider);
 
-			registerDisposable(vscode.workspace.registerTextDocumentContentProvider('tye-log', new TyeLogDocumentContentProvider(tyeApplicationProvider, tyeClientProvider)));
+			registerDisposable(vscode.workspace.registerTextDocumentContentProvider('tye-log', registerDisposable(new TyeLogDocumentContentProvider(tyeApplicationProvider, tyeClientProvider))));
 		
 			const extensionPackage = <ExtensionPackage>context.extension.packageJSON;
 			const tyeCliClient = new LocalTyeCliClient(() => tyePathProvider.getTyePath());
@@ -151,7 +151,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 							
 					const doc = await vscode.workspace.openTextDocument(logUri);
 
-					await vscode.window.showTextDocument(doc, {preview:false});
+					await vscode.window.showTextDocument(doc);
 				});
 
 			telemetryProvider.registerCommandWithTelemetry(
