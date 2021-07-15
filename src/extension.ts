@@ -1,11 +1,10 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import * as querystring from 'querystring';
 import * as vscode from 'vscode';
 import AxiosHttpClient from './services/httpClient';
 import { httpTyeClientProvider } from './services/tyeClient';
-import { TyeLogsContentProvider } from './views/tyeLogsContentProvider';
+import { TyeLogDocumentContentProvider } from './documents/tyeLogDocumentContentProvider';
 import TyeRunCommandTaskProvider from './tasks/tyeRunTaskProvider';
 import { TyeDebugConfigurationProvider } from './debug/tyeDebugConfigurationProvider';
 import { KnownServiceType, TaskBasedTyeApplicationProvider } from './services/tyeApplicationProvider';
@@ -74,7 +73,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const tyeProcessProvider = new LocalTyeProcessProvider(new LocalPortProvider(), createPlatformProcessProvider(), tyePathProvider);
 			const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(tyeProcessProvider, tyeClientProvider);
 
-			registerDisposable(vscode.workspace.registerTextDocumentContentProvider('tye-log', new TyeLogsContentProvider(tyeClientProvider)));
+			registerDisposable(vscode.workspace.registerTextDocumentContentProvider('tye-log', registerDisposable(new TyeLogDocumentContentProvider(tyeApplicationProvider, tyeClientProvider))));
 		
 			const extensionPackage = <ExtensionPackage>context.extension.packageJSON;
 			const tyeCliClient = new LocalTyeCliClient(() => tyePathProvider.getTyePath());
@@ -147,19 +146,11 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.showLogs',
 				async (context, node: TyeServiceNode) => {
-					const dashboard = node.application.dashboard;
-					const service: TyeService = node.service;
-
-					const logUri =
-						vscode.Uri
-							.parse(`tye-log://logs/${service.description.name}`)
-							.with({
-								query: querystring.stringify({ dashboard: dashboard?.toString() })
-						});
-
+					const logUri = vscode.Uri.parse(`tye-log://logs/${node.application.id}/${node.service.description.name}`);
+							
 					const doc = await vscode.workspace.openTextDocument(logUri);
 
-					await vscode.window.showTextDocument(doc, {preview:false});
+					await vscode.window.showTextDocument(doc);
 				});
 
 			telemetryProvider.registerCommandWithTelemetry(
