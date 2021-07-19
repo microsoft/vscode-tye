@@ -17,8 +17,10 @@ function toThemeIconId(service: TyeService): string {
         case 'ingress':
             return 'globe';
 
-        case 'executable':
         case 'function':
+            return 'github-action';
+
+        case 'executable':
         case 'project':
         default:
             return 'server-process';
