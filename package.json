@@ -23,6 +23,7 @@
 		"onCommand:vscode-tye.commands.attachService",
 		"onCommand:vscode-tye.commands.browseService",
 		"onCommand:vscode-tye.commands.debugAll",
+		"onCommand:vscode-tye.commands.launchTyeDashboard",
 		"onCommand:vscode-tye.commands.refreshEntry",
 		"onCommand:vscode-tye.commands.scaffolding.initTye",
 		"onCommand:vscode-tye.commands.scaffolding.scaffoldTyeTasks",
@@ -236,6 +237,12 @@
 			},
 			{
 				"category": "Tye",
+				"command": "vscode-tye.commands.launchTyeDashboard",
+				"title": "%vscode-tye.commands.launchTyeDashboard.title%",
+				"icon": "$(dashboard)"
+			},
+			{
+				"category": "Tye",
 				"command": "vscode-tye.commands.scaffolding.scaffoldTyeTasks",
 				"title": "%vscode-tye.commands.scaffolding.scaffoldTyeTasks.title%"
 			},
@@ -322,14 +329,19 @@
 			],
 			"view/item/context": [
 				{
+					"command": "vscode-tye.commands.launchTyeDashboard",
+					"when": "view == vscode-tye.views.services && viewItem =~ /application/",
+					"group": "inline@1"
+				},
+				{
 					"command": "vscode-tye.commands.debugAll",
 					"when": "view == vscode-tye.views.services && viewItem =~ /application/",
-					"group": "inline"
+					"group": "inline@2"
 				},
 				{
 					"command": "vscode-tye.commands.shutdownApplication",
 					"when": "view == vscode-tye.views.services && viewItem =~ /application/",
-					"group": "inline"
+					"group": "inline@3"
 				},
 				{
 					"command": "vscode-tye.commands.browseService",
