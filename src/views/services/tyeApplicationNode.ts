@@ -8,6 +8,7 @@ import { TyeApplication } from '../../services/tyeApplicationProvider';
 import TyeServiceNode from './tyeServiceNode';
 import { TyeClientProvider } from '../../services/tyeClient';
 import ext from '../../ext';
+import TyeOtherServicesNode from './tyeOtherServicesNode';
 
 export default class TyeApplicationNode implements TreeNode {
     private readonly id: string;
@@ -32,8 +33,20 @@ export default class TyeApplicationNode implements TreeNode {
         if (!services) {
             return [];
         }
-       
-        return services.map(service => new TyeServiceNode(this.application, service, this.id));
+
+        const serviceNodes = services.map(service => new TyeServiceNode(this.application, service, this.id));
+        
+        const [projectServiceNodes, nonProjectServiceNodes] =
+            serviceNodes
+                .reduce<[TyeServiceNode[], TyeServiceNode[]]>(
+                    (acc, serviceNode) => {
+                        acc[serviceNode.service.serviceType === 'project' ? 0 : 1].push(serviceNode)
+
+                        return acc;
+                    },
+                    [[], []]);
+        
+        return (<TreeNode[]>[]).concat(projectServiceNodes).concat([new TyeOtherServicesNode(nonProjectServiceNodes)]);
     }
 
     getTreeItem(): vscode.TreeItem {
