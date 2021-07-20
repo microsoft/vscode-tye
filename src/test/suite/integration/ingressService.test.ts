@@ -44,8 +44,8 @@ suite('integration/ingressServiceTests', () => {
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         const serviceTreeItems = await applicationTreeItem.getChildren!();
 
-        //Nodes in services + 1 Dashboard node.
-        assert.equal(serviceTreeItems?.length, testDataServiceCount + 1);
+        //Nodes in services.
+        assert.equal(serviceTreeItems?.length, testDataServiceCount);
     });
 
     test('ingressIsBrowsable', async () => {

@@ -45,8 +45,8 @@ suite('integration/tyeServiceProvider', () => {
 
         const serviceItems = await provider.getChildren(applicationItem);
 
-        //Nodes in services + 1 Dashboard node.
-        assert.equal(serviceItems?.length, testDataServiceCount + 1);
+        //Nodes in services.
+        assert.equal(serviceItems?.length, testDataServiceCount);
     });
 
     test('browsableTaggedBrowsable', async () => {
