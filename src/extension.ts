@@ -70,7 +70,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			const tyeClientProvider = httpTyeClientProvider(httpClient);
 			const settingsProvider = new VsCodeSettingsProvider();
 			const tyePathProvider = new LocalTyePathProvider(settingsProvider);
-			const tyeProcessProvider = new LocalTyeProcessProvider(new LocalPortProvider(), createPlatformProcessProvider(), tyePathProvider);
+			const tyeProcessProvider = new LocalTyeProcessProvider(new LocalPortProvider(), createPlatformProcessProvider(), tyeClientProvider, tyePathProvider);
 			const tyeApplicationProvider = new TaskBasedTyeApplicationProvider(tyeProcessProvider, tyeClientProvider);
 
 			registerDisposable(vscode.workspace.registerTextDocumentContentProvider('tye-log', registerDisposable(new TyeLogDocumentContentProvider(tyeApplicationProvider, tyeClientProvider))));

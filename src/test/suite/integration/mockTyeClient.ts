@@ -15,6 +15,10 @@ export class MockTyeClient implements TyeClient {
         });
     }
 
+    public getEndpoints(): Promise<string[]> {
+        return Promise.resolve([]);
+    }
+
     public getLog(): Promise<string> {
         return Promise.resolve('');
     }
