@@ -104,9 +104,9 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.launchTyeDashboard',
-				async (context, dashboard: vscode.Uri) => {
-					if (dashboard?.scheme === 'http' || dashboard?.scheme === 'https') {
-						await vscode.env.openExternal(dashboard);
+				async (context, node: TyeApplicationNode) => {
+					if (node.application.dashboard?.scheme === 'http' || node.application.dashboard?.scheme === 'https') {
+						await vscode.env.openExternal(node.application.dashboard);
 					}
 				});
 

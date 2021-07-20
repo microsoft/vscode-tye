@@ -10,7 +10,8 @@ interface TyeApplication {
 interface TyeService {
     description: TyeDescription,
     replicas: {[key:string]: TyeReplica},
-    serviceType: string;
+    serviceSource: 'configuration' | 'extension' | 'host';
+    serviceType: 'external' | 'project' | 'executable' | 'container' | 'function' | 'ingress';
 }
 
 interface TyeDescription {
