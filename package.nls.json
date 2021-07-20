@@ -5,6 +5,7 @@
     "vscode-tye.commands.debugAll.title": "Attach",
     "vscode-tye.commands.browseService.title": "Browse",
     "vscode-tye.commands.attachService.title": "Attach",
+    "vscode-tye.commands.launchTyeDashboard.title": "Open Dashboard in Browser",
     "vscode-tye.commands.scaffolding.initTye.title": "Initialize Tye",
     "vscode-tye.commands.scaffolding.scaffoldTyeTasks.title": "Scaffold Tye Tasks",
     "vscode-tye.commands.showLogs.title": "Logs",

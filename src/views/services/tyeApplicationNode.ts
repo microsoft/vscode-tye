@@ -5,10 +5,22 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 import TreeNode from '../treeNode';
 import { TyeApplication } from '../../services/tyeApplicationProvider';
-import { TyeDashboardNode } from './tyeDashboardNode';
 import TyeServiceNode from './tyeServiceNode';
 import { TyeClientProvider } from '../../services/tyeClient';
 import ext from '../../ext';
+import TyeOtherServicesNode from './tyeOtherServicesNode';
+
+function isConfigurationServiceNode(node: TyeServiceNode): boolean {
+    switch (node.service.serviceSource) {
+        case 'extension':
+        case 'host':
+            return false;
+
+        case 'configuration':
+        default:
+                return true;
+    }
+}
 
 export default class TyeApplicationNode implements TreeNode {
     private readonly id: string;
@@ -34,9 +46,21 @@ export default class TyeApplicationNode implements TreeNode {
             return [];
         }
 
-        const nodes: TreeNode[] = [ new TyeDashboardNode(this.application.dashboard, this.id)];
+        const serviceNodes = services.map(service => new TyeServiceNode(this.application, service, this.id));
         
-        return nodes.concat(services.map(service => new TyeServiceNode(this.application, service, this.id)));
+        const [configurationServiceNodes, otherServiceNodes] =
+            serviceNodes
+                .reduce<[TyeServiceNode[], TyeServiceNode[]]>(
+                    (acc, serviceNode) => {
+                        acc[isConfigurationServiceNode(serviceNode) ? 0 : 1].push(serviceNode)
+
+                        return acc;
+                    },
+                    [[], []]);
+        
+        return (<TreeNode[]>[])
+            .concat(configurationServiceNodes)
+            .concat(otherServiceNodes.length > 0 ? [new TyeOtherServicesNode(otherServiceNodes)] : []);
     }
 
     getTreeItem(): vscode.TreeItem {

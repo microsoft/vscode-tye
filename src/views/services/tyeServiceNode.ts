@@ -6,6 +6,27 @@ import { TyeApplication } from '../../services/tyeApplicationProvider';
 import TyeNode from '../treeNode';
 import TyeReplicaNode, { getReplicaBrowseUrl, isAttachable, isReplicaBrowsable } from './tyeReplicaNode';
 
+function toThemeIconId(service: TyeService): string {
+    switch (service.serviceType) {
+        case 'container':
+            return 'package';
+
+        case 'external':
+            return 'link-external';
+
+        case 'ingress':
+            return 'globe';
+
+        case 'function':
+            return 'github-action';
+
+        case 'executable':
+        case 'project':
+        default:
+            return 'server-process';
+    }
+}
+
 export default class TyeServiceNode implements TyeNode {
     private readonly id: string;
 
@@ -32,11 +53,7 @@ export default class TyeServiceNode implements TyeNode {
             treeItem.contextValue += ' attachable'
         }
         
-        if (this.service.serviceType === 'container') {
-            treeItem.iconPath = new vscode.ThemeIcon('package');
-        } else {
-            treeItem.iconPath = new vscode.ThemeIcon('project');
-        }
+        treeItem.iconPath = new vscode.ThemeIcon(toThemeIconId(this.service));
 
         if (this.isBrowsable) {
             treeItem.contextValue += ' browsable';
