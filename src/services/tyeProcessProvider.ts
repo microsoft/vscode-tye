@@ -109,9 +109,11 @@ export default class LocalTyeProcessProvider implements TyeProcessProvider {
 
             if (client) {
                 try {
-                    await client.getEndpoints();
+                    const endpoints = await client.getEndpoints();
 
-                    return { pid: process.pid, dashboardPort: port };
+                    if (endpoints) {
+                        return { pid: process.pid, dashboardPort: port };
+                    }
                 }
                 catch {
                     continue;
