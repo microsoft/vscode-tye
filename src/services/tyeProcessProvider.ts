@@ -1,16 +1,23 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
+import * as vscode from 'vscode';
 import { Observable, timer } from 'rxjs'
 import { distinctUntilChanged, first, switchMap } from 'rxjs/operators';
 import { arrayComparer } from '../util/comparison';
 import { PortProvider } from './portProvider';
 import { ProcessProvider } from './processProvider';
+import { TyeClientProvider } from './tyeClient';
 import { TyePathProvider } from './tyePathProvider';
 
 export interface TyeProcess {
     pid: number;
     dashboardPort: number;
+}
+
+export interface TyeProcessWithPorts {
+    pid: number;
+    ports: number[];
 }
 
 export interface TyeProcessProvider {
@@ -26,8 +33,13 @@ function tyeProcessesComparer(x: TyeProcess[], y: TyeProcess[]): boolean {
     return arrayComparer(x, y, (a: TyeProcess, b: TyeProcess) => a.pid - b.pid, tyeProcessComparer);
 }
 
-type WithOptional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-type ProspectiveTyeProcess = WithOptional<TyeProcess, 'dashboardPort'>;
+function tyeProcessWithPortsComparer(x: TyeProcessWithPorts, y: TyeProcessWithPorts): boolean {
+    return x.pid === y.pid && arrayComparer(x.ports, y.ports, (a, b) => a - b, (a, b) => a === b);
+}
+
+function tyeProcessesWithPortsComparer(x: TyeProcessWithPorts[], y: TyeProcessWithPorts[]): boolean {
+    return arrayComparer(x, y, (a: TyeProcessWithPorts, b: TyeProcessWithPorts) => a.pid - b.pid, tyeProcessWithPortsComparer);
+}
 
 export default class LocalTyeProcessProvider implements TyeProcessProvider {
     private readonly _processes: Observable<TyeProcess[]>;
@@ -35,20 +47,27 @@ export default class LocalTyeProcessProvider implements TyeProcessProvider {
     constructor(
         private readonly portProvider: PortProvider,
         private readonly processProvider: ProcessProvider,
+        private readonly tyeClientProvider: TyeClientProvider,
         private readonly tyePathProvider: TyePathProvider) {
         this._processes =
             // TODO: Make interval configurable.
+            // NOTE: switchMap() will cancel previous invocations.
+            //       What we really want is an interval after each
+            //       successful attempt.
+            // NOTE: There is a small (minute?) chance that a tye
+            //       process could be recycled such that it ends
+            //       up with the same PID and dynamically chosen
+            //       port. If possible, perhaps incorporate a
+            //       timestamp into the comparison.
             timer(0, 2000)
                 .pipe(
-                    // NOTE: switchMap() will cancel previous invocations.
-                    //       What we really want is an interval after each
-                    //       successful attempt.
-                    switchMap(() => this.getProcessList()),
-                    // NOTE: There is a small (minute?) chance that a tye
-                    //       process could be recycled such that it ends
-                    //       up with the same PID and dynamically chosen
-                    //       port. If possible, perhaps incorporate a
-                    //       timestamp into the comparison.
+                    // Get list of tye processes and their exposed ports...
+                    switchMap(() => this.getTyeProcessesWithPorts()),
+                    // Ignore updates that don't change the processes or their ports...
+                    distinctUntilChanged(tyeProcessesWithPortsComparer),
+                    // Identify the dashboard port for each tye process...
+                    switchMap(processes => this.determineDashboardPorts(processes)),
+                    // Ignore updates that don't change the processes or their dashboard...
                     distinctUntilChanged(tyeProcessesComparer));
     }
 
@@ -60,26 +79,49 @@ export default class LocalTyeProcessProvider implements TyeProcessProvider {
         return this.processes.pipe(first()).toPromise();
     }
 
-    private async getProcessList(): Promise<TyeProcess[]> {
+    private async getTyeProcessesWithPorts(): Promise<TyeProcessWithPorts[]> {
         const tyePath = await this.tyePathProvider.getTyePath();
         const tyeProcesses = await this.processProvider.listProcesses(tyePath);
-        const tyeProcessesWithPorts = await Promise.all(tyeProcesses.map(process => this.getPortForProcess(process.pid)));
+        
+        return await Promise.all(tyeProcesses.map(process => this.getTyeProcessWithPorts(process.pid)));
+    }
 
-        function hasValidPort(process: ProspectiveTyeProcess): process is TyeProcess {
-            return !!process.dashboardPort;
+    private async determineDashboardPorts(processes: TyeProcessWithPorts[]): Promise<TyeProcess[]> {
+        const allProcesses = await Promise.all(processes.map(process => this.determineDashboardPort(process)));
+
+        function isValidProcess(process: TyeProcess | undefined): process is TyeProcess {
+            return !!process;
         }
 
-        const tyeProcessesWithValidPorts =
-            tyeProcessesWithPorts
-                .filter(hasValidPort);
-
-        return tyeProcessesWithValidPorts;
+        return allProcesses.filter(isValidProcess);
     }
 
-    private async getPortForProcess(pid: number): Promise<ProspectiveTyeProcess> {
+    private async getTyeProcessWithPorts(pid: number): Promise<TyeProcessWithPorts> {
         const ports = await this.portProvider.getPortsForProcess(pid);
 
-        return { pid, dashboardPort: ports[0] }
+        return { pid, ports };
+    }
+
+    private async determineDashboardPort(process: TyeProcessWithPorts): Promise<TyeProcess | undefined> {
+        for (const port of process.ports) {
+            const dashboardUri = vscode.Uri.parse(`http://localhost:${port}`);
+            const client = this.tyeClientProvider(dashboardUri);
+
+            if (client) {
+                try {
+                    // TODO: Ingress may redirect to similarly named endpoints; we should use a more uniquely Tye endpoint.
+                    const endpoints = await client.getEndpoints();
+
+                    if (endpoints) {
+                        return { pid: process.pid, dashboardPort: port };
+                    }
+                }
+                catch {
+                    continue;
+                }
+            }
+        }
+
+        return undefined;
     }
 }
-
