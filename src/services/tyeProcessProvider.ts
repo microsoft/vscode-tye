@@ -66,7 +66,7 @@ export default class LocalTyeProcessProvider implements TyeProcessProvider {
                     // Ignore updates that don't change the processes or their ports...
                     distinctUntilChanged(tyeProcessesWithPortsComparer),
                     // Identify the dashboard port for each tye process...
-                    switchMap(processes => this.getTyeProcessesFromPorts(processes)),
+                    switchMap(processes => this.determineDashboardPorts(processes)),
                     // Ignore updates that don't change the processes or their dashboard...
                     distinctUntilChanged(tyeProcessesComparer));
     }
@@ -86,8 +86,8 @@ export default class LocalTyeProcessProvider implements TyeProcessProvider {
         return await Promise.all(tyeProcesses.map(process => this.getTyeProcessWithPorts(process.pid)));
     }
 
-    private async getTyeProcessesFromPorts(processes: TyeProcessWithPorts[]): Promise<TyeProcess[]> {
-        const allProcesses = await Promise.all(processes.map(process => this.getTyeProcessFromPorts(process)));
+    private async determineDashboardPorts(processes: TyeProcessWithPorts[]): Promise<TyeProcess[]> {
+        const allProcesses = await Promise.all(processes.map(process => this.determineDashboardPort(process)));
 
         function isValidProcess(process: TyeProcess | undefined): process is TyeProcess {
             return !!process;
@@ -102,13 +102,14 @@ export default class LocalTyeProcessProvider implements TyeProcessProvider {
         return { pid, ports };
     }
 
-    private async getTyeProcessFromPorts(process: TyeProcessWithPorts): Promise<TyeProcess | undefined> {
+    private async determineDashboardPort(process: TyeProcessWithPorts): Promise<TyeProcess | undefined> {
         for (const port of process.ports) {
             const dashboardUri = vscode.Uri.parse(`http://localhost:${port}`);
             const client = this.tyeClientProvider(dashboardUri);
 
             if (client) {
                 try {
+                    // TODO: Ingress may redirect to similarly named endpoints; we should use a more uniquely Tye endpoint.
                     const endpoints = await client.getEndpoints();
 
                     if (endpoints) {
