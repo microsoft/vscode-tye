@@ -62,6 +62,47 @@ function serviceComparer(x: TyeProjectService, y: TyeProjectService): boolean {
     return true;
 }
 
+function nodeServiceComparer(x: TyeNodeService, y: TyeNodeService): boolean {
+    const xReplicas = Object.keys(x.replicas).map(name => ({ name, replica: x.replicas[name] })).sort(nameSorter);
+    const yReplicas = Object.keys(y.replicas).map(name => ({ name, replica: y.replicas[name] })).sort(nameSorter);
+
+    if (xReplicas.length !== yReplicas.length) {
+        return false;
+    }
+
+    for (let i = 0; i < xReplicas.length; i++) {
+        const xiReplica = xReplicas[i].replica;
+        const yiReplica = yReplicas[i].replica;
+
+        if (xiReplica !== yiReplica) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+export function nodeServicesComparer(x: { [key: string]: TyeNodeService }, y: { [key: string]: TyeNodeService }): boolean {
+    const xServices = Object.keys(x).map(name => ({ name, service: x[name] })).sort(nameSorter);
+    const yServices = Object.keys(y).map(name => ({ name, service: y[name] })).sort(nameSorter);
+
+    if (xServices.length !== yServices.length) {
+        return false;
+    }
+
+    for (let j = 0; j < xServices.length; j++) {
+        const xijService = xServices[j];
+        const yijService = yServices[j];
+
+        if (xijService.name !== yijService.name
+            || !nodeServiceComparer(xijService.service, yijService.service)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 export function applicationComparer(x: TyeApplication | undefined, y: TyeApplication | undefined): boolean {
     if (x === undefined && y === undefined) {
         return true;
@@ -93,6 +134,10 @@ export function applicationComparer(x: TyeApplication | undefined, y: TyeApplica
             || !serviceComparer(xijService.service, yijService.service)) {
             return false;
         }
+    }
+
+    if (!nodeServicesComparer(x.nodeServices, y.nodeServices)) {
+        return false;
     }
 
     return true;
