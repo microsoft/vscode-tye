@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import { Subscription } from 'rxjs';
 import { DebugSessionMonitor } from './debugSessionMonitor';
 import { applicationComparer, TyeApplicationProvider } from '../services/tyeApplicationProvider';
-import { attachToReplica } from './attachToReplica';
+import { attachToDotnetReplica, attachToReplica } from './attachToReplica';
 import { distinctUntilChanged, map } from 'rxjs/operators';
 
 export interface TyeApplicationWatcher {
@@ -45,7 +45,7 @@ export class TyeApplicationDebugSessionWatcher extends vscode.Disposable impleme
                                     for (const replicaName of Object.keys(service.replicas)) {
                                         const currentPid = service.replicas[replicaName];
 
-                                        void attachToReplica(this.debugSessionMonitor, folder, service.serviceType, replicaName, currentPid);
+                                        void attachToDotnetReplica(this.debugSessionMonitor, folder, service.serviceType, replicaName, currentPid);
                                     }
                                 }
                             }

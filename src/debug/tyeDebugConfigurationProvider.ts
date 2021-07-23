@@ -6,7 +6,7 @@ import * as nls from 'vscode-nls';
 import { TyeApplicationProvider } from '../services/tyeApplicationProvider';
 import { getLocalizationPathForFile } from '../util/localization';
 import { TyeApplicationWatcher } from './tyeApplicationWatcher';
-import { attachToReplica } from './attachToReplica';
+import { attachToDotnetReplica, attachToReplica } from './attachToReplica';
 import { DebugSessionMonitor } from './debugSessionMonitor';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
@@ -59,7 +59,7 @@ export class TyeDebugConfigurationProvider implements vscode.DebugConfigurationP
             for (const replicaName of Object.keys(service.replicas)) {
                 const pid = service.replicas[replicaName];
 
-                await attachToReplica(this.debugSessionMonitor, folder, service.serviceType, replicaName, pid);
+                await attachToDotnetReplica(this.debugSessionMonitor, folder, service.serviceType, replicaName, pid);
             }
         }
 

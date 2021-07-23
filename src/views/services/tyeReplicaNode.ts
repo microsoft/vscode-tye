@@ -36,8 +36,18 @@ export function getReplicaBrowseUrl(service: TyeService, replica: TyeReplica): s
     return `${protocol}://${host}:${port}`;
 }
 
-export function isAttachable(service: TyeService): boolean {
+export function isNodeAttachable(service: TyeService): boolean {
+    return (service.serviceType === 'executable')
+        && (service.description.runInfo.type === 'node')
+        && (service.description.bindings.find(binding => binding.protocol === 'inspector') !== undefined);
+}
+ 
+export function isDotnetAttachable(service: TyeService): boolean {
     return (service.serviceType === 'project') || (service.serviceType === 'function');
+}
+
+export function isAttachable(service: TyeService): boolean {
+    return isDotnetAttachable(service) || isNodeAttachable(service);
 }
 
 export default class TyeReplicaNode implements TyeNode {

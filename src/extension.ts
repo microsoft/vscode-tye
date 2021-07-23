@@ -10,7 +10,7 @@ import { TyeDebugConfigurationProvider } from './debug/tyeDebugConfigurationProv
 import { KnownServiceType, TaskBasedTyeApplicationProvider } from './services/tyeApplicationProvider';
 import { TyeApplicationDebugSessionWatcher } from './debug/tyeApplicationWatcher';
 import { CoreClrDebugSessionMonitor } from './debug/debugSessionMonitor';
-import { attachToReplica } from './debug/attachToReplica';
+import { attachToDotnetReplica, attachToReplica } from './debug/attachToReplica';
 import { AzureUserInput, createAzExtOutputChannel, registerUIExtensionVariables, IActionContext } from 'vscode-azureextensionui';
 import ext from './ext';
 import AzureTelemetryProvider from './services/telemetryProvider';
@@ -119,16 +119,16 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.attachService',
 				async (context, node: TreeNode) => {
-					const replicas: { replica: TyeReplica, serviceType: KnownServiceType }[] = [];
+					const replicas: { replica: TyeReplica, service: TyeService }[] = [];
 
 					if (node instanceof TyeServiceNode && isAttachable(node.service)) {
-						replicas.push(...Object.values(node.service.replicas).map(replica => ({ replica: replica, serviceType: <KnownServiceType>node.service.serviceType })));
+						replicas.push(...Object.values(node.service.replicas).map(replica => ({ replica, service: node.service })));
 					} else if (node instanceof TyeReplicaNode && isAttachable(node.service)) {
-						replicas.push({ replica: node.replica, serviceType: <KnownServiceType>node.service.serviceType });
+						replicas.push({ replica: node.replica, service: node.service });
 					}
 
 					for (const replica of replicas) {
-						await attachToReplica(debugSessionMonitor, undefined, replica.serviceType, replica.replica.name, replica.replica.pid);
+						await attachToReplica(debugSessionMonitor, undefined, replica.service, replica.replica);
 					}
 				});
 
@@ -160,11 +160,11 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 
 					if (application?.projectServices) {
 						for (const service of Object.values(application.projectServices)) {
-								for (const replicaName of Object.keys(service.replicas)) {
-									const pid = service.replicas[replicaName];
+							for (const replicaName of Object.keys(service.replicas)) {
+								const pid = service.replicas[replicaName];
 
-									await attachToReplica(debugSessionMonitor, undefined, service.serviceType, replicaName, pid);
-								}
+								await attachToDotnetReplica(debugSessionMonitor, undefined, service.serviceType, replicaName, pid);
+							}
 						}
 					}
 				});

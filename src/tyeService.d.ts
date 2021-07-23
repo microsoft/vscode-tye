@@ -14,8 +14,18 @@ interface TyeService {
     serviceType: 'external' | 'project' | 'executable' | 'container' | 'function' | 'ingress';
 }
 
+interface TyeRunInfo {
+    type: 'external' | 'project' | 'executable' | 'container' | 'function' | 'ingress' | 'node';
+}
+
+interface TyeBinding {
+    protocol: string
+}
+
 interface TyeDescription {
     name: string
+    bindings: TyeBinding[]
+    runInfo: TyeRunInfo
 }
 
 interface TyeReplica {

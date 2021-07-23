@@ -35,7 +35,7 @@ async function getFunctionProcess(pid: number): Promise<string> {
     return functionProcess ? functionProcess.PID : pid.toString();
 }
 
-export async function attachToReplica(debugSessionMonitor: DebugSessionMonitor, folder: vscode.WorkspaceFolder | undefined, serviceType: KnownServiceType, replicaName: string, replicaPid: number | undefined): Promise<void> {
+export async function attachToDotnetReplica(debugSessionMonitor: DebugSessionMonitor, folder: vscode.WorkspaceFolder | undefined, serviceType: KnownServiceType, replicaName: string, replicaPid: number | undefined): Promise<void> {
     if (replicaPid !== undefined && !debugSessionMonitor.isAttached(replicaPid)) {
         let actualPid: string | undefined = replicaPid.toString();
 
@@ -56,6 +56,28 @@ export async function attachToReplica(debugSessionMonitor: DebugSessionMonitor, 
                     request: 'attach',
                     processId: actualPid
                 });
+        }
+    }
+}
+
+export async function attachToReplica(debugSessionMonitor: DebugSessionMonitor, folder: vscode.WorkspaceFolder | undefined, service: TyeService, replica: TyeReplica): Promise<void> {
+    if (service.serviceType === 'function' || service.serviceType === 'project') {
+        return attachToDotnetReplica(debugSessionMonitor, folder, service.serviceType, replica.name, replica.pid);
+    } else if (service.serviceType === 'executable' && service.description.runInfo.type === 'node') {
+        const inspectorPortIndex = service.description.bindings.findIndex(binding => binding.protocol === 'inspector');
+
+        if (inspectorPortIndex !== undefined) {
+            const inspectorPort = replica.ports[inspectorPortIndex];
+
+            await vscode.debug.startDebugging(
+                folder,
+                {
+                    type: 'pwa-node',
+                    name: localize('debug.attachToReplica.sessionName', 'Tye Replica: {0}', replica.name),
+                    request: 'attach',
+                    port: inspectorPort
+                }
+            )
         }
     }
 }

@@ -8,17 +8,22 @@ import { TyeClientProvider } from './tyeClient';
 import { TyeProcess, TyeProcessProvider } from './tyeProcessProvider';
 import { arrayComparer } from '../util/comparison';
 
-export type KnownServiceType = 'project' | 'function';
+export type KnownServiceType = 'project' | 'function' | 'executable';
 
 export type TyeProjectService = {
     replicas: { [key: string]: number | undefined };
     serviceType: KnownServiceType;
 };
 
+export type TyeNodeService = {
+    replicas: { [key: string]: number | undefined }
+}
+
 export type TyeApplication = {
     readonly dashboard: vscode.Uri;
     readonly id: string;
     readonly name: string;
+    readonly nodeServices: { [key: string]: TyeNodeService };
     readonly pid?: number;
     readonly projectServices: { [key: string]: TyeProjectService };
 };
@@ -161,10 +166,32 @@ export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
                                 },
                                 {});
     
+                    const nodeServices =
+                        (services ?? [])
+                                .filter(service => service.serviceType === 'executable' && service.description.runInfo.type === 'node')
+                                .reduce<{ [key: string]: TyeNodeService }>(
+                                    (serviceMap, service) => {
+                                        const inspectorPortIndex = service.description.bindings.findIndex(binding => binding.protocol === 'inspector');
+
+                                        serviceMap[service.description.name] = {
+                                            replicas:
+                                                Object.keys(service.replicas)
+                                                    .reduce<{ [key: string]: number | undefined }>(
+                                                        (replicaMap, replicaName) => {
+                                                            replicaMap[replicaName] = service.replicas[replicaName].ports[inspectorPortIndex];
+                                                            return replicaMap;
+                                                        },
+                                                        {})
+                                        };
+                                        return serviceMap;
+                                    },
+                                    {});
+
                     return {
                         dashboard: process.dashboard,
                         id: application.id,
                         name: application.name,
+                        nodeServices,
                         pid: process.pid,
                         projectServices
                     };
