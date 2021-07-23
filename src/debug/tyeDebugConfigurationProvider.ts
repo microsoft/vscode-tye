@@ -6,7 +6,7 @@ import * as nls from 'vscode-nls';
 import { TyeApplicationProvider } from '../services/tyeApplicationProvider';
 import { getLocalizationPathForFile } from '../util/localization';
 import { TyeApplicationWatcher } from './tyeApplicationWatcher';
-import { attachToDotnetReplica, attachToReplica } from './attachToReplica';
+import { attachToDotnetReplica, attachToNodeReplica, attachToReplica } from './attachToReplica';
 import { DebugSessionMonitor } from './debugSessionMonitor';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
@@ -52,14 +52,20 @@ export class TyeDebugConfigurationProvider implements vscode.DebugConfigurationP
         for (const serviceName of debuggedServiceNames) {
             const service = application.projectServices[serviceName];
 
-            if (service === undefined) {
-                throw new Error(localize('debug.tyeDebugConfigurationProvider.noDebuggedService', 'The Tye application "{0}" does not have the debugged service "{1}".', tyeDebugConfiguration.applicationName, serviceName));
-            }
-
             for (const replicaName of Object.keys(service.replicas)) {
                 const pid = service.replicas[replicaName];
 
                 await attachToDotnetReplica(this.debugSessionMonitor, folder, service.serviceType, replicaName, pid);
+            }
+        }
+
+        for (const serviceName of debuggedServiceNames) {
+            const service = application.nodeServices[serviceName];
+
+            for (const replicaName of Object.keys(service.replicas)) {
+                const inspectorPort = service.replicas[replicaName];
+
+                await attachToNodeReplica(this.debugSessionMonitor, folder, replicaName, inspectorPort);
             }
         }
 

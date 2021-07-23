@@ -47,6 +47,8 @@ export class TyeApplicationDebugSessionWatcher extends vscode.Disposable impleme
 
                                         void attachToDotnetReplica(this.debugSessionMonitor, folder, service.serviceType, replicaName, currentPid);
                                     }
+
+                                    // TODO: Attach to Node.js replicas.
                                 }
                             }
                         } else {

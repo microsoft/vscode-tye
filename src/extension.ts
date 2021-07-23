@@ -10,7 +10,7 @@ import { TyeDebugConfigurationProvider } from './debug/tyeDebugConfigurationProv
 import { KnownServiceType, TaskBasedTyeApplicationProvider } from './services/tyeApplicationProvider';
 import { TyeApplicationDebugSessionWatcher } from './debug/tyeApplicationWatcher';
 import { CoreClrDebugSessionMonitor } from './debug/debugSessionMonitor';
-import { attachToDotnetReplica, attachToReplica } from './debug/attachToReplica';
+import { attachToDotnetReplica, attachToNodeReplica, attachToReplica } from './debug/attachToReplica';
 import { AzureUserInput, createAzExtOutputChannel, registerUIExtensionVariables, IActionContext } from 'vscode-azureextensionui';
 import ext from './ext';
 import AzureTelemetryProvider from './services/telemetryProvider';
@@ -164,6 +164,16 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 								const pid = service.replicas[replicaName];
 
 								await attachToDotnetReplica(debugSessionMonitor, undefined, service.serviceType, replicaName, pid);
+							}
+						}
+					}
+
+					if (application?.nodeServices) {
+						for (const service of Object.values(application.nodeServices)) {
+							for (const replicaName of Object.keys(service.replicas)) {
+								const inspectorPort = service.replicas[replicaName];
+
+								await attachToNodeReplica(debugSessionMonitor, undefined, replicaName, inspectorPort);
 							}
 						}
 					}
