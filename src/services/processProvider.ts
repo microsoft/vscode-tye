@@ -14,7 +14,7 @@ export interface ProcessInfo {
 }
 
 export interface ProcessProvider {
-    listProcesses(name: string): Promise<ProcessInfo[]>;
+    listProcesses(filePath: string): Promise<ProcessInfo[]>;
 }
 
 // TODO: Consider making async.
@@ -67,8 +67,11 @@ function getWmicValue(line: string): string {
 }
 
 export class WindowsProcessProvider implements ProcessProvider {
-    async listProcesses(name: string): Promise<ProcessInfo[]> {
-        const list = await Process.exec(`wmic process where "name='${name}.exe'" get commandline,name,processid /format:list`);
+    async listProcesses(filePath: string): Promise<ProcessInfo[]> {
+        // WMIC lists processes by file name regardless of its full path.
+        const fileName = path.basename(filePath);
+
+        const list = await Process.exec(`wmic process where "name='${fileName}'" get commandline,name,processid /format:list`);
         
         // Lines in the output are delimited by "<CR><CR><LF>".
         const lines = list.stdout.split('\r\r\n');

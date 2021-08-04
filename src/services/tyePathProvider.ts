@@ -46,6 +46,6 @@ export default class LocalTyePathProvider implements TyePathProvider {
             // Best effort; In case of error, fallback to homedir.
         }
 
-        return path.join(os.homedir(), '.dotnet', 'tools', 'tye');
+        return path.join(os.homedir(), '.dotnet', 'tools', os.platform() === 'win32' ? 'tye.exe' : 'tye');
     }
 }
