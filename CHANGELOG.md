@@ -1,5 +1,19 @@
 # Change Log
 
+## v0.3.0 - 9 August 2021
+
+A number of usability enhancements and fixes.
+
+### Fixed
+* Check for both file and full paths of running instances. (#121) ([4d8cc7a](https://github.com/Microsoft/vscode-tye/commit/4d8cc7a)), closes [#121](https://github.com/Microsoft/vscode-tye/issues/121)
+* Reduce VSIX size (#123) ([4fa1822](https://github.com/Microsoft/vscode-tye/commit/4fa1822)), closes [#123](https://github.com/Microsoft/vscode-tye/issues/123)
+* Verify dashboard API endpoint (#129) ([4b3b76c](https://github.com/Microsoft/vscode-tye/commit/4b3b76c)), closes [#129](https://github.com/Microsoft/vscode-tye/issues/129)
+
+### Added
+
+* Refresh Tye applications tree view (#128) ([d3d4035](https://github.com/Microsoft/vscode-tye/commit/d3d4035)), closes [#128](https://github.com/Microsoft/vscode-tye/issues/128)
+* Differentiate service logs by application (#124) ([c5ea639](https://github.com/Microsoft/vscode-tye/commit/c5ea639)), closes [#124](https://github.com/Microsoft/vscode-tye/issues/124)
+
 ## v0.2.0 - 6 July 2021
 
 A number of usability enhancements and fixes.
