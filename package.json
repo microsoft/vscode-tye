@@ -2,7 +2,7 @@
 	"name": "vscode-tye",
 	"displayName": "Tye",
 	"description": "Makes it easy to debug and interact with applications using Tye.",
-	"version": "0.3.0-alpha",
+	"version": "0.3.0",
 	"preview": true,
 	"icon": "resources/brand-tye_128x.png",
 	"publisher": "ms-azuretools",
@@ -13,8 +13,8 @@
 		"url": "https://github.com/Microsoft/vscode-tye/"
 	},
 	"engines": {
-		"tye": ">=0.8.0-alpha.21352.1",
-		"vscode": "^1.58.0"
+		"tye": ">=0.9.0-alpha.21380.1",
+		"vscode": "^1.59.0"
 	},
 	"categories": [
 		"Other"
@@ -389,28 +389,28 @@
 		"@types/mocha": "^8.2.3",
 		"@types/node": "14.x",
 		"@types/node-netstat": "^1.8.1",
-		"@types/ps-tree": "^1.1.0",
-		"@types/semver": "^7.3.7",
+		"@types/ps-tree": "^1.1.1",
+		"@types/semver": "^7.3.8",
 		"@types/terser-webpack-plugin": "^5.0.4",
-		"@types/vscode": "^1.58.0",
-		"@typescript-eslint/eslint-plugin": "^4.28.1",
-		"@typescript-eslint/parser": "^4.28.1",
+		"@types/vscode": "^1.59.0",
+		"@typescript-eslint/eslint-plugin": "^4.29.1",
+		"@typescript-eslint/parser": "^4.29.1",
 		"del": "^6.0.0",
-		"eslint": "^7.29.0",
+		"eslint": "^7.32.0",
 		"glob": "^7.1.7",
 		"gulp": "^4.0.2",
 		"gulp-eslint": "^6.0.0",
 		"gulp-sourcemaps": "^3.0.0",
 		"gulp-typescript": "^6.0.0-alpha.1",
-		"mocha": "^9.0.1",
+		"mocha": "^9.0.3",
 		"terser-webpack-plugin": "^5.1.4",
-		"ts-loader": "^9.2.3",
-		"ts-node": "^10.1.0",
+		"ts-loader": "^9.2.5",
+		"ts-node": "^10.2.0",
 		"typescript": "^4.3.5",
-		"vsce": "^1.95.0",
+		"vsce": "^1.96.1",
 		"vscode-nls-dev": "^3.3.2",
-		"vscode-test": "^1.5.2",
-		"webpack": "^5.42.0"
+		"vscode-test": "^1.6.1",
+		"webpack": "^5.49.0"
 	},
 	"dependencies": {
 		"@reactivex/rxjs": "^6.6.7",
