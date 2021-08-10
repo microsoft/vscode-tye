@@ -118,19 +118,11 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 
 			telemetryProvider.registerCommandWithTelemetry(
 				'vscode-tye.commands.attachService',
-				async (context, node: TreeNode) => {
-					const replicas: { replica: TyeReplica, serviceType: KnownServiceType }[] = [];
+				async (context, node: TreeNode) => await registerAttachCommand(node, debugSessionMonitor));
 
-					if (node instanceof TyeServiceNode && isAttachable(node.service)) {
-						replicas.push(...Object.values(node.service.replicas).map(replica => ({ replica: replica, serviceType: <KnownServiceType>node.service.serviceType })));
-					} else if (node instanceof TyeReplicaNode && isAttachable(node.service)) {
-						replicas.push({ replica: node.replica, serviceType: <KnownServiceType>node.service.serviceType });
-					}
-
-					for (const replica of replicas) {
-						await attachToReplica(debugSessionMonitor, undefined, replica.serviceType, replica.replica.name, replica.replica.pid);
-					}
-				});
+			telemetryProvider.registerCommandWithTelemetry(
+				'vscode-tye.commands.attachReplica',
+				async (context, node: TreeNode) => await registerAttachCommand(node, debugSessionMonitor));
 
 			const scaffolder = new LocalScaffolder();
 			const tyeApplicationConfigurationProvider = new WorkspaceTyeApplicationConfigurationProvider(new YamlTyeApplicationConfigurationReader());
@@ -183,4 +175,19 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 
 			return Promise.resolve();
 		});
+
+		async function registerAttachCommand(node: TreeNode, debugSessionMonitor: CoreClrDebugSessionMonitor)
+		{
+			const replicas: { replica: TyeReplica, serviceType: KnownServiceType }[] = [];
+
+			if (node instanceof TyeServiceNode && isAttachable(node.service)) {
+				replicas.push(...Object.values(node.service.replicas).map(replica => ({ replica: replica, serviceType: <KnownServiceType>node.service.serviceType })));
+			} else if (node instanceof TyeReplicaNode && isAttachable(node.service)) {
+				replicas.push({ replica: node.replica, serviceType: <KnownServiceType>node.service.serviceType });
+			}
+
+			for (const replica of replicas) {
+				await attachToReplica(debugSessionMonitor, undefined, replica.serviceType, replica.replica.name, replica.replica.pid);
+			}
+		}
 }
