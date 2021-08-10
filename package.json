@@ -21,6 +21,7 @@
 	],
 	"activationEvents": [
 		"onCommand:vscode-tye.commands.attachService",
+		"onCommand:vscode-tye.commands.attachReplica",
 		"onCommand:vscode-tye.commands.browseService",
 		"onCommand:vscode-tye.commands.debugAll",
 		"onCommand:vscode-tye.commands.launchTyeDashboard",
@@ -228,6 +229,12 @@
 				"category": "Tye",
 				"command": "vscode-tye.commands.attachService",
 				"title": "%vscode-tye.commands.attachService.title%",
+				"icon": "$(debug-all)"
+			},
+			{
+				"category": "Tye",
+				"command": "vscode-tye.commands.attachReplica",
+				"title": "%vscode-tye.commands.attachReplica.title%",
 				"icon": "$(debug-alt)"
 			},
 			{
@@ -300,6 +307,10 @@
 					"when": "never"
 				},
 				{
+					"command": "vscode-tye.commands.attachReplica",
+					"when": "never"
+				},
+				{
 					"command": "vscode-tye.commands.browseService",
 					"when": "never"
 				},
@@ -350,7 +361,12 @@
 				},
 				{
 					"command": "vscode-tye.commands.attachService",
-					"when": "view == vscode-tye.views.services && viewItem =~ /attachable/",
+					"when": "view == vscode-tye.views.services && viewItem =~ /attachable/ && viewItem =~ /service/",
+					"group": "inline"
+				},
+				{
+					"command": "vscode-tye.commands.attachReplica",
+					"when": "view == vscode-tye.views.services && viewItem =~ /attachable/ && viewItem =~ /replica/",
 					"group": "inline"
 				},
 				{

@@ -50,7 +50,7 @@ export default class TyeReplicaNode implements TyeNode {
     getTreeItem(): vscode.TreeItem {
         const treeItem = new vscode.TreeItem(this.replica.name);
 
-        treeItem.contextValue = this.service.serviceType;
+        treeItem.contextValue = `${this.service.serviceType} replica`;
         treeItem.iconPath = new vscode.ThemeIcon('server-process');
         treeItem.id = this.id;
 

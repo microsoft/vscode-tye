@@ -44,7 +44,7 @@ export default class TyeServiceNode implements TyeNode {
         const treeItem = new vscode.TreeItem(this.service.description.name, vscode.TreeItemCollapsibleState.Collapsed);
 
         treeItem.contextValue = this.service.serviceType;
-        treeItem.contextValue += ' hasLogs'
+        treeItem.contextValue += ' hasLogs service'
 
         treeItem.id = this.id;
 
