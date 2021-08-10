@@ -216,7 +216,7 @@
 				"category": "Tye",
 				"command": "vscode-tye.commands.debugAll",
 				"title": "%vscode-tye.commands.debugAll.title%",
-				"icon": "$(debug-alt)"
+				"icon": "$(debug-all)"
 			},
 			{
 				"category": "Tye",
