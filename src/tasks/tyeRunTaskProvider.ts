@@ -103,7 +103,7 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                                     const matchingLogLine = tyeAppStartedRegex.exec(stdOut);
                                     if (matchingLogLine != null)
                                     {
-                                        tyePid = +matchingLogLine[1];
+                                        tyePid = parseInt(matchingLogLine[1], 10);
                                     }
                                 }
                             });
