@@ -33,6 +33,8 @@ export interface TyeRunTaskDefinition extends TaskDefinition {
     watch?: boolean;
 }
 
+const tyeAppStartedRegex = new RegExp('started successfully with Pid: (?<pid>[0-9]+)');
+
 export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
     constructor(
         telemetryProvider: TelemetryProvider,
@@ -97,10 +99,13 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                                         waitForProcessClose: false
                                     };
                                 },
-                                onStarted:
-                                    pid => {
-                                        tyePid = pid;
+                                onStdOut: stdOut => {
+                                    const matchingLogLine = tyeAppStartedRegex.exec(stdOut);
+                                    if (matchingLogLine != null)
+                                    {
+                                        tyePid = parseInt(matchingLogLine[1], 10);
                                     }
+                                }
                             });
                     });
             },
