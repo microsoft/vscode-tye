@@ -33,6 +33,8 @@ export interface TyeRunTaskDefinition extends TaskDefinition {
     watch?: boolean;
 }
 
+const tyeAppStartedRegex = new RegExp('started successfully with Pid: (?<pid>[0-9]+)');
+
 export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
     constructor(
         telemetryProvider: TelemetryProvider,
@@ -51,7 +53,6 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
 
                         const tyeDefinition = <TyeRunTaskDefinition>definition;
                         const tyePath = await tyePathProvider.getTyePath();
-                        const tyeAppStartedRegex = new RegExp('started successfully with Pid: (?<pid>[0-9]+)');
 
                         const command =
                             CommandLineBuilder
