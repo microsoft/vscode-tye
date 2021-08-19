@@ -97,9 +97,15 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                                         waitForProcessClose: false
                                     };
                                 },
-                                onStarted:
-                                    pid => {
-                                        tyePid = pid;
+                                onStdOut: stdOut => {
+                                        let matchingLogLine = null;
+                                        const tyeAppStartedRegex = new RegExp('started successfully with Pid: [0-9]+');
+                                        if (tyeAppStartedRegex.test(stdOut))
+                                        {
+                                            matchingLogLine = tyeAppStartedRegex.exec(stdOut);
+                                            // eslint-disable-next-line no-useless-escape
+                                            tyePid = matchingLogLine == null ? 0 : +matchingLogLine[0].replace(/[^0-9\.]+/g, '');
+                                        }
                                     }
                             });
                     });
