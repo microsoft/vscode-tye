@@ -51,6 +51,7 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
 
                         const tyeDefinition = <TyeRunTaskDefinition>definition;
                         const tyePath = await tyePathProvider.getTyePath();
+                        const tyeAppStartedRegex = new RegExp('started successfully with Pid: (?<pid>[0-9]+)');
 
                         const command =
                             CommandLineBuilder
@@ -98,15 +99,12 @@ export default class TyeRunCommandTaskProvider extends CommandTaskProvider {
                                     };
                                 },
                                 onStdOut: stdOut => {
-                                        let matchingLogLine = null;
-                                        const tyeAppStartedRegex = new RegExp('started successfully with Pid: [0-9]+');
-                                        if (tyeAppStartedRegex.test(stdOut))
-                                        {
-                                            matchingLogLine = tyeAppStartedRegex.exec(stdOut);
-                                            // eslint-disable-next-line no-useless-escape
-                                            tyePid = matchingLogLine == null ? 0 : +matchingLogLine[0].replace(/[^0-9\.]+/g, '');
-                                        }
+                                    const matchingLogLine = tyeAppStartedRegex.exec(stdOut);
+                                    if (matchingLogLine != null)
+                                    {
+                                        tyePid = +matchingLogLine[1];
                                     }
+                                }
                             });
                     });
             },
