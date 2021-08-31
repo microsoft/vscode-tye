@@ -71,7 +71,7 @@ export class WindowsProcessProvider implements ProcessProvider {
         // WMIC lists processes by file name regardless of its full path.
         const fileName = path.basename(filePath);
 
-        const list = await Process.exec(`wmic process where "name='${fileName}'" get commandline,name,processid /format:list`);
+        const list = await Process.exec(`wmic process where "name='${fileName}' or name='${fileName}.exe'" get commandline,name,processid /format:list`);
         
         // Lines in the output are delimited by "<CR><CR><LF>".
         const lines = list.stdout.split('\r\r\n');
