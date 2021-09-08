@@ -430,7 +430,7 @@
 	},
 	"dependencies": {
 		"@reactivex/rxjs": "^6.6.7",
-		"axios": "^0.21.1",
+		"axios": "^0.21.2",
 		"fs-extra": "^10.0.0",
 		"js-yaml": "^4.1.0",
 		"node-netstat": "^1.8.0",
