@@ -1,5 +1,19 @@
 # Change Log
 
+## v0.4.0 - 13 September 2021
+
+A number of usability enhancements and fixes.
+
+### Fixed
+* Fix the wmic process filter logic for tye processes. (#145) ([2c48d86](https://github.com/Microsoft/vscode-tye/commit/2c48d86)), closes [#144](https://github.com/Microsoft/vscode-tye/issues/144)
+* Update the logic to relate a tye-run task with tye application (#143) ([150a057](https://github.com/Microsoft/vscode-tye/commit/150a057)), Fixes [#127](https://github.com/Microsoft/vscode-tye/issues/127)
+* Accommodate custom Tye paths. (#136) ([a3ed1bf](https://github.com/Microsoft/vscode-tye/commit/a3ed1bf)), closes [#133](https://github.com/Microsoft/vscode-tye/issues/133)
+
+### Added
+
+* Update icon for DebugAll (#141) ([1a17634](https://github.com/Microsoft/vscode-tye/commit/1a17634)), closes [#137](https://github.com/Microsoft/vscode-tye/issues/137)
+
+
 ## v0.3.0 - 9 August 2021
 
 A number of usability enhancements and fixes.
