@@ -6,7 +6,7 @@
 	"preview": true,
 	"icon": "resources/brand-tye_128x.png",
 	"publisher": "ms-azuretools",
-	"license": "SEE LICENSE IN LICENSE.txt",
+	"license": "SEE LICENSE IN LICENSE",
 	"aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
 	"homepage": "https://github.com/Microsoft/vscode-tye/",
 	"repository": {
