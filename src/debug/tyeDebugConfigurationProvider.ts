@@ -3,7 +3,8 @@
 
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
-import { TyeApplicationProvider } from '../services/tyeApplicationProvider';
+import { filter, first, map, timeout } from 'rxjs/operators';
+import { TyeApplication, TyeApplicationProvider } from '../services/tyeApplicationProvider';
 import { getLocalizationPathForFile } from '../util/localization';
 import { TyeApplicationWatcher } from './tyeApplicationWatcher';
 import { attachToReplica } from './attachToReplica';
@@ -27,11 +28,35 @@ export class TyeDebugConfigurationProvider implements vscode.DebugConfigurationP
     async resolveDebugConfigurationWithSubstitutedVariables(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration): Promise<vscode.DebugConfiguration | null | undefined> {
         const tyeDebugConfiguration = <TyeDebugConfiguration>debugConfiguration;
 
-        const applications = await this.tyeApplicationProvider.getApplications();
-
         // NOTE: In the unlikely event of multiple same-named applications running, we arbitrarily use the first match.
         // TODO: Cache applications started via our `tye-run` tasks, and give preference to those.
-        const application = applications.find(a => a.name === tyeDebugConfiguration.applicationName);
+
+        function isValidApplication(a: TyeApplication | undefined): a is TyeApplication {
+            return a !== undefined;
+        }
+
+        function allServicesRunning(a: TyeApplication): boolean {
+            return Object
+                .values(a.projectServices)
+                .every(service => Object.values(service.replicas).length);
+        }
+
+        let application: TyeApplication | undefined;
+
+        try
+        {
+            application = await this.tyeApplicationProvider.applications
+                .pipe(
+                    map(applications => applications.find(a => a.name === tyeDebugConfiguration.applicationName)),
+                    filter(isValidApplication),
+                    filter(allServicesRunning),
+                    first(),
+                    timeout(60000))
+                .toPromise();
+        }
+        catch {
+            // Trap any timeout exception.
+        }
 
         if (!application) {
             throw new Error(localize('debug.tyeDebugConfigurationProvider.applicationNotRunning', 'The Tye application "{0}" is not running.', tyeDebugConfiguration.applicationName));
