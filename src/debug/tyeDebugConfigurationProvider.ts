@@ -3,13 +3,15 @@
 
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
+import { race } from 'rxjs';
 import { filter, first, map, timeout } from 'rxjs/operators';
 import { TyeApplication, TyeApplicationProvider } from '../services/tyeApplicationProvider';
 import { getLocalizationPathForFile } from '../util/localization';
 import { TyeApplicationWatcher } from './tyeApplicationWatcher';
 import { attachToReplica } from './attachToReplica';
 import { DebugSessionMonitor } from './debugSessionMonitor';
-import { UserInput } from 'src/services/userInput';
+import { UserInput } from '../services/userInput';
+import { observableFromCancellationToken } from '../util/observableUtil';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -49,14 +51,22 @@ export class TyeDebugConfigurationProvider implements vscode.DebugConfigurationP
         {
             application = await this.userInput.withProgress(
                 localize('debug.tyeDebugConfigurationProvider.waitingForApplication', 'Waiting for Tye application to start...'),
-                () => this.tyeApplicationProvider.applications
-                    .pipe(
-                        map(applications => applications.find(a => a.name === tyeDebugConfiguration.applicationName)),
-                        filter(isValidApplication),
-                        filter(allServicesRunning),
-                        first(),
-                        timeout(60000))
-                    .toPromise()
+                (progress, cancellationToken) => {
+
+                    const cancellation = observableFromCancellationToken<TyeApplication>(cancellationToken);
+
+                    const applicationMonitor =
+                        this.tyeApplicationProvider
+                            .applications
+                            .pipe(
+                                map(applications => applications.find(a => a.name === tyeDebugConfiguration.applicationName)),
+                                filter(isValidApplication),
+                                filter(allServicesRunning),
+                                first(),
+                                timeout(60000));
+
+                    return race(applicationMonitor, cancellation).toPromise();
+                }
             );
         }
         catch {
