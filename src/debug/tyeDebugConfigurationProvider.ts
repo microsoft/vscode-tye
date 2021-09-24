@@ -9,6 +9,7 @@ import { getLocalizationPathForFile } from '../util/localization';
 import { TyeApplicationWatcher } from './tyeApplicationWatcher';
 import { attachToReplica } from './attachToReplica';
 import { DebugSessionMonitor } from './debugSessionMonitor';
+import { UserInput } from 'src/services/userInput';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));
 
@@ -22,7 +23,8 @@ export class TyeDebugConfigurationProvider implements vscode.DebugConfigurationP
     constructor(
         private readonly debugSessionMonitor: DebugSessionMonitor,
         private readonly tyeApplicationProvider: TyeApplicationProvider,
-        private readonly tyeApplicationWatcher: TyeApplicationWatcher) {
+        private readonly tyeApplicationWatcher: TyeApplicationWatcher,
+        private readonly userInput: UserInput) {
     }
 
     async resolveDebugConfigurationWithSubstitutedVariables(folder: vscode.WorkspaceFolder | undefined, debugConfiguration: vscode.DebugConfiguration): Promise<vscode.DebugConfiguration | null | undefined> {
@@ -45,14 +47,17 @@ export class TyeDebugConfigurationProvider implements vscode.DebugConfigurationP
 
         try
         {
-            application = await this.tyeApplicationProvider.applications
-                .pipe(
-                    map(applications => applications.find(a => a.name === tyeDebugConfiguration.applicationName)),
-                    filter(isValidApplication),
-                    filter(allServicesRunning),
-                    first(),
-                    timeout(60000))
-                .toPromise();
+            application = await this.userInput.withProgress(
+                localize('debug.tyeDebugConfigurationProvider.waitingForApplication', 'Waiting for Tye application to start...'),
+                () => this.tyeApplicationProvider.applications
+                    .pipe(
+                        map(applications => applications.find(a => a.name === tyeDebugConfiguration.applicationName)),
+                        filter(isValidApplication),
+                        filter(allServicesRunning),
+                        first(),
+                        timeout(60000))
+                    .toPromise()
+            );
         }
         catch {
             // Trap any timeout exception.
