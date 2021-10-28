@@ -61,7 +61,7 @@ export class UnixProcessProvider implements ProcessProvider {
 }
 
 interface WmiWin32ProcessObject {
-    readonly CommandLine: string;
+    readonly CommandLine: string | null;
     readonly Name: string;
     readonly ProcessId: number;
 }
@@ -85,14 +85,14 @@ export class WindowsProcessProvider implements ProcessProvider {
 
                 // NOTE: ConvertTo-Json returns a single JSON object when given a single object rather than a collection.
                 //       The -AsArray argument isn't available until PowerShell 7.0 and later.
-                
+
                 if (Array.isArray(json)) {
                     output = <WmiWin32ProcessObject[]>json;
                 } else {
                     output = [<WmiWin32ProcessObject>json];
                 }
                 
-                return output.map(o => ({ cmd: o.CommandLine, name: o.Name, pid: o.ProcessId }));
+                return output.map(o => ({ cmd: o.CommandLine ?? '', name: o.Name, pid: o.ProcessId }));
             }
             catch {       
                 // NOTE: No-op.                         
