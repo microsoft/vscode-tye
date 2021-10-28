@@ -83,6 +83,9 @@ export class WindowsProcessProvider implements ProcessProvider {
             try {
                 const json: unknown = JSON.parse(list.stdout);
 
+                // NOTE: ConvertTo-Json returns a single JSON object when given a single object rather than a collection.
+                //       The -AsArray argument isn't available until PowerShell 7.0 and later.
+                
                 if (Array.isArray(json)) {
                     output = <WmiWin32ProcessObject[]>json;
                 } else {
