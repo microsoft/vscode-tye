@@ -60,10 +60,10 @@ export class UnixProcessProvider implements ProcessProvider {
     }
 }
 
-function getWmicValue(line: string): string {
-    const index = line.indexOf('=');
-
-    return line.substring(index + 1);
+interface WmiWin32ProcessObject {
+    readonly CommandLine: string;
+    readonly Name: string;
+    readonly ProcessId: number;
 }
 
 export class WindowsProcessProvider implements ProcessProvider {
@@ -71,28 +71,32 @@ export class WindowsProcessProvider implements ProcessProvider {
         // WMIC lists processes by file name regardless of its full path.
         const fileName = path.basename(filePath);
 
-        const list = await Process.exec(`wmic process where "name='${fileName}' or name='${fileName}.exe'" get commandline,name,processid /format:list`);
-        
-        // Lines in the output are delimited by "<CR><CR><LF>".
-        const lines = list.stdout.split('\r\r\n');
+        const list = await Process.exec(
+            `Get-WmiObject -Query "select CommandLine, Name, ProcessId from win32_process where Name='${fileName}' or Name='${fileName}.exe'" | Select-Object -Property CommandLine, Name, ProcessId | ConvertTo-Json`,
+            {
+                shell: 'powershell.exe'
+            });
 
-        const processes: ProcessInfo[] = [];
+        if (list.code === 0 && list.stdout.length) {
+            let output: WmiWin32ProcessObject[];
 
-        // Each item in the list is prefixed by two empty lines, then <property>=<value> lines, in alphabetical order.
-        for (let i = 0; i < lines.length / 5; i++) {
-            // Stop if the input is truncated (as there is an upper output limit)...
-            if ((i * 5) + 4 >= lines.length) {
-                break;
+            try {
+                const json: unknown = JSON.parse(list.stdout);
+
+                if (Array.isArray(json)) {
+                    output = <WmiWin32ProcessObject[]>json;
+                } else {
+                    output = [<WmiWin32ProcessObject>json];
+                }
+                
+                return output.map(o => ({ cmd: o.CommandLine, name: o.Name, pid: o.ProcessId }));
             }
-
-            const cmd = getWmicValue(lines[(i * 5) + 2]);
-            const name = getWmicValue(lines[(i * 5) + 3]);
-            const pid = parseInt(getWmicValue(lines[(i * 5) + 4]), 10);
-
-            processes.push({ cmd, name, pid });
+            catch {       
+                // NOTE: No-op.                         
+            }
         }
 
-        return processes;
+        return [];
     }
 }
 
