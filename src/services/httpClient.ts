@@ -39,9 +39,7 @@ export default class AxiosHttpClient implements HttpClient {
                 options?.json ? JSON.stringify(data) : data,
                 {
                     cancelToken: axiosToken,
-                    headers: {
-                        'content-type': options?.json ? 'application/json' : undefined
-                    }
+                    headers: options?.json ? { 'content-type': 'application/json' } : undefined
                 });
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
