@@ -73,7 +73,6 @@ export async function scaffoldTyeTasks(context: IActionContext, configurationPro
         workspaceConfiguration.folder,
         label => {
             const tyeRunTask: TyeRunTaskDefinition = {
-                applicationName: configuration.name,
                 label,
                 type: 'tye-run',
                 watch: true
