@@ -59,7 +59,7 @@ export class TyeDebugConfigurationProvider implements vscode.DebugConfigurationP
                         this.tyeApplicationProvider
                             .applications
                             .pipe(
-                                map(applications => applications.find(a => a.name === tyeDebugConfiguration.applicationName)),
+                                map(applications => applications.find(a => a.name.toLowerCase() === tyeDebugConfiguration.applicationName.toLowerCase())),
                                 filter(isValidApplication),
                                 filter(allServicesRunning),
                                 first(),
