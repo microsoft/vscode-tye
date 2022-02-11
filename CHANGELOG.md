@@ -1,5 +1,15 @@
 # Change Log
 
+## v0.5.0 - 11 February 2022
+
+A number of usability enhancements and fixes.
+
+### Fixed
+
+* Tye should use case insensitive string matching between the application name in tye.yaml and launch.json [#167](https://github.com/Microsoft/vscode-tye/issues/167)
+* Move to PowerShell-based WMI provider [#163](https://github.com/Microsoft/vscode-tye/issues/163)
+* [bug] Timing issue starting large deployments prevents the debugger from auto connecting [#161](https://github.com/Microsoft/vscode-tye/issues/161)
+
 ## v0.4.0 - 13 September 2021
 
 A number of usability enhancements and fixes.
