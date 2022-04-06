@@ -27,24 +27,7 @@
 			"request": "launch",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/out/test/suite/allTests"
-			],
-			"env": {
-				"DEBUGTELEMETRY": "1"
-			},
-			"outFiles": [
-				"${workspaceFolder}/out/test/**/*.js"
-			],
-			"preLaunchTask": "npm: build-test"
-		},
-		{
-			// TODO: Running this requires running the webpack build manually first (background tasks can't be used as dependsOn at this time, https://github.com/microsoft/vscode/issues/70283)
-			"name": "Extension Tests (Unit)",
-			"type": "extensionHost",
-			"request": "launch",
-			"args": [
-				"--extensionDevelopmentPath=${workspaceFolder}",
-				"--extensionTestsPath=${workspaceFolder}/out/test/suite/unitTests"
+				"--extensionTestsPath=${workspaceFolder}/out/test/suite/index"
 			],
 			"env": {
 				"DEBUGTELEMETRY": "1"
