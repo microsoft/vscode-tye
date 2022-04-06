@@ -24,16 +24,13 @@ var actualExtension;
 
 function getExtension(extensionPath) {
     if (!actualExtension) {
-        const ignoreBundle = !/^(false|0)?$/i.test(process.env.VSCODE_TYE_IGNORE_BUNDLE || '');
-        const extensionFolderName = ignoreBundle ? 'out' : 'dist'
+        const extensionFolderName = 'dist';
         const extensionFileName = `./${extensionFolderName}/extension`;
-    
-        if (!ignoreBundle) {
-            global.vscodeTye = {
-                localizationRootPath: path.join(extensionPath, extensionFolderName)
-            };
-        }
-    
+
+        global.vscodeTye = {
+            localizationRootPath: path.join(extensionPath, extensionFolderName)
+        };
+
         actualExtension = require(extensionFileName);
     }
 

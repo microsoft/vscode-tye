@@ -5,8 +5,12 @@
 	"tasks": [
 		{
 			"type": "npm",
-			"script": "build",
-			"problemMatcher": "$gulp-tsc",
+			"script": "watch",
+			"problemMatcher": [
+				"$ts-webpack-watch",
+				"$tslint-webpack-watch"
+			],
+			"isBackground": true,
 			"presentation": {
 				"reveal": "never"
 			},
@@ -16,13 +20,15 @@
 			}
 		},
 		{
-			"label": "build-packed",
 			"type": "npm",
-			"script": "build-packed",
-			"problemMatcher": "$gulp-tsc",
+			"script": "build-test",
+			"problemMatcher": [
+				"$ts-webpack-watch",
+				"$tslint-webpack-watch"
+			],
 			"presentation": {
 				"reveal": "never"
 			}
-		}	
+		}
 	]
 }
