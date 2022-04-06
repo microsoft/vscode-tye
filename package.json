@@ -387,8 +387,7 @@
 		"package": "npm run build && npm run package-impl",
 		"ci-build": "npm run lint && npm run build",
 		"ci-package": "npm run ci-build && npm run package-impl",
-		"test": "npm run build-test && node ./out/test/runAllTests.js",
-		"unit-test": "npm run build-test && node ./out/test/runUnitTests.js",
+		"test": "npm run build-test && node ./out/test/runTest.js",
 		"package-impl": "vsce package"
 	},
 	"devDependencies": {
@@ -401,9 +400,9 @@
 		"@types/ps-tree": "^1.1.2",
 		"@types/semver": "^7.3.9",
 		"@types/vscode": "^1.64.0",
-		"@typescript-eslint/eslint-plugin": "^4.33.0",
-		"@typescript-eslint/parser": "^4.33.0",
-		"eslint": "^7.32.0",
+		"@typescript-eslint/eslint-plugin": "^5.18.0",
+		"@typescript-eslint/parser": "^5.18.0",
+		"eslint": "^8.12.0",
 		"glob": "^7.2.0",
 		"mocha": "^9.2.2",
 		"terser-webpack-plugin": "^5.3.1",
