@@ -12,7 +12,6 @@
 		"baseUrl": "./",
 		"paths": {
             "*": [
-                "node_modules/vscode/*",
                 "*"
             ]
 		},
@@ -24,7 +23,6 @@
 	},
 	"exclude": [
 		".vscode-test",
-		"gulpfile.ts",
 		"main.js",
 		"node_modules",
 		"webpack.config.ts"

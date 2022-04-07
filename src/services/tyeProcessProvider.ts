@@ -75,8 +75,10 @@ export default class LocalTyeProcessProvider implements TyeProcessProvider {
         return this._processes;
     }
 
-    getProcesses(): Promise<TyeProcess[]> {
-        return this.processes.pipe(first()).toPromise();
+    async getProcesses(): Promise<TyeProcess[]> {
+        const firstProcesses = await this.processes.pipe(first()).toPromise();
+
+        return firstProcesses ?? [];
     }
 
     private async getTyeProcessesWithPorts(): Promise<TyeProcessWithPorts[]> {

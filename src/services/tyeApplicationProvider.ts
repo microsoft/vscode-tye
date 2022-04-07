@@ -111,8 +111,10 @@ export class TaskBasedTyeApplicationProvider implements TyeApplicationProvider {
         return this._applications;
     }
 
-    getApplications(): Promise<TyeApplication[]> {
-        return this.applications.pipe(first()).toPromise();
+    async getApplications(): Promise<TyeApplication[]> {
+        const firstApplications = await this.applications.pipe(first()).toPromise();
+
+        return firstApplications ?? [];
     }
 
     private toApplicationsStream(processes: TyeProcess[]): Observable<TyeApplication[]> {

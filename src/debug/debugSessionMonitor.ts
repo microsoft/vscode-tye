@@ -26,14 +26,14 @@ export class CoreClrDebugSessionMonitor extends vscode.Disposable implements Deb
         this.onDidStartListener = vscode.debug.onDidStartDebugSession(
             debugSession => {
                 if (debugSession.type === coreClrDebugSessionType && debugSession.configuration.request === coreClrDebugRequestType && debugSession.configuration.processId) {
-                    this.pids.add(parseInt(debugSession.configuration.processId, 10));
+                    this.pids.add(parseInt(<string>debugSession.configuration.processId, 10));
                 }
             });
 
             this.onDidTerminateListener = vscode.debug.onDidTerminateDebugSession(
                 debugSession => {
                     if (debugSession.type === coreClrDebugSessionType && debugSession.configuration.request === coreClrDebugRequestType && debugSession.configuration.processId) {
-                        this.pids.delete(parseInt(debugSession.configuration.processId, 10));
+                        this.pids.delete(parseInt(<string>debugSession.configuration.processId, 10));
                     }
                 });
             }
