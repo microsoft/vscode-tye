@@ -33,7 +33,7 @@ function lsofCommandParser(line: string, callback: (item: netstat.ParsedItem) =>
     };
 
     return callback(netstat.utils.normalizeValues(item));
-};
+}
 
 
 // NOTE: The TS definition incorrectly asserts that `darwin` and `linux` are const.
