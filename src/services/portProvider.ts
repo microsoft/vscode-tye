@@ -3,14 +3,15 @@
 
 import * as netstat from 'node-netstat';
 
-netstat.commands.darwin = {
+const lsofCommand = {
     cmd: 'lsof',
     args: ['-Pn', '-i4', '-sTCP:LISTEN']
 };
 
-// NOTE: The TS definition incorrectly asserts that `darwin` is const.
-// TODO: Update the TS definitions.
-(netstat.parsers.darwin as unknown) = (line: string, callback: (item: netstat.ParsedItem) => void) => {
+netstat.commands.darwin = lsofCommand;
+netstat.commands.linux = lsofCommand;
+
+function lsofCommandParser(line: string, callback: (item: netstat.ParsedItem) => void): void {
     const parts = line.split(/\s/).filter(String);
     if (!parts.length || (parts.length !== 9 && parts.length !== 10 )) {
         // We expect 9 or 10 columns of data; bail when not found...
@@ -32,7 +33,13 @@ netstat.commands.darwin = {
     };
 
     return callback(netstat.utils.normalizeValues(item));
-};
+}
+
+
+// NOTE: The TS definition incorrectly asserts that `darwin` and `linux` are const.
+// TODO: Update the TS definitions.
+(netstat.parsers.darwin as unknown) = lsofCommandParser;
+(netstat.parsers.linux as unknown) = lsofCommandParser;
 
 function netstatAsync(options: Omit<netstat.Options, 'done'>): Promise<netstat.ParsedItem[]> {
     return new Promise(
