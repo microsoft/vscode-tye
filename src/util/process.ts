@@ -83,7 +83,9 @@ export class Process extends vscode.Disposable {
 
                 const process = cp.spawn(command, options);
 
-                this.onStartedEmitter.fire(process.pid);
+                if (process.pid !== undefined) {
+                    this.onStartedEmitter.fire(process.pid);
+                }
 
                 process.on(
                     'error',
