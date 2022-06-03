@@ -151,7 +151,7 @@ export class Process extends vscode.Disposable {
                                 }
                             }
 
-                            if (os.platform() === 'win32') {
+                            if (os.platform() === 'win32' && process.pid !== undefined) {
                                 // NOTE: Windows does not support SIGTERM/SIGINT/SIGBREAK, so there can be no graceful process shutdown.
                                 //       As a partial mitigation, use `taskkill` to kill the entire process tree.
                                 void Process.exec(`taskkill /pid ${process.pid} /t /f`);
