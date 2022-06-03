@@ -1,7 +1,7 @@
 // Copyright (c) Microsoft Corporation.
 // Licensed under the MIT license.
 
-import { callWithTelemetryAndErrorHandling, IActionContext, registerCommand } from 'vscode-azureextensionui';
+import { callWithTelemetryAndErrorHandling, IActionContext, registerCommand } from '@microsoft/vscode-azext-utils';
 
 export interface TelemetryProvider {
     callWithTelemetry<T>(eventName: string, action: (context: IActionContext) => Promise<T>): Promise<T | undefined>;

@@ -4,7 +4,7 @@
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import { UserInput } from '../services/userInput';
-import { IActionContext } from 'vscode-azureextensionui';
+import { IActionContext } from '@microsoft/vscode-azext-utils';
 import TreeNode from '../views/treeNode';
 import TyeApplicationNode from '../views/services/tyeApplicationNode';
 import { getLocalizationPathForFile } from '../util/localization';

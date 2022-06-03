@@ -416,6 +416,7 @@
 		"webpack-cli": "^4.9.2"
 	},
 	"dependencies": {
+		"@microsoft/vscode-azext-utils": "^0.3.2",
 		"axios": "^0.27.2",
 		"fs-extra": "^10.1.0",
 		"js-yaml": "^4.1.0",
@@ -424,7 +425,6 @@
 		"ps-tree": "^1.2.0",
 		"rxjs": "^7.5.5",
 		"semver": "^7.3.7",
-		"vscode-azureextensionui": "^0.44.3",
 		"vscode-nls": "^5.0.1"
 	}
 }
