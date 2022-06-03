@@ -5,7 +5,7 @@ import * as semver from 'semver';
 import { TyeCliClient } from './tyeCliClient';
 import * as nls from 'vscode-nls';
 import { getLocalizationPathForFile } from '../util/localization';
-import { IErrorHandlingContext } from 'vscode-azureextensionui';
+import { IErrorHandlingContext } from '@microsoft/vscode-azext-utils';
 import { UserInput } from './userInput';
 
 const localize = nls.loadMessageBundle(getLocalizationPathForFile(__filename));

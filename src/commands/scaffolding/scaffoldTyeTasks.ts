@@ -5,7 +5,7 @@ import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
 import { TyeRunTaskDefinition } from '../../tasks/tyeRunTaskProvider';
 import { UserInput } from '../../services/userInput';
-import { IActionContext } from 'vscode-azureextensionui';
+import { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ConflictHandler, ConflictUniquenessPredicate } from '../../scaffolding/conflicts';
 import { names, range } from '../../util/generators';
 import { getLocalizationPathForFile } from '../../util/localization';

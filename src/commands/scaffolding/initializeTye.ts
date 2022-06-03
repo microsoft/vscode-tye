@@ -3,7 +3,7 @@
 
 import * as vscode from 'vscode';
 import * as nls from 'vscode-nls';
-import { IActionContext } from 'vscode-azureextensionui';
+import { IActionContext } from '@microsoft/vscode-azext-utils';
 import { getLocalizationPathForFile } from '../../util/localization';
 import { TyeCliClient } from '../../services/tyeCliClient';
 import { TyeApplicationConfigurationProvider } from '../../services/tyeApplicationConfiguration';

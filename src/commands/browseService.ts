@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import { UserInput } from '../services/userInput';
-import { IActionContext } from 'vscode-azureextensionui';
+import { IActionContext } from '@microsoft/vscode-azext-utils';
 import TreeNode from '../views/treeNode';
 import TyeReplicaNode from '../views/services/tyeReplicaNode';
 import TyeServiceNode from '../views/services/tyeServiceNode';

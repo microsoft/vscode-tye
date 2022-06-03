@@ -10,7 +10,7 @@ import { TyeClientProvider } from '../services/tyeClient';
 import { TyeApplicationProvider } from '../services/tyeApplicationProvider';
 import { ProcessCancellationOptions } from '../util/process';
 import { TyeInstallationManager } from '../services/tyeInstallationManager';
-import { IActionContext } from 'vscode-azureextensionui';
+import { IActionContext } from '@microsoft/vscode-azext-utils';
 
 export type TyeLogProvider = 'console' | 'elastic' | 'ai' | 'seq';
 export type TyeDistributedTraceProvider = 'zipkin';

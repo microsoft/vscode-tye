@@ -11,7 +11,7 @@ import { KnownServiceType, TaskBasedTyeApplicationProvider } from './services/ty
 import { TyeApplicationDebugSessionWatcher } from './debug/tyeApplicationWatcher';
 import { CoreClrDebugSessionMonitor } from './debug/debugSessionMonitor';
 import { attachToReplica } from './debug/attachToReplica';
-import { AzureUserInput, createAzExtOutputChannel, registerUIExtensionVariables, IActionContext } from 'vscode-azureextensionui';
+import { createAzExtOutputChannel, registerUIExtensionVariables, IActionContext } from '@microsoft/vscode-azext-utils';
 import ext from './ext';
 import AzureTelemetryProvider from './services/telemetryProvider';
 import createScaffoldTyeTasksCommand from './commands/scaffolding/scaffoldTyeTasks';
@@ -54,7 +54,6 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 	ext.context = context;
 	ext.ignoreBundle = true;
 	ext.outputChannel = registerDisposable(createAzExtOutputChannel('Tye', 'tye'));
-	ext.ui = new AzureUserInput(context.globalState);
 
 	registerUIExtensionVariables(ext);
 
@@ -77,7 +76,7 @@ export function activate(context: vscode.ExtensionContext): Promise<void> {
 		
 			const extensionPackage = <ExtensionPackage>context.extension.packageJSON;
 			const tyeCliClient = new LocalTyeCliClient(() => tyePathProvider.getTyePath());
-			const ui = new AggregateUserInput(ext.ui);
+			const ui = new AggregateUserInput(actionContext.ui);
 			const tyeInstallationManager = new LocalTyeInstallationManager(extensionPackage.engines['tye'], tyeCliClient, ui);
 
 			const treeProvider = new TyeServicesTreeDataProvider(tyeApplicationProvider, tyeClientProvider, tyeInstallationManager, ui);
