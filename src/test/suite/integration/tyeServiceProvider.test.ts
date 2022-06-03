@@ -2,7 +2,7 @@
 // Licensed under the MIT license.
 
 import * as assert from 'assert';
-import * as fse from 'fs-extra';
+import * as fs from 'fs/promises';
 import * as path from 'path';
 import TyeReplicaNode from '../../../views/services/tyeReplicaNode';
 import TyeServiceNode from '../../../views/services/tyeServiceNode';
@@ -18,7 +18,7 @@ suite('integration/tyeServiceProvider', () => {
     const testDataServiceCount = 5;
 
     async function buildTestClient(): Promise<TyeClient> {
-        const data = JSON.parse(await fse.readFile(path.resolve(__dirname, '../../../../src/test/suite/integration/services.json'), 'utf8')) as  TyeService[];
+        const data = JSON.parse(await fs.readFile(path.resolve(__dirname, '../../../../src/test/suite/integration/services.json'), 'utf8')) as  TyeService[];
         return new MockTyeClient(data);
     }
 

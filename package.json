@@ -418,7 +418,6 @@
 	"dependencies": {
 		"@microsoft/vscode-azext-utils": "^0.3.2",
 		"axios": "^0.27.2",
-		"fs-extra": "^10.1.0",
 		"js-yaml": "^4.1.0",
 		"node-netstat": "^1.8.0",
 		"ps-list": "^7.2.0",
@@ -426,5 +425,11 @@
 		"rxjs": "^7.5.5",
 		"semver": "^7.3.7",
 		"vscode-nls": "^5.0.1"
+	},
+	"__metadata": {
+		"id": "b0edab79-bc74-4740-bb22-dd09214528b9",
+		"publisherDisplayName": "Microsoft",
+		"publisherId": "52b787f2-79a9-4f32-99b4-393afe3005d3",
+		"isPreReleaseVersion": false
 	}
 }
