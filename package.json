@@ -416,7 +416,7 @@
 		"webpack-cli": "^4.9.2"
 	},
 	"dependencies": {
-		"@microsoft/vscode-azext-utils": "^0.3.2",
+		"@microsoft/vscode-azext-utils": "^0.3.3",
 		"axios": "^0.27.2",
 		"js-yaml": "^4.1.0",
 		"node-netstat": "^1.8.0",
