@@ -1,5 +1,13 @@
 # Change Log
 
+## v0.5.1 - 29 June 2022
+
+Minor fixes and dependency updates.
+
+### Fixed
+
+* No Tye application is running in the Tye Applications view - Ubuntu 21.10 [#179](https://github.com/microsoft/vscode-tye/issues/179)
+
 ## v0.5.0 - 11 February 2022
 
 A number of usability enhancements and fixes.
