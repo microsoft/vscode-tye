@@ -1,7 +1,7 @@
 # Tye for Visual Studio Code (Preview)
 
-[![Marketplace Version](https://vsmarketplacebadge.apphb.com/version/ms-azuretools.vscode-tye.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-tye)
-[![Marketplace Installs](https://vsmarketplacebadge.apphb.com/installs-short/ms-azuretools.vscode-tye.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-tye)
+[![Marketplace Version](https://img.shields.io/visual-studio-marketplace/v/ms-azuretools.vscode-tye.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-tye)
+[![Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/ms-azuretools.vscode-tye.svg)](https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-tye)
 [![Build Status](https://dev.azure.com/ms-azuretools/AzCode/_apis/build/status/vscode-tye%20(CI)?branchName=main)](https://dev.azure.com/ms-azuretools/AzCode/_build/latest?definitionId=35&branchName=main)
 
 The Tye extension makes it easier to run and debug applications that are using [Tye](https://github.com/dotnet/tye)
