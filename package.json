@@ -2,7 +2,7 @@
 	"name": "vscode-tye",
 	"displayName": "Tye",
 	"description": "Makes it easy to debug and interact with applications using Tye.",
-	"version": "0.5.1",
+	"version": "0.5.2",
 	"preview": true,
 	"icon": "resources/brand-tye_128x.png",
 	"publisher": "ms-azuretools",
@@ -14,7 +14,7 @@
 	},
 	"engines": {
 		"tye": ">=0.11.0-alpha.22111.1",
-		"vscode": "^1.67.2"
+		"vscode": "^1.75.0"
 	},
 	"categories": [
 		"Other"
@@ -402,6 +402,7 @@
 		"@typescript-eslint/eslint-plugin": "^5.27.0",
 		"@typescript-eslint/parser": "^5.27.0",
 		"@vscode/test-electron": "^2.2.0",
+		"@vscode/vsce": "^2.10.0",
 		"eslint": "^8.36.0",
 		"glob": "^8.1.0",
 		"mocha": "^10.2.0",
@@ -409,7 +410,6 @@
 		"ts-loader": "^9.4.2",
 		"ts-node": "^10.9.1",
 		"typescript": "^4.9.3",
-		"@vscode/vsce": "^2.10.0",
 		"vscode-nls-dev": "^4.0.3",
 		"webpack": "^5.76.2",
 		"webpack-cli": "^4.9.2"
