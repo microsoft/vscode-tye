@@ -119,6 +119,14 @@
                 "connectionString": {
                     "description": "The connection string.",
                     "type": "string"
+                },
+                "routes": {
+                    "description": "Optional list of additional routes to show in Bindings on the Dashboard for easy access.",
+                    "type": "array",
+                    "items": {
+                        "examples": ["/api/swagger/ui"],
+                        "type": "string"
+                    }
                 }
             },
             "additionalProperties": false
