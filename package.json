@@ -422,7 +422,7 @@
 		"ps-list": "^7.2.0",
 		"ps-tree": "^1.2.0",
 		"rxjs": "^7.8.0",
-		"semver": "^7.3.8",
+		"semver": "^7.5.2",
 		"vscode-nls": "^5.2.0"
 	},
 	"overrides": {
